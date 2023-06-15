@@ -2,16 +2,21 @@ function StyleStandards() {
 
   return (
     <div>
-      <h1 className="primary_font">This is the primary Font</h1>
-      <div className="color1"></div>
-      <div className="color2"></div>
-      <div className="color3"></div>
-      <div className="color4"></div>
-      <div className="color5"></div>
-      <div className="color6"></div>
-      <div className="color7"></div>
-      <div className="color8"></div>
-      <div className="color9"></div>
+      <h1 className="secondary_font">Use Noto Sans Display font for larger text</h1>
+      <h3 className="primary_font">Use Noto Sans font for paragraphs and small text</h3>
+      <div>
+        <h1 className="secondary_font">Website Colors</h1>
+        <label>#F2EBEC<div className="color1"></div></label>
+        <label>#8A99A6<div className="color2"></div></label>
+        <label>#D98D62<div className="color3"></div></label>
+        <label>#8C4C35<div className="color4"></div></label>
+        <label>#BF6A4B<div className="color5"></div></label>
+        <label>#6A7680<div className="color6"></div></label>
+        <label>#D9D9D9<div className="color7"></div></label>
+        <label>#939393<div className="color8"></div></label>
+        <label>#ededed<div className="color9"></div></label>
+      </div>
+       
     </div>
   )
   }

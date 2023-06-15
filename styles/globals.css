@@ -1,56 +1,73 @@
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+h1, h2, h3 {
+  font-family: 'Noto Sans Display', sans-serif;
+}
+h4, h5, h6, p, li {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+
 .color1 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #F2EBEC;
 }
 .color2 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #8A99A6;
 }
 .color3 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #D98D62;
 }
 .color4 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #8C4C35;
 }
 .color5 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #BF6A4B;
 }
 .color6 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #6A7680;
 }
 .color7 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #D9D9D9;
 }
 .color8 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #939393;
 }
 .color9 {
-  height: 50px;
-  width: 50px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   background-color: #ededed;
 }
-/* .primary_font{
-} */
+.primary_font{
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 300;
+}
+.secondary_font{
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 300;
+}
