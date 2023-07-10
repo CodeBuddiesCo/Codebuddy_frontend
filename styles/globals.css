@@ -71,3 +71,157 @@ h4, h5, h6, p, li {
   font-family: 'Noto Sans Display', sans-serif;
   font-weight: 300;
 }
+
+
+
+.div-block {
+  width: 100vw;
+  height: 628px;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  top: 0%;
+  bottom: auto;
+  left: 0%;
+  right: 0%;
+}
+
+
+
+.section {
+  background-color: rgba(138, 153, 166, .3);
+  justify-content: space-between;
+  display: flex;
+  position: absolute;
+  top: 0%;
+  bottom: auto;
+  left: 0%;
+  right: 0%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+}
+
+
+.heading {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.div-block-3 {
+  width: 244px;
+  height: 78px;
+  background-image: url('../images/CB_Logo.svg');
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 88px;
+}
+
+.div-block-4 {
+  height: 42px;
+  min-width: 0;
+  justify-content: flex-end;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 94px;
+  display: flex;
+}
+
+.nav-buttons {
+  width: auto;
+  height: auto;
+  color: #8c4c35;
+  text-align: center;
+  background-color: rgba(242, 235, 236, .6);
+  border-radius: 5px;
+  margin-right: 20px;
+  padding: 10px;
+  font-family: Noto Sans, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration: none;
+}
+
+.nav-buttons.right {
+  margin-right: 0;
+}
+
+.section-2 {
+  justify-content: space-between;
+  display: flex;
+}
+
+.div-block-5 {
+  width: 602px;
+  height: 339px;
+  margin-top: 79px;
+}
+
+.div-block-6 {
+  width: 602px;
+  height: 339px;
+  background-color: rgba(242, 235, 236, .6);
+  margin-top: 79px;
+  display: flex;
+}
+
+.text-block {
+  color: #6a7680;
+  margin: auto 47px;
+  font-family: Noto Sans Display, sans-serif;
+  font-size: 36px;
+  font-weight: 200;
+  line-height: 49px;
+}
+
+.text-span {
+  color: #8c4c35;
+  font-weight: 900;
+}
+
+.div-block-7 {
+  width: 153px;
+  height: 38px;
+  background-image: url('../images/text.svg');
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-right: 0;
+  padding-left: 0;
+  position: absolute;
+  bottom: 583px;
+  right: 106px;
+}
+
+.image {
+  z-index: -100;
+  width: 100%;
+  max-width: none;
+  position: absolute;
+  top: 0%;
+  bottom: auto;
+  left: 0%;
+  right: 0%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+}
+
+.div-block-8 {
+  z-index: -100;
+  width: auto;
+  height: 628px;
+  max-height: 628px;
+  min-height: 600px;
+  background-image: url('../images/alvan-nee-73flblFUksY-unsplash-1-min_1.jpg');
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: scroll;
+  position: fixed;
+  top: 0%;
+  bottom: auto;
+  left: 0%;
+  right: 0%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+}
