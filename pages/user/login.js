@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import Link from 'next/link';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -10,16 +10,27 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://54.196.0.68/api/users/login', {
-        username,
-        password,
+      const response = await fetch('https://codebuddiesserver.onrender.com/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
       });
 
-      if (response.data.token) {
-        setMessage('You have successfully logged in');
-
-        setUsername('');
-        setPassword('');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.token) {
+          console.log('Token:', data.token);  // Log the token to the console
+          setMessage('You have successfully logged in');
+          setUsername('');
+          setPassword('');
+        } else {
+          throw new Error();
+        }
       } else {
         throw new Error();
       }
@@ -52,6 +63,10 @@ function Login() {
         {message && <p>{message}</p>}
         <button type="submit">Login</button>
       </form>
+
+      <div>
+        Don't have an account? <Link href="/user/register">Register</Link>
+      </div>
     </div>
   );
 }
