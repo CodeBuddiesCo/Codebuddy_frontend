@@ -163,7 +163,7 @@ h4, h5, h6, p, li {
 .main-photo {
   z-index: -100;
   width: 100vw;
-  height: 65.5vh;
+  height: 628px;
   object-fit: fill;
   background-image: url('../public/alvan-nee-73flblFUksY-unsplash-1-min.jpg');
   background-position: 50%;
