@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import styles from '../../styles/authForms.module.css';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -24,7 +25,7 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         if (data.token) {
-          console.log('Token:', data.token);  // Log the token to the console
+          console.log('Token:', data.token); // Log the token to the console
           setMessage('You have successfully logged in');
           setUsername('');
           setPassword('');
@@ -42,29 +43,33 @@ function Login() {
 
   return (
     <div>
-      <h1>This is where you will log in</h1>
-      <form onSubmit={handleSubmit}>
+      <h1 className={styles.heading}>Login</h1>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div>
-          <label>Username:</label>
+          <label className={styles.label}>Username:</label>
           <input
+            className={styles.input}
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label className={styles.label}>Password:</label>
           <input
+            className={styles.input}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {message && <p>{message}</p>}
-        <button type="submit">Login</button>
+        {message && <p className={styles.message}>{message}</p>}
+        <button className={styles.button} type="submit">
+          Login
+        </button>
       </form>
 
-      <div>
+      <div className={styles.link}>
         Don't have an account? <Link href="/user/register">Register</Link>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import styles from '../../styles/authForms.module.css';
 
 function Register() {
   const [name, setName] = useState('');
@@ -39,7 +40,7 @@ function Register() {
           throw new Error();
         }
       } else {
-        if(response.status === 409){
+        if (response.status === 409) {
           setMessage('Username or Email already exists');
         } else {
           throw new Error();
@@ -53,41 +54,48 @@ function Register() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <h1 className={styles.heading}>Register</h1>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div>
-          <label>Name:</label>
+          <label className={styles.label}>Name:</label>
           <input
+            className={styles.input}
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div>
-          <label>Email:</label>
+          <label className={styles.label}>Email:</label>
           <input
+            className={styles.input}
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div>
-          <label>Username:</label>
+          <label className={styles.label}>Username:</label>
           <input
+            className={styles.input}
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label className={styles.label}>Password:</label>
           <input
+            className={styles.input}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {message && <p>{message}</p>}
-        <button type="submit">Register</button>
+        {message && <p className={styles.message}>{message}</p>}
+        <button className={styles.button} type="submit">
+          Register
+        </button>
       </form>
     </div>
   );
