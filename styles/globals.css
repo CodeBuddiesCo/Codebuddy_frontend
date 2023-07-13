@@ -165,6 +165,7 @@ h4, h5, h6, p, li {
   width: 100vw;
   height: 65.5vh;
   object-fit: fill;
+  background-image: url('../public/alvan-nee-73flblFUksY-unsplash-1-min.jpg');
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
