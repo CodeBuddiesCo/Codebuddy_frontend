@@ -1,0 +1,45 @@
+.heading {
+    font-family: 'Noto Sans Display', sans-serif;
+    /* Add other styles */
+  }
+  
+  .form {
+    /* Add styles */
+  }
+  
+  .label {
+    /* Add styles */
+  }
+  
+  .input {
+    /* Add styles */
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #F2EBEC;
+    margin-bottom: 10px;
+  }
+  
+  .button {
+    /* Add styles */
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #D98D62;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .message {
+    /* Add styles */
+    color: #8C4C35;
+  }
+  
+  .link {
+    /* Add styles */
+    margin-top: 10px;
+    font-family: 'Noto Sans', sans-serif;
+  }
+  
