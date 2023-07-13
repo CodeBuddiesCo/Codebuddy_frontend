@@ -2,12 +2,12 @@ import Link from 'next/link';
 
 function HomePage() {
   const eventId = new Date();
-
+  
   return (
     <div>
       <div className="main-photo"></div>
       <section className="header-section wf-section">
-        <div className="logo-div"></div>
+        <img className='logo-div' src="/CB_logo.png" alt='code buddy logo'/>
         <div className="nav-btn-div">
           <Link href="#">
             <div className="header-nav-buttons w-button">What is codebuddy?</div>
@@ -28,7 +28,7 @@ function HomePage() {
           <div className="home-spacer-div"></div>
           <div className="tagline-div">
             <div className="tagline-text-block">
-              Experience the power of <span className="collab-text-span">collaboration</span> on <span className="logo-text-span"> sdbhjjkk</span>, connecting you with skilled code enthusiasts through live video to supercharge your code
+              Experience the power of <span className="collab-text-span">collaboration</span> on <span><img className='logo-text-span' src='grey_logo.png' alt='code buddy logo'/></span>, connecting you with skilled code enthusiasts through live video to supercharge your code
             </div>
           </div>
         </div>
