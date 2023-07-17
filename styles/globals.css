@@ -1,5 +1,9 @@
 body {
   font-family: 'Noto Sans', sans-serif;
+  overflow-x: hidden;
+}
+a{
+  text-decoration: none;
 }
 h1, h2, h3 {
   font-family: 'Noto Sans Display', sans-serif;
@@ -70,7 +74,9 @@ h4, h5, h6, p, li {
   font-weight: 300;
 }
 
-/* homepage styles */
+/*! All Homepage styles */
+
+/** Homepage intro styles */
 
 .header-section {
   height: auto;
@@ -82,6 +88,7 @@ h4, h5, h6, p, li {
   bottom: auto;
   left: 0%;
   right: 0%;
+  overflow: hidden;
   box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
 }
 .logo-div {
@@ -129,7 +136,8 @@ h4, h5, h6, p, li {
   text-decoration: none;
 }
 .home-section {
-  justify-content: space-between;
+  height: 628px;
+  width: auto;
   display: block;
 }
 .home-spacer-div {
@@ -169,15 +177,13 @@ h4, h5, h6, p, li {
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
-  position: fixed;
+  position: absolute;
   top: 0%;
   bottom: auto;
   left: 0%;
   right: 0%;
+  overflow: hidden;
   box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
-}
-.body {
-  overflow: visible;
 }
 .logo-text-span {
   margin-bottom: -12px;
@@ -194,6 +200,135 @@ h4, h5, h6, p, li {
   display: flex;
 }
 
-a{
-  text-decoration: none;
+/** Homepage Event Styles */
+
+.home-events-section {
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 15px;
+  overflow: hidden;
+  display: flex;
+}
+.home-events-title {
+  color: #6a7680;
+  margin-bottom: 10px;
+  margin-left: 90px;
+  font-family: Noto Sans Display, sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 38px;
+}
+.home-events-holder-title-month_year {
+  color: #bf6a4b;
+  margin-bottom: 8px;
+  font-family: Noto Sans Display, sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 30px;
+}
+.home-events-holder-div {
+  border: .5px solid #8a99a6;
+  border-radius: 5px;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-left: 90px;
+  margin-right: 90px;
+  padding: 14px 42px 28px;
+  display: flex;
+  overflow: auto;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, .2);
+}
+.home-event-details-top-div {
+  height: 40px;
+  outline-offset: 0px;
+  background-color: #d9d9d9;
+  border: .25px #8a99a6;
+  border-bottom-style: solid;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  outline: .5px #8a99a6;
+  justify-content: space-between;
+  display: flex;
+}
+.home-event-details-main-div {
+  width: 350px;
+  border: .5px solid #8a99a6;
+  border-radius: 5px;
+  flex: none;
+  margin-right: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+}
+.home-event-top-text {
+  color: #6a7680;
+  text-align: left;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 10px;
+  font-family: Noto Sans, sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 22px;
+}
+.home-event-top-text.right {
+  margin-left: 0;
+  margin-right: 10px;
+}
+.home-event-bottom-text {
+  color: #6a7680;
+  font-family: Noto Sans, sans-serif;
+  font-size: 16px;
+  font-weight: 200;
+  line-height: 22px;
+}
+.home-event-bottom-text.lower {
+  margin-bottom: 10px;
+}
+.home-event-bottom-text.middle {
+  margin-bottom: 13px;
+}
+.home-event-bottom-details-main-flex-div {
+  border: .5px #8a99a6;
+  border-bottom-right-radius: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 19px 10px;
+  display: flex;
+}
+.home-event-button {
+  height: auto;
+  outline-offset: 0px;
+  color: #8c4c35;
+  background-color: rgba(242, 235, 236, .8);
+  border: .25px solid #8a99a6;
+  border-radius: 5px;
+  outline: .5px #8a99a6;
+  padding: 4px 20px;
+  font-family: Noto Sans, sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 19px;
+}
+.home-event-details-bottom-div {
+  object-fit: fill;
+  background-color: rgba(191, 106, 75, .1);
+  border: .25px #8a99a6;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  display: flex;
+}
+.home-event-bottom-details-top-flex-div {
+  width: 325px;
+  flex: none;
+  justify-content: space-between;
+  align-self: stretch;
+  align-items: center;
+  margin-bottom: 10px;
+  display: flex;
+}
+.home-event-bottom-details-bottom-flex-div {
+  align-self: stretch;
+}
+.home-event-holder-flex-div {
+  display: flex;
 }
