@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Alert } from 'react-bootstrap';
 import styles from '../../styles/authForms.module.css';
 
 function Login() {
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,6 +34,8 @@ function Login() {
           setMessage('You have successfully logged in');
           setUsername('');
           setPassword('');
+          setShowAlert(false);
+          router.push('/user/profile'); // Redirect to profile page
         } else {
           throw new Error();
         }
@@ -38,6 +44,7 @@ function Login() {
       }
     } catch (error) {
       setMessage('Invalid username or password');
+      setShowAlert(true);
       console.error(error);
     }
   };
@@ -52,6 +59,7 @@ function Login() {
         </div>
         <div className={`col-md-6 bg-white p-5 ${styles['form-style']}`}>
           <h3 className="pb-3">Sign In</h3>
+          {showAlert && <Alert variant="danger">{message}</Alert>}
           <form onSubmit={handleSubmit}>
             <div className="form-group pb-3">
               <input
@@ -62,6 +70,7 @@ function Login() {
                 aria-describedby="usernameHelp"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
               />
             </div>
             <div className="form-group pb-3">
@@ -72,6 +81,7 @@ function Login() {
                 id="exampleInputPassword1"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </div>
             <div className="d-flex align-items-center justify-content-between">

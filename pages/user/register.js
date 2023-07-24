@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Alert } from 'react-bootstrap';
 import styles from '../../styles/authForms.module.css';
 
 function Register() {
@@ -55,7 +56,7 @@ function Register() {
 
   return (
     <div className={styles.container}>
-<div className={`row m-5 no-gutters shadow-lg my-card`}>
+      <div className={`row m-5 no-gutters shadow-lg my-card`}>
         <div className="col-md-6 d-none d-md-block left">
           <img src="/registerdog2.png" 
                className="img-fluid" 
@@ -71,6 +72,7 @@ function Register() {
                 className="form-control"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
             </div>
             <div className="form-group pb-3">
@@ -80,6 +82,7 @@ function Register() {
                 className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
             <div className="form-group pb-3">
@@ -89,6 +92,7 @@ function Register() {
                 className="form-control"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
               />
             </div>
             <div className="form-group pb-3">
@@ -98,10 +102,11 @@ function Register() {
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </div>
             <div className="pb-2">
-                <button
+              <button
                 type="submit"
                 className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['form-button']}`}
               >
@@ -109,7 +114,11 @@ function Register() {
               </button>
             </div>
           </form>
-          {message && <p className={styles.message}>{message}</p>}
+          {message && (
+            <Alert variant="danger" className="mt-3">
+              {message}
+            </Alert>
+          )}
         </div>
       </div>
     </div>
