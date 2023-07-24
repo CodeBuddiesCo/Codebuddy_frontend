@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../../styles/authForms.module.css';
 
 function Register() {
@@ -53,50 +54,64 @@ function Register() {
   };
 
   return (
-    <div>
-      <h1 className={styles.heading}>Register</h1>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div>
-          <label className={styles.label}>Name:</label>
-          <input
-            className={styles.input}
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+    <div className={styles.container}>
+<div className={`row m-5 no-gutters shadow-lg my-card`}>
+        <div className="col-md-6 d-none d-md-block left">
+          <img src="/registerdog2.png" 
+               className="img-fluid" 
+               style={{minHeight:"100%", width: "100%", height: "100%", objectFit: "cover"}} />
         </div>
-        <div>
-          <label className={styles.label}>Email:</label>
-          <input
-            className={styles.input}
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <div className={`col-md-6 bg-white p-5 right ${styles['form-style']}`}>
+          <h3 className="pb-3">Register</h3>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group pb-3">
+              <input
+                type="text"
+                placeholder="Name"
+                className="form-control"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="form-group pb-3">
+              <input
+                type="text"
+                placeholder="Email"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="form-group pb-3">
+              <input
+                type="text"
+                placeholder="Username"
+                className="form-control"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="form-group pb-3">
+              <input
+                type="password"
+                placeholder="Password"
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="pb-2">
+                <button
+                type="submit"
+                className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['form-button']}`}
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+          {message && <p className={styles.message}>{message}</p>}
         </div>
-        <div>
-          <label className={styles.label}>Username:</label>
-          <input
-            className={styles.input}
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className={styles.label}>Password:</label>
-          <input
-            className={styles.input}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {message && <p className={styles.message}>{message}</p>}
-        <button className={styles.button} type="submit">
-          Register
-        </button>
-      </form>
+      </div>
     </div>
   );
 }

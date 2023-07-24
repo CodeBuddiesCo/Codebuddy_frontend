@@ -1,45 +1,79 @@
-.heading {
-    font-family: 'Noto Sans Display', sans-serif;
-    /* Add other styles */
-  }
-  
-  .form {
-    /* Add styles */
-  }
-  
-  .label {
-    /* Add styles */
-  }
-  
-  .input {
-    /* Add styles */
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    background-color: #F2EBEC;
-    margin-bottom: 10px;
-  }
-  
-  .button {
-    /* Add styles */
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
-    background-color: #D98D62;
-    color: white;
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .message {
-    /* Add styles */
-    color: #8C4C35;
-  }
-  
-  .link {
-    /* Add styles */
-    margin-top: 10px;
-    font-family: 'Noto Sans', sans-serif;
-  }
-  
+.form-style input {
+  border: 0;
+  height: 50px;
+  border-radius: 5px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.form-style input:focus {
+  border-bottom: 1px solid #007bff;
+  box-shadow: none;
+  outline: 0;
+  background-color: #ebebeb;
+}
+
+.sideline {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #ccc;
+}
+
+.sideline:before,
+.sideline:after {
+  content: '';
+  border-top: 1px solid #ebebeb;
+  margin: 0 20px 0 0;
+  flex: 1 0 20px;
+}
+
+.sideline:after {
+  margin: 0 0 0 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+.form-style {
+  padding: 2em;
+}
+
+.my-card {
+  border-radius: 5px !important;
+  overflow: hidden;
+}
+
+.right {
+  border-radius: 10px;
+}
+
+.left {
+  border-radius: 5px;
+}
+
+.form-button {
+  background-color: #BF6A4B  ;
+  color: #fff;
+  border: none;
+}
+
+.form-button:hover {
+  background-color: #a0573d; 
+}
+
+.email-form-button {
+  background-color: #4BBFAD    ;
+  color: #fff;
+  border: none;
+}
+
+.email-form-button:hover {
+  background-color: #3CAE99; 
+}
