@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert } from 'react-bootstrap';
 import styles from '../../styles/authForms.module.css';
+import { useGoogleLogin } from '@react-oauth/google';
 
 function Login() {
   const router = useRouter();
@@ -11,6 +12,24 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+
+  const responseMessage = (response) => {
+    console.log(response);
+  };
+
+  const errorMessage = (error) => {
+    console.log(error);
+  };
+
+  const login = useGoogleLogin({
+    onSuccess: (response) => {
+      console.log(response);
+      router.push('/user/profile'); // Redirect to the profile page
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,13 +54,14 @@ function Login() {
           setUsername('');
           setPassword('');
           setShowAlert(false);
-          router.push('/user/profile'); // Redirect to profile page
+          router.push('/user/profile'); // Redirect to the profile page
         } else {
           throw new Error();
         }
       } else {
         throw new Error();
       }
+
     } catch (error) {
       setMessage('Invalid username or password');
       setShowAlert(true);
@@ -53,9 +73,11 @@ function Login() {
     <div className={styles.container}>
       <div className="row m-5 no-gutters shadow-lg">
         <div className="col-md-6 d-none d-md-block">
-          <img src="/logindog2.png"
+          <img
+            src="/logindog2.png"
             className="img-fluid"
-            style={{ minHeight: "100%", width: "100%", height: "100%", objectFit: "cover" }} />
+            style={{ minHeight: '100%', width: '100%', height: '100%', objectFit: 'cover' }}
+          />
         </div>
         <div className={`col-md-6 bg-white p-5 ${styles['form-style']}`}>
           <h3 className="pb-3">Sign In</h3>
@@ -100,10 +122,11 @@ function Login() {
           <div className={styles.sideline}>OR</div>
           <div>
             <button
-              type="submit"
+              type="button"
+              onClick={login} // Call the login function to trigger the Google login
               className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['email-form-button']}`}
             >
-              Login With Email
+              Login With Google
             </button>
           </div>
           <div className="pt-4 text-center">
@@ -113,6 +136,6 @@ function Login() {
       </div>
     </div>
   );
-};
+}
 
 export default Login;
