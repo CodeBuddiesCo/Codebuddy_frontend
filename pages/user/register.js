@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert } from 'react-bootstrap';
+import Link from 'next/link';
 import styles from '../../styles/authForms.module.css';
 
 function Register() {
@@ -58,9 +59,9 @@ function Register() {
     <div className={styles.container}>
       <div className={`row m-5 no-gutters shadow-lg my-card`}>
         <div className="col-md-6 d-none d-md-block left">
-          <img src="/registerdog2.png" 
-               className="img-fluid" 
-               style={{minHeight:"100%", width: "100%", height: "100%", objectFit: "cover"}} />
+          <img src="/registerdog2.png"
+            className="img-fluid"
+            style={{ minHeight: "100%", width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
         <div className={`col-md-6 bg-white p-5 right ${styles['form-style']}`}>
           <h3 className="pb-3">Register</h3>
@@ -112,6 +113,9 @@ function Register() {
               >
                 Submit
               </button>
+              <div className="pt-4 text-center">
+                Already have an account? <Link href="/user/login">Sign In</Link>
+              </div>
             </div>
           </form>
           {message && (
