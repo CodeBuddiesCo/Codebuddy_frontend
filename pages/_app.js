@@ -1,11 +1,13 @@
+require('dotenv').config()
+
 import '/styles/globals.css'
 import '/styles/authForms.module.css'
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import {SessionProvider} from 'next-auth/react'
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps, session }) {
   return (
-    <GoogleOAuthProvider clientId="716494370128-79qffo5l6h956ds42lkgt74c62ntk1qf.apps.googleusercontent.com">
+    <SessionProvider session={session}>
       <Component {...pageProps} />
-    </GoogleOAuthProvider>
+    </SessionProvider>
   );
 }
