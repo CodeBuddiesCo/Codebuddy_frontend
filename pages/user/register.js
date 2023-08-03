@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert } from 'react-bootstrap';
 import Link from 'next/link';
 import styles from '../../styles/authForms.module.css';
+import { signIn } from 'next-auth/react';
 
 function Register() {
   const [name, setName] = useState('');
@@ -12,6 +13,22 @@ function Register() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
+
+  const handleOAuthRegister = async (provider) => {
+    try {
+      const result = await signIn(provider, { callbackUrl: '/user/profile' });
+      if (!result.error) {
+        // Handle successful registration
+        router.push('/user/profile');
+      } else {
+        // Handle registration error
+        console.error(result.error);
+      }
+    } catch (error) {
+      // Handle unexpected errors
+      console.error(error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,9 +130,18 @@ function Register() {
               >
                 Submit
               </button>
-              <div className="pt-4 text-center">
-                Already have an account? <Link href="/user/login">Sign In</Link>
+              <div className={styles.sideline}>OR</div>
+              <div>
+                <button
+                  onClick={() => handleOAuthRegister('google')}
+                  className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['email-form-button']}`}
+                >
+                  Register With Google
+                </button>
               </div>
+            </div>
+            <div className="pt-4 text-center">
+              Already have an account? <Link href="/user/login">Sign In</Link>
             </div>
           </form>
           {message && (
