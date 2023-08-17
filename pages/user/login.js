@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,55 +12,62 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
-
+  const [isUsernameLogin, setIsUsernameLogin] = useState(false);
   const { data: session } = useSession();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (localStorage.getItem('loginMethod') === 'username') {
+      setIsUsernameLogin(true);
+    }
+  }, []);
 
+  const handleUsernamePasswordLogin = async (e) => {
+    e.preventDefault();
     try {
       const response = await fetch('https://codebuddiesserver.onrender.com/api/users/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.token) {
-          console.log('Token:', data.token);
-          setMessage('You have successfully logged in');
-          setUsername('');
-          setPassword('');
-          setShowAlert(false);
-          router.push('/user/profile');
-        } else {
-          throw new Error();
-        }
-      } else {
-        throw new Error();
-      }
+      console.log('Response Status:', response.status);
+      const result = await response.json();
+      console.log('Response Body:', result);
 
+      if (result.token) {
+        console.log("Token received, redirecting to profile...");
+        localStorage.setItem('token', result.token);
+        localStorage.setItem('loginMethod', 'username');
+        localStorage.setItem('username', result.user.name);
+        localStorage.setItem('isAdmin', result.user.isAdmin ? 'true' : 'false'); // Store the admin status
+        localStorage.setItem('isBuddy', result.user.is_buddy ? 'true' : 'false'); // Store the buddy status
+
+        router.push('/user/profile');
+      } else {
+        console.log("No token received, showing error...");
+        setMessage('Invalid username or password');
+        setShowAlert(true);
+      }
     } catch (error) {
       setMessage('Invalid username or password');
       setShowAlert(true);
-      console.error(error);
+      console.error('Exception:', error)
     }
   };
 
-  if (session && session.user) {
+  const handleGoogleLogin = () => {
+    signIn('google');
+  };
+
+  if ((session && session.user) || isUsernameLogin) {
     return (
       <div>
-<p>Welcome, {session?.user?.name || 'Guest'}</p>
-        <button onClick={() => signOut()}>Sign out</button>
+<p>Welcome, {session?.user?.name || localStorage.getItem('username') || 'Guest'}</p>
+        <button onClick={() => { signOut(); localStorage.removeItem('loginMethod'); setIsUsernameLogin(false); }}>Sign out</button>
       </div>
     );
   } else {
+    
     return (
       <div className={styles.container}>
         <div className="row m-5 no-gutters shadow-lg">
@@ -74,7 +81,7 @@ function Login() {
           <div className={`col-md-6 bg-white p-5 ${styles['form-style']}`}>
             <h3 className="pb-3">Sign In</h3>
             {showAlert && <Alert variant="danger">{message}</Alert>}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleUsernamePasswordLogin}>
               <div className="form-group pb-3">
                 <input
                   type="text"
@@ -113,7 +120,7 @@ function Login() {
             </form>
             <div className={styles.sideline}>OR</div>
             <div>
-              <button onClick={() => signIn('google')} className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['email-form-button']}`}>
+              <button onClick={handleGoogleLogin} className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['email-form-button']}`}>
                 Login With Google
               </button>
             </div>
@@ -128,3 +135,4 @@ function Login() {
 }
 
 export default Login;
+
