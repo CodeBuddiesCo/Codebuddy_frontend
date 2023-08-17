@@ -13,13 +13,24 @@ function Register() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
+  const [passwordError, setPasswordError] = useState('');
+
+  const handlePasswordBlur = () => {
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+    } else {
+      setPasswordError('');
+    }
+  };
 
   const handleOAuthRegister = async (provider) => {
     try {
-      const result = await signIn(provider, { callbackUrl: '/user/profile' });
+      const result = await signIn(provider, { callbackUrl: '/user/register' });
       if (!result.error) {
         // Handle successful registration
-        router.push('/user/profile');
+        // router.push('/user/profile');
+        console.log(result);
+
       } else {
         // Handle registration error
         console.error(result.error);
@@ -34,7 +45,7 @@ function Register() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://codebuddiesserver.onrender.com/api/users/register', {
+      const response = await fetch('https://codebuddiesserver.onrender.com/api/users/register', { // Correct the URL if needed
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,17 +68,17 @@ function Register() {
           setPassword('');
           router.push('/user/login');
         } else {
-          throw new Error();
+          setMessage('Registration failed: unexpected response from server');
         }
+      } else if (response.status === 409) {
+        setMessage('Username or Email already exists');
       } else {
-        if (response.status === 409) {
-          setMessage('Username or Email already exists');
-        } else {
-          throw new Error();
-        }
+        const errorText = await response.text();
+        setMessage(`Registration failed: ${errorText}`);
+        console.error('Error:', errorText);
       }
     } catch (error) {
-      setMessage('Registration failed');
+      setMessage('Registration failed: unexpected error');
       console.error('Error:', error);
     }
   };
@@ -120,8 +131,10 @@ function Register() {
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onBlur={handlePasswordBlur} // Add this line
                 required
               />
+              {passwordError && <div className="text-danger">{passwordError}</div>} {/* Display the error */}
             </div>
             <div className="pb-2">
               <button
