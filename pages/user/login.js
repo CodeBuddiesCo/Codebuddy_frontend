@@ -41,6 +41,7 @@ function Login() {
         localStorage.setItem('username', result.user.name);
         localStorage.setItem('isAdmin', result.user.isAdmin ? 'true' : 'false'); // Store the admin status
         localStorage.setItem('isBuddy', result.user.is_buddy ? 'true' : 'false'); // Store the buddy status
+        localStorage.setItem('userId', result.user.id);
 
         router.push('/user/profile');
       } else {
@@ -62,12 +63,12 @@ function Login() {
   if ((session && session.user) || isUsernameLogin) {
     return (
       <div>
-<p>Welcome, {session?.user?.name || localStorage.getItem('username') || 'Guest'}</p>
+        <p>Welcome, {session?.user?.name || localStorage.getItem('username') || 'Guest'}</p>
         <button onClick={() => { signOut(); localStorage.removeItem('loginMethod'); setIsUsernameLogin(false); }}>Sign out</button>
       </div>
     );
   } else {
-    
+
     return (
       <div className={styles.container}>
         <div className="row m-5 no-gutters shadow-lg">
