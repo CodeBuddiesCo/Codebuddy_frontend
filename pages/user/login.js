@@ -62,12 +62,12 @@ function Login() {
   if ((session && session.user) || isUsernameLogin) {
     return (
       <div>
-<p>Welcome, {session?.user?.name || localStorage.getItem('username') || 'Guest'}</p>
+        <p>Welcome, {session?.user?.name || localStorage.getItem('username') || 'Guest'}</p>
         <button onClick={() => { signOut(); localStorage.removeItem('loginMethod'); setIsUsernameLogin(false); }}>Sign out</button>
       </div>
     );
   } else {
-    
+
     return (
       <div className={styles.container}>
         <div className="row m-5 no-gutters shadow-lg">
