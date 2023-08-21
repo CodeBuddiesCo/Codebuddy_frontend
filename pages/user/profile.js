@@ -12,81 +12,90 @@ function Profile() {
   const [receivedMessages, setReceivedMessages] = useState([]);
 
   useEffect(() => {
+    console.log('useEffect is running'); 
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
-    if (isAdmin) {
-      fetchReceivedMessages();
+
+    fetchReceivedMessages();
+  }, []);
+
+  const fetchReceivedMessages = async () => {
+    console.log('fetchReceivedMessages is called');
+    try {
+      const token = localStorage.getItem('token');
+      const user_id = localStorage.getItem('userId');
+console.log('userid:', user_id)
+      if (!user_id) {
+        console.error('User ID not available');
+        return;
+      }
+
+      console.log('Fetching messages...');
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/messages/${user_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status !== 200) {
+        console.error('Error fetching received messages:', response);
+        return;
+      }
+
+      const messages = await response.json();
+      console.log('Received Messages:', messages);
+
+      setReceivedMessages(messages);
+    } catch (error) {
+      console.error('Exception:', error);
     }
-  }, [isAdmin]);
+  };
 
-const fetchReceivedMessages = async () => {
-  try {
-    const token = session?.accessToken || localStorage.getItem('token');
-    const response = await fetch('https://codebuddiesserver.onrender.com/api/users/inbox', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.status !== 200) {
-      // Log the response to see what went wrong
-      const text = await response.text();
-      console.error('Error fetching received messages:', text);
-      return;
-    }
-
-    const messages = await response.json();
-    setReceivedMessages(messages);
-  } catch (error) {
-    console.error('Exception:', error);
-  }
-};
-  
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      // Use token from session if it exists, otherwise use token from local storage
-      const token = session?.accessToken || localStorage.getItem('token');
-  
-      if (!token) {
-        console.error('No token found');
-        return; // Handle this case as needed
-      }
-  
-      const response = await fetch('https://codebuddiesserver.onrender.com/api/users/send', {
+    const sender_id = localStorage.getItem('userId') || session?.user?.id;
+      const receiver_username = recipientUsername;
+      const token = localStorage.getItem('token');
+      console.log('Sending message...');
+      const response = await fetch('https://codebuddiesserver.onrender.com/api/users/message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ recipientUsername, message }),
+        body: JSON.stringify({
+          sender_id,
+          receiver_username,
+          message_content: message,
+        }),
       });
   
       if (response.status === 200) {
+        console.log('Message sent successfully');
         setFormSubmitted(true);
       } else {
-        console.error('Failed to send message');
+        const errorResponse = await response.json(); 
+        console.error('Failed to send message:', errorResponse);
       }
     } catch (error) {
       console.error('Exception:', error);
     }
-  };  
+  };
 
   return (
     <div>
       <h1>Welcome, {name}!</h1>
-      {isAdmin && (
-        <>
-          <h3>You are an admin!</h3>
-          <h3>Received Messages:</h3>
-          <ul>
-            {receivedMessages.map((msg, index) => (
-              <li key={index}>{msg.content}</li>
-            ))}
-          </ul>
-        </>
-      )}
+      <h3>Received Messages:</h3>
+      <button onClick={fetchReceivedMessages}>Refresh Messages</button>
+      <ul>
+        {receivedMessages.map((msg, index) => (
+          <li key={index}>{JSON.stringify(msg)}</li>
+        ))}
+      </ul>
+      {isAdmin && <h3>You are an admin!</h3>}
       {isBuddy ? (
         <h3>You are a buddy!</h3>
       ) : (

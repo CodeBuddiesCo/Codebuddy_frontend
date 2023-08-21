@@ -41,6 +41,7 @@ function Login() {
         localStorage.setItem('username', result.user.name);
         localStorage.setItem('isAdmin', result.user.isAdmin ? 'true' : 'false'); // Store the admin status
         localStorage.setItem('isBuddy', result.user.is_buddy ? 'true' : 'false'); // Store the buddy status
+        localStorage.setItem('userId', result.user.id);
 
         router.push('/user/profile');
       } else {
