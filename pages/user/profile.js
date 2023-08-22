@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import ReceivedMessages from '../../components/ReceivedMessages';
+import BuddyRequestForm from '../../components/BuddyRequestForm';
 
 const Profile = () => {
   const { data: session } = useSession();
@@ -7,10 +9,12 @@ const Profile = () => {
   const [message, setMessage] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [receivedMessages, setReceivedMessages] = useState([]);
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
-  const isBuddy = localStorage.getItem('isBuddy') === 'true';
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isBuddy, setIsBuddy] = useState(false);
 
   useEffect(() => {
+    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
     fetchReceivedMessages();
   }, []);
@@ -83,46 +87,22 @@ const Profile = () => {
     <div>
       <h1>Welcome, {name}!</h1>
       {isAdmin && (
-        <>
-          <h3>Received Messages:</h3>
-          <button onClick={fetchReceivedMessages}>Refresh Messages</button>
-          <div>
-            {receivedMessages.map((msg, index) => (
-              <div key={index} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px' }}>
-                <p><strong>From:</strong> {msg.sender_name}</p>
-                <p><strong>Username:</strong> {msg.sender_username}</p>
-                <p><strong>Message:</strong> {msg.message_content}</p>
-                <p><strong>Timestamp:</strong> {new Date(msg.timestamp).toLocaleString()}</p>
-                <button onClick={() => promoteToBuddy(msg.sender_id)}>Promote to Buddy</button> {/* Added button here */}
-              </div>
-            ))}
-          </div>
-        </>
+        <ReceivedMessages messages={receivedMessages} promoteToBuddy={promoteToBuddy} />
       )}
       {isAdmin && <h3>You are an admin!</h3>}
       {isBuddy ? (
         <h3>You are a buddy!</h3>
       ) : (
-        <>
-          <h3>You are not a buddy. Send a message request to become one!:</h3>
-          {formSubmitted ? (
-            <p>Message sent!</p>
-          ) : (
-            <form onSubmit={handleMessageSubmit}>
-              <textarea
-                placeholder="Enter your message here"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-              />
-              <button type="submit">Send Message</button>
-            </form>
-          )}
-        </>
+        <BuddyRequestForm 
+        message={message} 
+        setMessage={setMessage} 
+        handleMessageSubmit={handleMessageSubmit} 
+        formSubmitted={formSubmitted} 
+      />
       )}
       <h2>This is where you will find your user details and attended event history</h2>
     </div>
   );
-}
+};
 
 export default Profile;
