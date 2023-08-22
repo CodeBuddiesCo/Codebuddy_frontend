@@ -1,52 +1,33 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
-function Profile() {
+const Profile = () => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
-  const [recipientUsername, setRecipientUsername] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isBuddy, setIsBuddy] = useState(false);
   const [message, setMessage] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [receivedMessages, setReceivedMessages] = useState([]);
+  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  const isBuddy = localStorage.getItem('isBuddy') === 'true';
 
   useEffect(() => {
-    console.log('useEffect is running'); 
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
-    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
-    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
-
     fetchReceivedMessages();
   }, []);
 
   const fetchReceivedMessages = async () => {
-    console.log('fetchReceivedMessages is called');
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+
     try {
       const token = localStorage.getItem('token');
-      const user_id = localStorage.getItem('userId');
-console.log('userid:', user_id)
-      if (!user_id) {
-        console.error('User ID not available');
-        return;
-      }
-
-      console.log('Fetching messages...');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/messages/${user_id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/messages/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (response.status !== 200) {
-        console.error('Error fetching received messages:', response);
-        return;
+      if (response.status === 200) {
+        setReceivedMessages(await response.json());
       }
-
-      const messages = await response.json();
-      console.log('Received Messages:', messages);
-
-      setReceivedMessages(messages);
     } catch (error) {
       console.error('Exception:', error);
     }
@@ -54,31 +35,44 @@ console.log('userid:', user_id)
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
-
-    try {
     const sender_id = localStorage.getItem('userId') || session?.user?.id;
-      const receiver_username = recipientUsername;
+    const token = localStorage.getItem('token');
+    const adminUsernames = ['Hollye', 'Catherine'];
+
+    for (const receiver_username of adminUsernames) {
+      try {
+        const response = await fetch('https://codebuddiesserver.onrender.com/api/users/message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ sender_id, receiver_username, message_content: message }),
+        });
+
+        if (response.status === 200) {
+          console.log('Message sent successfully to admin:', receiver_username);
+        }
+      } catch (error) {
+        console.error('Exception:', error);
+      }
+    }
+
+    setFormSubmitted(true);
+  };
+
+  const promoteToBuddy = async (userId) => {
+    try {
       const token = localStorage.getItem('token');
-      console.log('Sending message...');
-      const response = await fetch('https://codebuddiesserver.onrender.com/api/users/message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          sender_id,
-          receiver_username,
-          message_content: message,
-        }),
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/promote/${userId}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (response.status === 200) {
-        console.log('Message sent successfully');
-        setFormSubmitted(true);
+        alert('User successfully promoted to buddy');
       } else {
-        const errorResponse = await response.json(); 
-        console.error('Failed to send message:', errorResponse);
+        alert('Failed to promote user: ' + (await response.json()).message || 'Unknown error');
       }
     } catch (error) {
       console.error('Exception:', error);
@@ -88,13 +82,23 @@ console.log('userid:', user_id)
   return (
     <div>
       <h1>Welcome, {name}!</h1>
-      <h3>Received Messages:</h3>
-      <button onClick={fetchReceivedMessages}>Refresh Messages</button>
-      <ul>
-        {receivedMessages.map((msg, index) => (
-          <li key={index}>{JSON.stringify(msg)}</li>
-        ))}
-      </ul>
+      {isAdmin && (
+        <>
+          <h3>Received Messages:</h3>
+          <button onClick={fetchReceivedMessages}>Refresh Messages</button>
+          <div>
+            {receivedMessages.map((msg, index) => (
+              <div key={index} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px' }}>
+                <p><strong>From:</strong> {msg.sender_name}</p>
+                <p><strong>Username:</strong> {msg.sender_username}</p>
+                <p><strong>Message:</strong> {msg.message_content}</p>
+                <p><strong>Timestamp:</strong> {new Date(msg.timestamp).toLocaleString()}</p>
+                <button onClick={() => promoteToBuddy(msg.sender_id)}>Promote to Buddy</button> {/* Added button here */}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
       {isAdmin && <h3>You are an admin!</h3>}
       {isBuddy ? (
         <h3>You are a buddy!</h3>
@@ -105,13 +109,6 @@ console.log('userid:', user_id)
             <p>Message sent!</p>
           ) : (
             <form onSubmit={handleMessageSubmit}>
-              <input
-                type="text"
-                placeholder="Recipient's username"
-                value={recipientUsername}
-                onChange={(e) => setRecipientUsername(e.target.value)}
-                required
-              />
               <textarea
                 placeholder="Enter your message here"
                 value={message}
