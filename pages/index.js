@@ -1,7 +1,24 @@
 import Link from 'next/link';
+import { fetchUpcomingEvents } from '../event_api_calls';
 
-function HomePage() {
+function HomePage({upcomingEvents, setUpcomingEvents}) {
   const eventId = new Date();
+
+  async function getUpcomingEvents() {
+    try {
+
+      const results = await fetchUpcomingEvents()
+      console.log("results from getUpcomingEvents >>", results)
+      setUpcomingEvents(() => results);
+
+    } catch (error) {
+      console.error   
+    }
+  }
+
+  useEffect(() => {
+    getUpcomingEvents();
+  }, [])
   
   return (
     <div>
