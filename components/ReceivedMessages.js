@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../styles/profile.module.css';
 
-const ReceivedMessages = ({ messages, promoteToBuddy, fetchReceivedMessages }) => {
+const ReceivedMessages = ({ messages, promoteToBuddy, fetchReceivedMessages, handleSoftDelete }) => {
     const [promotedMessages, setPromotedMessages] = useState({});
 
     const handlePromotion = (senderId, index) => {
@@ -14,22 +14,23 @@ const ReceivedMessages = ({ messages, promoteToBuddy, fetchReceivedMessages }) =
             <h3 className={styles.receivedMessagesHeader}>Buddy Requests:</h3>
             <div className={styles.messagesList}>
                 {messages.map((msg, index) => (
-                    promotedMessages[index] ? (
-                        <div key={index} className={styles.messageItem}>
+                    <div key={index} className={styles.messageItem}>
+                        <button onClick={() => handleSoftDelete(msg.id, index)}>Delete</button>
+                        {promotedMessages[index] ? (
                             <p><strong>{msg.sender_name} ({msg.sender_username}) has been promoted to a buddy.</strong></p>
-                        </div>
-                    ) : (
-                        <div key={index} className={styles.messageItem}>
-                            <div className={styles.messageHeader}>
-                                <span><strong>From:</strong> {msg.sender_name} ({msg.sender_username})</span>
-                                <span>{new Date(msg.timestamp).toLocaleString()}</span>
+                        ) : (
+                            <div>
+                                <div className={styles.messageHeader}>
+                                    <span><strong>From:</strong> {msg.sender_name} ({msg.sender_username})</span>
+                                    <span>{new Date(msg.timestamp).toLocaleString()}</span>
+                                </div>
+                                <p className={styles.messageContent}><strong>Message:</strong> {msg.message_content}</p>
+                                <div className={styles.messageActions}>
+                                    <button className={styles.promoteButton} onClick={() => handlePromotion(msg.sender_id, index)}>Promote to Buddy</button>
+                                </div>
                             </div>
-                            <p className={styles.messageContent}><strong>Message:</strong> {msg.message_content}</p>
-                            <div className={styles.messageActions}>
-                                <button className={styles.promoteButton} onClick={() => handlePromotion(msg.sender_id, index)}>Promote to Buddy</button>
-                            </div>
-                        </div>
-                    )
+                        )}
+                    </div>
                 ))}
                 <button onClick={fetchReceivedMessages}>Refresh Messages</button>
             </div>
@@ -38,3 +39,4 @@ const ReceivedMessages = ({ messages, promoteToBuddy, fetchReceivedMessages }) =
 };
 
 export default ReceivedMessages;
+
