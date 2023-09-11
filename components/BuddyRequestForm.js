@@ -7,7 +7,7 @@ const BuddyRequestForm = ({ name, username, message, setMessage, handleMessageSu
     return (
         <div className={styles.formContainer}>
             <div className={styles.userInfo}>
-                <strong>{name}</strong> ({username})
+                {/* <strong>{name}</strong> ({username}) */}
             </div>
             {formSubmitted ? (
                 <p className={styles.successMessage}>Your request to become a buddy has been sent. We'll review it and get back to you soon.</p>
