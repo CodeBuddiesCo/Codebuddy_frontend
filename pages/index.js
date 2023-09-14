@@ -16,9 +16,9 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
     }
   }
 
-  useEffect(() => {
-    getUpcomingEvents();
-  }, [])
+  // useEffect(() => {
+  //   getUpcomingEvents();
+  // }, [])
   
   return (
     <div>
