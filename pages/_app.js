@@ -8,10 +8,14 @@ import {SessionProvider} from 'next-auth/react'
 export default function App({ Component, pageProps, session }) {
   const [allEvents, setAllEvents] = useState([])
   const [upcomingEvents, setUpcomingEvents] = useState([])
+  const [loading, setLoading] = useState(false)
 
   return (
     <SessionProvider session={session}>
       <Component {...pageProps} 
+        /** All Page State **/
+          loading={loading}
+          setLoading={setLoading}
         /** Event State **/
           allEvents={allEvents}
           setAllEvents={setAllEvents}
