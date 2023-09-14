@@ -1,17 +1,31 @@
 import React, { useState } from 'react';
 import styles from '../styles/profile.module.css';
 
-const ReceivedMessages = ({ messages, promoteToBuddy, fetchReceivedMessages, handleSoftDelete }) => {
+const ReceivedMessages = ({ messages, promoteToBuddy, handleSoftDelete, viewingDeleted, setViewingDeleted, fetchReceivedMessages }) => {
     const [promotedMessages, setPromotedMessages] = useState({});
 
     const handlePromotion = (senderId, index) => {
         promoteToBuddy(senderId);
         setPromotedMessages({ ...promotedMessages, [index]: true });
-    }
+    };
 
     return (
         <div className={styles.receivedMessagesContainer}>
-            <h3 className={styles.receivedMessagesHeader}>Buddy Requests:</h3>
+            <div className={styles.tabContainer}>
+                <button 
+                  className={`${styles.tabButton} ${!viewingDeleted ? styles.activeTab : ''}`} 
+                  onClick={() => setViewingDeleted(false)}
+                >
+                  Buddy Requests
+                </button>
+                <button 
+                  className={`${styles.tabButton} ${viewingDeleted ? styles.activeTab : ''}`} 
+                  onClick={() => setViewingDeleted(true)}
+                >
+                  Deleted Requests
+                </button>
+            </div>
+            {/* <h3 className={styles.receivedMessagesHeader}>Buddy Requests:</h3> */}
             <div className={styles.messagesList}>
                 {messages.map((msg, index) => (
                     <div key={index} className={styles.messageItem}>
@@ -39,4 +53,3 @@ const ReceivedMessages = ({ messages, promoteToBuddy, fetchReceivedMessages, han
 };
 
 export default ReceivedMessages;
-

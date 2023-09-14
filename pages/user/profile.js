@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import ReceivedMessages from '../../components/ReceivedMessages';
 import BuddyRequestForm from '../../components/BuddyRequestForm';
-import DeletedMessages from '../../components/DeletedMessages'; // import the component
+import DeletedMessages from '../../components/DeletedMessages';
+import styles from '../../styles/profile.module.css';
 
 const Profile = () => {
   const { data: session } = useSession();
@@ -12,15 +13,16 @@ const Profile = () => {
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
-  const [deletedMessages, setDeletedMessages] = useState([]); // Declare state variable
+  const [deletedMessages, setDeletedMessages] = useState([]);
+  const [viewingDeleted, setViewingDeleted] = useState(false);
 
   const handleSoftDelete = async (messageId, index) => {
-    console.log("DELETE request received for /message/:messageId");  // Debug log
-    console.log(`Deleting message with ID: ${messageId}`);  // Debug log
     const token = localStorage.getItem('token');
-    const deletedMsg = receivedMessages.splice(index, 1)[0];
+    const newReceivedMessages = [...receivedMessages];
+    const deletedMsg = newReceivedMessages.splice(index, 1)[0];
+
     setDeletedMessages([...deletedMessages, deletedMsg]);
-    setReceivedMessages([...receivedMessages]);
+    setReceivedMessages(newReceivedMessages);
 
     try {
       const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/message/${messageId}`, {
@@ -29,10 +31,20 @@ const Profile = () => {
       });
 
       if (response.status === 200) {
+        try {
+          const textResponse = await response.text();
+          console.log('Raw server response:', textResponse);
+
+
+          const deletedMessageData = JSON.parse(textResponse);
+          console.log('Parsed server response:', deletedMessageData);
+        } catch (error) {
+          console.error('Failed to parse JSON:', error);
+        }
         alert('Message marked for deletion');
-        const newReceivedMessages = [...receivedMessages];
-        const deletedMsg = newReceivedMessages.splice(index, 1)[0];
-        setDeletedMessages([...deletedMessages, deletedMsg]);
+        fetchReceivedMessages();
+      } else {
+        newReceivedMessages.splice(index, 0, deletedMsg);
         setReceivedMessages(newReceivedMessages);
       }
     } catch (error) {
@@ -87,6 +99,8 @@ const Profile = () => {
         const allMessages = await response.json();
         const filteredMessages = allMessages.filter(msg => !msg.marked_for_deletion);
         setReceivedMessages(filteredMessages);
+        console.log('All messages:', allMessages);
+
       }
     } catch (error) {
       console.error('Exception:', error);
@@ -117,7 +131,6 @@ const Profile = () => {
         console.error('Exception:', error);
       }
     }
-
     setFormSubmitted(true);
   };
 
@@ -143,12 +156,22 @@ const Profile = () => {
     <div>
       <h1>Welcome, {name}!</h1>
       {isAdmin && (
-        <ReceivedMessages
-          messages={receivedMessages}
-          promoteToBuddy={promoteToBuddy}
-          handleSoftDelete={handleSoftDelete} // Pass handleSoftDelete as a prop
-        />)}
-      {isAdmin && <h3>You are an admin!</h3>}
+        <div className={styles.receivedMessagesHeader}>
+          {viewingDeleted ? (
+            <DeletedMessages messages={deletedMessages} viewingDeleted={viewingDeleted} setViewingDeleted={setViewingDeleted} />
+          ) : (
+            <ReceivedMessages
+              messages={receivedMessages}
+              promoteToBuddy={promoteToBuddy}
+              handleSoftDelete={handleSoftDelete}
+              fetchReceivedMessages={fetchReceivedMessages}
+              viewingDeleted={viewingDeleted}
+              setViewingDeleted={setViewingDeleted}
+            />
+          )}
+          <h3>You are an admin!</h3>
+        </div>
+      )}
       {isBuddy ? (
         <h3>You are a buddy!</h3>
       ) : (
@@ -160,7 +183,6 @@ const Profile = () => {
         />
       )}
       <h2>This is where you will find your user details and attended event history</h2>
-      <DeletedMessages messages={deletedMessages} /> {/* Corrected location */}
     </div>
   );
 };
