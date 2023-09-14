@@ -17,11 +17,10 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
     }
   }
 
-
   useEffect(() => {
     getUpcomingEvents();
   }, [])
-  
+
   return (
     <div>
       <div className="main-photo"></div>
