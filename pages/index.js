@@ -1,9 +1,12 @@
 import Link from 'next/link';
+import { useRouter } from "next/router";
 import { useEffect} from "react";
+import Header from '../components/Header';
 import { fetchUpcomingEvents } from '../event_api_calls';
 
 function HomePage({upcomingEvents, setUpcomingEvents}) {
   const eventId = new Date();
+
 
   async function getUpcomingEvents() {
     try {
@@ -17,6 +20,8 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
     }
   }
 
+    const router = useRouter();
+
   useEffect(() => {
     getUpcomingEvents();
   }, [])
@@ -24,23 +29,7 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
   return (
     <div>
       <div className="main-photo"></div>
-      <section className="header-section wf-section">
-        <img className='logo-div' src="/CB_logo.png" alt='code buddy logo'/>
-        <div className="nav-btn-div">
-          <Link href="#">
-            <div className="header-nav-buttons w-button">What is codebuddy?</div>
-          </Link>
-          <Link href="#">
-            <div className="header-nav-buttons w-button">Become a buddy</div>
-          </Link>
-          <Link href="#">
-            <div className="header-nav-buttons w-button">Calendar of Events</div>
-          </Link>
-          <Link href="/user/login">
-            <div className="header-nav-buttons button-right w-button">Signup / Login</div>
-          </Link>
-        </div>
-      </section>
+      <Header/>
       <section className="home-section wf-section">
         <div className="home-top-div">
           <div className="home-spacer-div"></div>

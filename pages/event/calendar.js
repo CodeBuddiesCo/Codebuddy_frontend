@@ -3,14 +3,16 @@ import { fetchAllEvents, fetchUpcomingEvents } from "../../event_api_calls";
 import { parseISO, format, startOfWeek, getDay, parse } from 'date-fns';
 import React from 'react'
 import Loading from "../../components/Loading";
+import Header from "../../components/Header";
 
 
-function CalendarOfEvents({allEvents, setAllEvents, upcomingEvents, setUpcomingEvents, loading, setLoading}) {
+function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy}) {
   const [state, setState] = useState({currentDate: new Date(),});
   const { currentDate } = state;
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
   const days = [];
+  
 
   /* This is constructing a date object with the year, the month following the current month, and then calling the day
   before the first of that month (0), to get the previous day which was the last day of that month and then calling getDate to
@@ -51,30 +53,48 @@ function CalendarOfEvents({allEvents, setAllEvents, upcomingEvents, setUpcomingE
     }
   }
 
-
   useEffect(() => {
+    setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     getAllEvents();
   }, [])
 
   return (
-    <div>
+    <div className="calendar-page">
+      <Header/>
+      <div className="header-background"></div>
       {loading && <Loading/>}
       {!loading &&<div>
-        <h1>Codebuddy Calendar of Events</h1>
+        <h1 className="calendar-header">Codebuddy Calendar of Events</h1>
         <div>
-          <div class="calendar-header">
-            <button onClick={prevMonth}>Previous</button>
+          <div className="calendar-month">
             <h1>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h1>
+            <button onClick={prevMonth}>Previous</button>
             <button onClick={nextMonth}>Next</button>
-          </div> 
-          <div class="calendar-container">
-            {days.map((day) =>(<div key={day.key} class="calendar-days">
-              {day.key > 0 && <h1>{day.key}</h1>}
+          </div>
+          <div className="calendar-days-container"> 
+            {daysOfWeek.map((day)=>(<div className="calendar-days">{day}</div>))}
+          </div>
+          <div className="calendar-dates-container">
+            {days.map((day) =>(<div key={day.key} className="calendar-dates">
+              {day.key > 0 && <h4>{day.key}</h4>}
               {allEvents[0] && allEvents.map(event =>(
-              <div key={event.event_id}>
-                {format(parseISO(event.date_time), 'd') === day.key  && <h3>{format(parseISO(event.date_time), 'PPp')}</h3>}
+              <div key={event.event_id} >
+                {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
+                  {format(parseISO(event.date_time), 'd') === day.key  && <div>
+                    <h6>{event.primary_language} {event.secondary_language !== null && <span>and {event.secondary_language}</span>}Buddy Code</h6>
+                    <h6>{format(parseISO(event.date_time), 'p')}</h6>
+                  </div>}
+                  {console.log(format(parseISO(event.date_time), 'y'))}
+                </div>}
               </div>))}
-              {(day.key > 0) && <button>Add Event</button>}
+              {isBuddy &&<div>
+                {(currentDate.getFullYear() >= new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
+                  {day.key > 0 &&<button className="add-event-calendar-button">Add Event</button>}
+                </div>}
+                {(currentDate.getFullYear() >= new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
+                  {day.key >= new Date().getDate() && <button className="add-event-calendar-button">Add Event</button>}
+                </div>}
+             </div>}
             </div>))}
           </div>
         </div>
