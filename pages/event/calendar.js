@@ -4,9 +4,10 @@ import { parseISO, format, startOfWeek, getDay, parse } from 'date-fns';
 import React from 'react'
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
+import Link from "next/link";
 
 
-function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy}) {
+function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, setSelectedDate}) {
   const [state, setState] = useState({currentDate: new Date(),});
   const { currentDate } = state;
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -70,6 +71,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
             <h1>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h1>
             <button onClick={prevMonth}>Previous</button>
             <button onClick={nextMonth}>Next</button>
+            <Link href="/event/add"><button>Add Event</button></Link>
           </div>
           <div className="calendar-days-container"> 
             {daysOfWeek.map((day)=>(<div className="calendar-days">{day}</div>))}
@@ -89,10 +91,10 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
               </div>))}
               {isBuddy &&<div>
                 {(currentDate.getFullYear() >= new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
-                  {day.key > 0 &&<button className="add-event-calendar-button">Add Event</button>}
+                  {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
                 </div>}
                 {(currentDate.getFullYear() >= new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
-                  {day.key >= new Date().getDate() && <button className="add-event-calendar-button">Add Event</button>}
+                  {day.key >= new Date().getDate() && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
                 </div>}
              </div>}
             </div>))}

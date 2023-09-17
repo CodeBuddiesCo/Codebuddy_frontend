@@ -23,7 +23,7 @@ function Header() {
   return (
     <div>
       <section className="header-section wf-section">
-        <img className='logo-div' src="/CB_logo.png" alt='code buddy logo'/>
+        <img className='logo-div' src="/CB_Logo.png" alt='code buddy logo'/>
         <div className="nav-btn-div">
           <Link href="#">
             <div className="header-nav-buttons w-button">What is codebuddy?</div>
