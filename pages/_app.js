@@ -11,6 +11,7 @@ export default function App({ Component, pageProps, session }) {
   const [upcomingEvents, setUpcomingEvents] = useState([])
   const [loading, setLoading] = useState(false)
   const [isBuddy, setIsBuddy] = useState(false)
+  const [selectedDate, setSelectedDate] = useState({})
 
   return (
     <SessionProvider session={session}>
@@ -25,6 +26,8 @@ export default function App({ Component, pageProps, session }) {
           setAllEvents={setAllEvents}
           upcomingEvents={upcomingEvents}
           setUpcomingEvents={setUpcomingEvents}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
         /** Event State **/
       />
     </SessionProvider>
