@@ -77,15 +77,14 @@ h4, h5, h6, p, li {
   font-weight: 300;
 }
 
-/* ! All Homepage styles
-/* * Homepage intro styles */
-
+/* * Header styles */
 .header-section {
   height: auto;
-  background-color: rgba(138, 153, 166, .1);
+  min-height: 118px;
+  background-color: rgb(248, 249, 251);
   justify-content: space-between;
   display: flex;
-  position: absolute;
+  position: fixed;
   top: 0%;
   bottom: auto;
   left: 0%;
@@ -93,7 +92,6 @@ h4, h5, h6, p, li {
   overflow: hidden;
   box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
 }
-
 .logo-div {
   width: 244px;
   height: 78px;
@@ -123,6 +121,66 @@ h4, h5, h6, p, li {
   color: #8c4c35;
   text-align: center;
   white-space: nowrap;
+  background-color: #F2EBEC;
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 20px;
+  padding: 10px;
+  font-family: Noto Sans, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 20px;
+  text-decoration: none;
+}
+.header-nav-buttons.button-right {
+  margin-right: 0;
+  text-decoration: none;
+}
+
+/* * Homepage Header styles */
+.HP-header-section {
+  height: auto;
+  background-color: rgba(138, 153, 166, .1);
+  justify-content: space-between;
+  display: flex;
+  position: absolute;
+  top: 0%;
+  bottom: auto;
+  left: 0%;
+  right: 0%;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+}
+.HP-logo-div {
+  width: 244px;
+  height: 78px;
+  object-fit: contain;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-attachment: scroll;
+  margin: 20px 88px;
+  flex: none;
+}
+.HP-nav-btn-div {
+  height: auto;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 94px;
+  display: flex;
+}
+.HP-header-nav-buttons {
+  width: auto;
+  height: auto;
+  color: #8c4c35;
+  text-align: center;
+  white-space: nowrap;
   background-color: rgba(242, 235, 236, .6);
   border-radius: 5px;
   margin-top: 5px;
@@ -134,10 +192,12 @@ h4, h5, h6, p, li {
   line-height: 20px;
   text-decoration: none;
 }
-.header-nav-buttons.button-right {
+.HP-header-nav-buttons.button-right {
   margin-right: 0;
   text-decoration: none;
 }
+
+/* * Homepage styles */
 .home-section {
   height: 628px;
   width: auto;
@@ -205,7 +265,6 @@ h4, h5, h6, p, li {
 }
 
 /** Homepage Event Styles */
-
 .home-events-section {
   flex-direction: column;
   justify-content: flex-start;
@@ -338,16 +397,12 @@ h4, h5, h6, p, li {
 } 
 
 /** All Calendar Styles */
-
 .calendar-page {
   color: #6a7680;
   display: flex;
   justify-content: center;
-}
-.calendar-header {
   margin-top: 150px;
 }
-
 .calendar-days-container {
   display: flex;
   flex-wrap: wrap;
@@ -355,7 +410,6 @@ h4, h5, h6, p, li {
   margin-top: 40px;
   padding: 0;
 }
-
 .calendar-days {
   display: flex;
   width: 14%;
@@ -386,6 +440,20 @@ h4, h5, h6, p, li {
 }
 .calendar-dates:hover .add-event-calendar-button {
   display: block;
+}
+
+/** Loading Component */
+.loading-page{
+  width: auto;
+  height: auto;
+  box-shadow: 0px 0px 1px 0px #8A99A6;
+}
+.loading-message{
+  margin-left: 150px;
+  margin-right: 150px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  color: #8C4C35;
 }
 
 

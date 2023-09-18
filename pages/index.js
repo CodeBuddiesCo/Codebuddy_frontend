@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from "next/router";
 import { useEffect} from "react";
-import Header from '../components/Header';
+import HomepageHeader from '../components/HomepageHeader';
+
 import { fetchUpcomingEvents } from '../event_api_calls';
 
 function HomePage({upcomingEvents, setUpcomingEvents}) {
@@ -29,7 +30,7 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
   return (
     <div>
       <div className="main-photo"></div>
-      <Header/>
+      <HomepageHeader/>
       <section className="home-section wf-section">
         <div className="home-top-div">
           <div className="home-spacer-div"></div>

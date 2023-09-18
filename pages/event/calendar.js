@@ -7,12 +7,14 @@ import Header from "../../components/Header";
 import Link from "next/link";
 
 
-function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, setSelectedDate}) {
+function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, setSelectedDate, setCurrentPage, currentPage}) {
   const [state, setState] = useState({currentDate: new Date(),});
   const { currentDate } = state;
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
   const days = [];
+  setCurrentPage("Event Calendar")
+
   
 
   /* This is constructing a date object with the year, the month following the current month, and then calling the day
@@ -53,7 +55,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
       console.error   
     }
   }
-
+   console.log(currentPage)
   useEffect(() => {
     setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     getAllEvents();
@@ -61,7 +63,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
 
   return (
     <div className="calendar-page">
-      <Header/>
+      <Header {...currentPage={currentPage}}/>
       <div className="header-background"></div>
       {loading && <Loading/>}
       {!loading &&<div>
