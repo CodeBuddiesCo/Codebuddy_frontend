@@ -1,10 +1,10 @@
 require('dotenv').config()
 
-import { useState, useEffect} from "react";
+import { useEffect, useState} from "react";
 import '/styles/globals.css'
 import '/styles/authForms.module.css'
 import {SessionProvider} from 'next-auth/react'
-import Header from "../components/Header";
+
 
 export default function App({ Component, pageProps, session }) {
   const [allEvents, setAllEvents] = useState([])
@@ -12,6 +12,8 @@ export default function App({ Component, pageProps, session }) {
   const [loading, setLoading] = useState(false)
   const [isBuddy, setIsBuddy] = useState(false)
   const [selectedDate, setSelectedDate] = useState({})
+  const [currentPage, setCurrentPage] = useState("")
+
 
   return (
     <SessionProvider session={session}>
@@ -21,6 +23,8 @@ export default function App({ Component, pageProps, session }) {
           setLoading={setLoading}
           isBuddy={isBuddy}
           setIsBuddy={setIsBuddy}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
         /** Event State **/
           allEvents={allEvents}
           setAllEvents={setAllEvents}
