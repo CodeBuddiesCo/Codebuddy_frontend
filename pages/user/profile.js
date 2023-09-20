@@ -3,9 +3,10 @@ import { useSession } from 'next-auth/react';
 import ReceivedMessages from '../../components/ReceivedMessages';
 import BuddyRequestForm from '../../components/BuddyRequestForm';
 import DeletedMessages from '../../components/DeletedMessages';
+import Header from '../../components/Header';
 import styles from '../../styles/profile.module.css';
 
-const Profile = () => {
+const Profile = ( {setCurrentPage, currentPage} ) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
   const [message, setMessage] = useState('');
@@ -15,6 +16,8 @@ const Profile = () => {
   const [isBuddy, setIsBuddy] = useState(false);
   const [deletedMessages, setDeletedMessages] = useState([]);
   const [viewingDeleted, setViewingDeleted] = useState(false);
+
+  setCurrentPage("User Profile")
 
   const handleSoftDelete = async (messageId, index) => {
     const token = localStorage.getItem('token');
@@ -154,6 +157,7 @@ const Profile = () => {
 
   return (
     <div>
+      <Header currentPage = {currentPage} />
       <h1>Welcome, {name}!</h1>
       {isAdmin && (
         <div className={styles.receivedMessagesHeader}>
