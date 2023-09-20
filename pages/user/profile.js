@@ -6,7 +6,7 @@ import DeletedMessages from '../../components/DeletedMessages';
 import Header from '../../components/Header';
 import styles from '../../styles/profile.module.css';
 
-const Profile = ( {setCurrentPage, currentPage} ) => {
+const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
   const [message, setMessage] = useState('');
@@ -100,7 +100,7 @@ const Profile = ( {setCurrentPage, currentPage} ) => {
 
       if (response.status === 200) {
         const allMessages = await response.json();
-        const filteredMessages = allMessages.filter(msg => !msg.marked_for_deletion);
+        const filteredMessages = allMessages.filter(msg => !msg.marked_for_deletion && !msg.is_buddy);
         setReceivedMessages(filteredMessages);
         console.log('All messages:', allMessages);
 
@@ -157,7 +157,7 @@ const Profile = ( {setCurrentPage, currentPage} ) => {
 
   return (
     <div>
-      <Header currentPage = {currentPage} />
+      <Header currentPage={currentPage} />
       <h1>Welcome, {name}!</h1>
       {isAdmin && (
         <div className={styles.receivedMessagesHeader}>
