@@ -55,7 +55,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
       console.error   
     }
   }
-   console.log(currentPage)
+
   useEffect(() => {
     setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     getAllEvents();

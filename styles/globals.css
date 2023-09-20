@@ -453,8 +453,12 @@ h4, h5, h6, p, li {
   margin-right: 150px;
   margin-top: 50px;
   margin-bottom: 50px;
-  color: #8C4C35;
+  /* color: #8C4C35; */
 }
 
+/** Add Event Styles */
+.add-event-page {
+  margin-top: 150px;
+}
 
 
