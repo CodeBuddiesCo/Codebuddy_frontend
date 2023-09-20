@@ -85,6 +85,8 @@
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin-top: 50px;
+  resize: both; /* allows resizing both vertically and horizontally */
+  overflow: auto; /* ensures scrollbars appear when necessary */
 }
 
 .receivedMessagesHeader {
