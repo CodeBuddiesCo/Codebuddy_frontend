@@ -4,7 +4,6 @@ import Link from 'next/link';
 function Header({currentPage}) {
   const [username, setUsername] = useState("")
   const [isBuddy, setIsBuddy] = useState("false")
-  console.log(currentPage)
 
   const handleLogout = (event) => {
     event.preventDefault();
