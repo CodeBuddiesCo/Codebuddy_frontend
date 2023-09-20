@@ -100,7 +100,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 
       if (response.status === 200) {
         const allMessages = await response.json();
-        const filteredMessages = allMessages.filter(msg => !msg.marked_for_deletion && !msg.is_buddy);
+        const filteredMessages = allMessages.filter(msg => !msg.marked_for_deletion && !msg.sender_is_buddy);
         setReceivedMessages(filteredMessages);
         console.log('All messages:', allMessages);
 
