@@ -27,12 +27,31 @@ function AddEvent({selectedDate, setSelectedDate}) {
     <div>
       <Header/>
     <div className="add-event-page">
-      <h1>This will be the form to add an event</h1>
+      <div className="add-event-form-container">
+        <div className="add-event-form-image-container">
+
+        </div>
       {selectedDateWithTime && <p>{format(parseISO(selectedDateWithTime), 'PPPPpp')}</p>}
       <form>
+        <div className="select-border">
+        <select className="add-event-select" id="open-to-buddy" placeholder="Open to additional buddy?" required>
+          <option value="Open to additional buddy?" disabled selected hidden>Open to additional buddy?</option>
+          <option value="allow">Allow</option>
+          <option value="don't-allow">Don't Allow</option>
+        </select>
+      </div>
+      <div className="select-border">
+        {/* <p>Open to additional buddy?</p>   */}
+        <select className="add-event-select" id="open-to-buddy" placeholder="Open to additional buddy?" required>
+          <option value="primary-code-language" disabled selected hidden>Open to additional buddy?</option>
+          <option value="allow">Allow</option>
+          <option value="don't-allow">Don't Allow</option>
+        </select>  
+      </div>
       <input type="time" onChange={(event) => setTestState(event.target.value)}></input>
       <button onClick={handleAddTimeToDate}>Submit</button>
       </form>
+      </div>
     </div>
     </div>
   )
