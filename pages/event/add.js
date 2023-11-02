@@ -1,46 +1,75 @@
 import { useState, useEffect} from "react";
-import { parseISO, format } from 'date-fns';
+import { parseISO, format, set } from 'date-fns';
 import Header from "../../components/Header";
+import { fetchAddEvent } from "../../event_api_calls";
+import Link from "next/link";
+const {codeLanguageArray} = require('../../Arrays/CodeLanguageArray')
 
 function AddEvent({selectedDate}) {
   const [defaultFormDate, setDefaultFormDate] = useState("")
   const [defaultFormTime, setDefaultFormTime] = useState("19:00")
   const [selectedFormTime, setSelectedFormTime] = useState("")
   const [selectedFormDate, setSelectedFormDate] = useState("")
-  const [selectedDateWithTime, setSelectedDateWithTime] = useState("")
-  const [openToBuddyLabel, setOpenToBuddyLabel] = useState(false)
-  const [primaryLanguageLabel, setPrimaryLanguageLabel] = useState(false)
+  const [openToBuddy, setOpenToBuddy] = useState("")
+  const [primaryLanguage, setPrimaryLanguage] = useState("")
+  const [secondaryLanguage, setSecondaryLanguage] = useState("")
   const [secondaryLanguageLabel, setSecondaryLanguageLabel] = useState(false)
-  // const [timeLabel, setTimeLabel] = useState(false)
-  // const [dateLabel, setDateLabel] = useState(false)
-
+  const [zoomLink, setZoomLink] = useState("")
+  const [successMessage, setSuccessMessage] = useState(true)
 
   const formDateFunction = () => {
     if (selectedDate) {
-    setDefaultFormDate(selectedDate.toISOString().slice(0,10))
-  } else {
-    setDefaultFormDate(new Date().toISOString().slice(0,10))
-  }
-}
-
-  const handleAddTimeToDate = (event) => {
-    event.preventDefault();
-    if(selectedFormDate && selectedFormTime) {
-      console.log(selectedFormDate)
-      const connectedDateAndTime = new Date(selectedFormDate + "T" + selectedFormTime + ":00")
-      setSelectedDateWithTime(connectedDateAndTime.toISOString())
-    } else if (selectedFormDate && !selectedFormTime) {
-      console.log(selectedFormDate)
-      const connectedDateAndTime = new Date(selectedFormDate + "T" + defaultFormTime + ":00")
-      setSelectedDateWithTime(connectedDateAndTime.toISOString())
-    } else if (!selectedFormDate && selectedFormTime) {
-      console.log(selectedFormDate)
-      const connectedDateAndTime = new Date(defaultFormDate + "T" + selectedFormTime + ":00")
-      setSelectedDateWithTime(connectedDateAndTime.toISOString())
+      setDefaultFormDate(selectedDate.toISOString().slice(0,10))
     } else {
-      console.log(selectedFormDate)
-      const connectedDateAndTime = new Date(defaultFormDate + "T" + defaultFormTime + ":00")
-      setSelectedDateWithTime(connectedDateAndTime.toISOString())
+      let d = new Date() 
+      let month = ("0" + (d.getMonth() + 1)).slice(-2);
+      let date = ("0" + d.getDate()).slice(-2);
+      setDefaultFormDate(d.getFullYear()+"-"+month+"-"+date)
+      console.log(defaultFormDate)
+    }
+  }
+
+  async function handleAddEvent(event) {
+    event.preventDefault();
+    let selectedDateWithTime = ""
+    let secondBuddy = ""
+
+    try {
+      if(selectedFormDate && selectedFormTime) {
+        const connectedDateAndTime = new Date(selectedFormDate + "T" + selectedFormTime + ":00");
+        selectedDateWithTime = connectedDateAndTime.toISOString();
+      } else if (selectedFormDate && !selectedFormTime) {
+        const connectedDateAndTime = new Date(selectedFormDate + "T" + defaultFormTime + ":00");
+        selectedDateWithTime = connectedDateAndTime.toISOString();
+      } else if (!selectedFormDate && selectedFormTime) {
+        const connectedDateAndTime = new Date(defaultFormDate + "T" + selectedFormTime + ":00");
+        selectedDateWithTime = connectedDateAndTime.toISOString();
+      } else {
+        const connectedDateAndTime = new Date(defaultFormDate + "T" + defaultFormTime + ":00");
+        selectedDateWithTime = connectedDateAndTime.toISOString();
+      }
+
+      if (openToBuddy === "allow") {
+        secondBuddy = "open"
+      } else if (openToBuddy === "don't Allow"){
+        secondBuddy = "closed"
+      }
+     
+      const results = await fetchAddEvent (secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink);
+      console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
+      
+      if(results.id){
+        setOpenToBuddy("");
+        setPrimaryLanguage("");
+        setSecondaryLanguage("")
+        setSecondaryLanguageLabel("")
+        setZoomLink("")
+        setSuccessMessage(true)
+
+      }
+
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -53,34 +82,45 @@ function AddEvent({selectedDate}) {
       <Header/>
       <div className="add-event-page">
         <div className="add-event-main-content-container">
-          <div className="add-event-form-image-container">
-          </div>
-          {selectedDateWithTime && <p>{format(parseISO(selectedDateWithTime), 'PPPPpp')}</p>}
-          <form className="add-event-form-container" onSubmit={handleAddTimeToDate}>
+          <img className="add-event-form-image-container" src="/jametlene-reskp-fliwkBbS7oM-unsplash.jpg"
+              style={{ width: '52%', objectFit: 'cover', backgroundSize: 'contain', overflow: 'hidden'}}>
+          </img>
+          {successMessage && <div className="add-event-form-container">
+            <div className="add-event-form-header-container">
+              <h1 className="add-event-form-header2">Success!!</h1>
+              <h1 className="add-event-form-header1">The crew is on the way!</h1>
+            </div>
+            <div className="add-event-form-button-container">
+              <Link href="/event/add"className="add-event-form-button" >Add Another Event</Link>
+              <Link href="/event/calendar" className="add-event-form-button cancel" >Return to calendar</Link>
+            </div>  
+          </div>}
+          {!successMessage && <form className="add-event-form-container" onSubmit={handleAddEvent}>
+            <div className="add-event-form-header-container">
+              <h1 className="add-event-form-header1">Gather the crew...</h1>
+              <h1 className="add-event-form-header2">add an event!</h1>
+            </div>
             <div className="add-event-select-border">
-              {openToBuddyLabel && <label className="add-event-select-label">Open to additional buddy?</label>}
-              <select className="add-event-select" id="open-to-buddy"  onChange={() => setOpenToBuddyLabel(true)} required>
-                <option disabled selected>Open to additional buddy?</option>
+              {openToBuddy && <label className="add-event-select-label">Open to additional buddy?</label>}
+              <select className="add-event-select" id="open-to-buddy"  onChange={(event) => setOpenToBuddy(event.target.value)} required>
+                <option value="" disabled selected>Open to additional buddy?</option>
                 <option value="allow">Allow</option>
                 <option value="don't allow">Don't Allow</option>
               </select>  
             </div>
             <div className="add-event-select-border">
-              {primaryLanguageLabel && <label className="add-event-select-label">Primary Code Language</label>}
-              <select className="add-event-select" id="Primary-Language" onChange={() => setPrimaryLanguageLabel(true)} required>
-                <option value="Secondary Code Language" disabled selected hidden>Primary Code Language</option>
-                <option value="HTML">HTML</option>
-                <option value="JavaScript">JavaScript</option>
-                <option value="PHP">PHP</option>
-              </select>
+              {primaryLanguage && <label className="add-event-select-label">Primary Code Language</label>}
+              <select className="add-event-select" id="Primary-Language" onChange={(event) => setPrimaryLanguage(event.target.value)} required>
+                <option value="" disabled selected>Primary Code Language</option>
+                {codeLanguageArray.map((language) => <option value={language}>{language}</option>)}
+                </select>
             </div>
             <div className="add-event-select-border">
-              {secondaryLanguageLabel && <label className="add-event-select-label">Primary Code Language</label>}
-              <select className="add-event-select" id="Secondary-Language" onChange={() => setSecondaryLanguageLabel(true)} required>
-                <option value="Secondary Code Language" disabled selected hidden>Secondary Code Language</option>
-                <option value="HTML">HTML</option>
-                <option value="JavaScript">JavaScript</option>
-                <option value="PHP">PHP</option>
+              {secondaryLanguageLabel && <label className="add-event-select-label">Secondary Code Language</label>}
+              <select className="add-event-select" id="Secondary-Language" onChange={(event) => {setSecondaryLanguageLabel(true); setSecondaryLanguage(event.target.value)}} >
+              <option value="" disabled selected>Secondary Code Language</option>
+              <option value="">None</option>
+              {codeLanguageArray.map((language) => <option value={language}>{language}</option>)}
               </select>
             </div>
             <div className="add-event-date-time-select-container">
@@ -93,8 +133,16 @@ function AddEvent({selectedDate}) {
                 <input className="add-event-select small" type="time" defaultValue={defaultFormTime} onChange={(event) => setSelectedFormTime(event.target.value)}></input>
               </div>
             </div>
-            <button type="submit" >Submit</button>
-          </form>
+            <div className="add-event-select-border">
+              {zoomLink && <label className="add-event-select-label">Zoom Meeting Link</label>}
+              <input className="add-event-select text-entry" type="text" placeholder="Zoom Meeting Link" id="zoom-link" onChange={(event) => {setZoomLink(event.target.value)}} required>
+              </input>
+            </div>
+            <div className="add-event-form-button-container">
+              <button className="add-event-form-button" type="submit" >Submit</button>
+              <Link href="/event/calendar" className="add-event-form-button cancel" >Cancel</Link>
+            </div>  
+          </form>}
         </div>
       </div>
     </div>

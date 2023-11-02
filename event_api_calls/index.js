@@ -1,5 +1,4 @@
 
-
 const setHeader = () => {
   const token = window.localStorage.getItem("token")
 
@@ -38,6 +37,35 @@ export async function fetchAllEvents() {
   }
 }
 
+export async function fetchAddEvent(secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink) {
+  try {
+    const header = setHeader()
+    const username = window.localStorage.getItem("username")
+
+    const url = `https://codebuddiesserver.onrender.com/api/events`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify(
+        {
+          buddy_one: username,
+          buddy_two: secondBuddy, 
+          primary_language: primaryLanguage, 
+          secondary_language: secondaryLanguage,
+          date_time: selectedDateWithTime,
+          spots_available: 3,
+          meeting_link: zoomLink
+        }
+      )
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: index.js:62 ~ fetchAddEvent ~ data:", data)
+    
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export async function fetchUpcomingEvents() {
   
