@@ -15,7 +15,7 @@ function AddEvent({selectedDate}) {
   const [secondaryLanguage, setSecondaryLanguage] = useState("")
   const [secondaryLanguageLabel, setSecondaryLanguageLabel] = useState(false)
   const [zoomLink, setZoomLink] = useState("")
-  const [successMessage, setSuccessMessage] = useState(true)
+  const [successMessage, setSuccessMessage] = useState(false)
 
   const formDateFunction = () => {
     if (selectedDate) {
