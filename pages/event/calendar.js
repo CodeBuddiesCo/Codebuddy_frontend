@@ -82,15 +82,14 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
             {days.map((day) =>(<div key={day.key} className="calendar-dates">
               {day.key > 0 && <h4>{day.key}</h4>}
               {allEvents[0] && allEvents.map(event =>(
-              <div key={event.event_id} >
+              <Link href={`/event/details/${event.event_id}`}><div key={event.event_id} >
                 {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
                   {format(parseISO(event.date_time), 'd') === day.key  && <div>
                     <h6>{event.primary_language} {event.secondary_language !== null && <span> & {event.secondary_language}</span>} Buddy Code</h6>
                     <h6>{format(parseISO(event.date_time), 'p')}</h6>
                   </div>}
-                  {console.log(format(parseISO(event.date_time), 'y'))}
                 </div>}
-              </div>))}
+              </div></Link>))}
               {isBuddy &&<div>
                 {(currentDate.getFullYear() >= new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
                   {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}

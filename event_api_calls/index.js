@@ -100,7 +100,7 @@ export async function fetchEventById(eventId) {
     });
     const data = await response.json();
 
-    if (data) {
+    if (data.event_id) {
       console.log('data from fetchEventById :>> ', data);
       return [data]
     } else {
