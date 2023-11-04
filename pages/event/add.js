@@ -65,7 +65,6 @@ function AddEvent({selectedDate}) {
         setSecondaryLanguageLabel("")
         setZoomLink("")
         setSuccessMessage(true)
-
       }
 
     } catch (error) {
