@@ -11,6 +11,7 @@ export default function App({ Component, pageProps, session }) {
   const [upcomingEvents, setUpcomingEvents] = useState([])
   const [loading, setLoading] = useState(false)
   const [isBuddy, setIsBuddy] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [selectedDate, setSelectedDate] = useState("")
   const [currentPage, setCurrentPage] = useState("")
 
@@ -23,6 +24,8 @@ export default function App({ Component, pageProps, session }) {
           setLoading={setLoading}
           isBuddy={isBuddy}
           setIsBuddy={setIsBuddy}
+          isAdmin={isAdmin}
+          setIsAdmin={setIsAdmin}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         /** Event State **/
