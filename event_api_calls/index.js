@@ -67,6 +67,35 @@ export async function fetchAddEvent(secondBuddy, primaryLanguage, secondaryLangu
   }
 }
 
+export async function fetchAdminAddEvent(primaryBuddy, secondaryBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink) {
+  try {
+    const header = setHeader()
+
+    const url = `https://codebuddiesserver.onrender.com/api/events`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify(
+        {
+          buddy_one: primaryBuddy,
+          buddy_two: secondaryBuddy, 
+          primary_language: primaryLanguage, 
+          secondary_language: secondaryLanguage,
+          date_time: selectedDateWithTime,
+          spots_available: 3,
+          meeting_link: zoomLink
+        }
+      )
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: index.js:92 ~ fetchAdminAddEvent ~ data:", data)
+    
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function fetchUpcomingEvents() {
   
   try {
