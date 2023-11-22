@@ -96,12 +96,12 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                   {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
                 </div>}
                 {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
-                  {day.key >= new Date().getDate() && <Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                  {day.key >= new Date().getDate() && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
                 </div>}
               </div>}
               {isAdmin &&<div>
                 {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
-                  {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                  {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
                 </div>}
                 {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
                   {day.key >= new Date().getDate() && <Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}

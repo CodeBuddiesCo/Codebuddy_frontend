@@ -3,6 +3,7 @@ import { parseISO, format, set } from 'date-fns';
 import Header from "../../components/Header";
 import { fetchAdminAddEvent } from "../../event_api_calls";
 import Link from "next/link";
+import Unauthorized from "../../components/Unauthorized";
 const {codeLanguageArray} = require('../../Arrays/CodeLanguageArray')
 
 function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
@@ -35,7 +36,8 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
     let selectedDateWithTime = ""
 
     try {
-      if(selectedFormDate && selectedFormTime) {
+
+      if (selectedFormDate && selectedFormTime) {
         const connectedDateAndTime = new Date(selectedFormDate + "T" + selectedFormTime + ":00");
         selectedDateWithTime = connectedDateAndTime.toISOString();
       } else if (selectedFormDate && !selectedFormTime) {
@@ -51,13 +53,15 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
 
       const results = await fetchAdminAddEvent (primaryBuddy, secondaryBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink);
       console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
+
       
-      if(results.id){
-        setOpenToBuddy("");
+      if(results[0].id){
+        setPrimaryBuddy("");
+        setSecondaryBuddy("");
         setPrimaryLanguage("");
-        setSecondaryLanguage("")
-        setSecondaryLanguageLabel("")
-        setZoomLink("")
+        setSecondaryLanguage("");
+        setSecondaryLanguageLabel("");
+        setZoomLink("");
         setSuccessMessage(true)
       }
 
@@ -75,11 +79,7 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
     <div>
       <Header/>
       <div className="add-event-page">
-        {!isAdmin && <div className="loading-page">
-          <div className="loading-message">
-          <h1>You do not have the correct access level to reach this page</h1>
-          </div>
-        </div>}
+        {!isAdmin && <Unauthorized/>}
         {isAdmin && <div className="add-event-main-content-container">
           <img className="add-event-form-image-container" src="/jametlene-reskp-fliwkBbS7oM-unsplash.jpg"
               style={{ width: '52%', objectFit: 'cover', backgroundSize: 'contain', overflow: 'hidden'}}>
@@ -90,7 +90,7 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
               <h1 className="add-event-form-header1">The crew is on the way!</h1>
             </div>
             <div className="add-event-form-button-container">
-              <Link href="/event/add"className="add-event-form-button" >Add Another Event</Link>
+              <Link href="/event/admin_add"className="add-event-form-button" >Add Another Event</Link>
               <Link href="/event/calendar" className="add-event-form-button cancel" >Return to calendar</Link>
             </div>  
           </div>}
@@ -111,8 +111,8 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
               {secondaryBuddy && <label className="add-event-select-label">Secondary Event Buddy</label>}
               <select className="add-event-select" id="Secondary Event Buddy"  onChange={(event) => setSecondaryBuddy(event.target.value)} required>
                 <option value="" disabled selected>Secondary Event Buddy</option>
-                <option value="Open">Open</option>
-                <option value="Closed">Closed</option>
+                <option value="open">open</option>
+                <option value="closed">closed</option>
                 <option value="Hollye">Hollye</option>
                 <option value="Catherine">Catherine</option>
               </select>  
