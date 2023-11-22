@@ -3,9 +3,11 @@ import { parseISO, format, set } from 'date-fns';
 import Header from "../../components/Header";
 import { fetchAddEvent } from "../../event_api_calls";
 import Link from "next/link";
+import Unauthorized from "../../components/Unauthorized";
+import Loading from "../../components/Loading";
 const {codeLanguageArray} = require('../../Arrays/CodeLanguageArray')
 
-function AddEvent({selectedDate}) {
+function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
   const [defaultFormDate, setDefaultFormDate] = useState("")
   const [defaultFormTime, setDefaultFormTime] = useState("19:00")
   const [selectedFormTime, setSelectedFormTime] = useState("")
@@ -58,7 +60,7 @@ function AddEvent({selectedDate}) {
       const results = await fetchAddEvent (secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink);
       console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
       
-      if(results.id){
+      if(results[0].id){
         setOpenToBuddy("");
         setPrimaryLanguage("");
         setSecondaryLanguage("")
@@ -73,14 +75,17 @@ function AddEvent({selectedDate}) {
   }
 
   useEffect(() => {
+    setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     formDateFunction()
+    console.log(isBuddy)
   }, [])
 
   return (
     <div>
       <Header/>
       <div className="add-event-page">
-        <div className="add-event-main-content-container">
+        {!isBuddy && <Unauthorized/>}
+        {isBuddy && <div className="add-event-main-content-container">
           <img className="add-event-form-image-container" src="/jametlene-reskp-fliwkBbS7oM-unsplash.jpg"
               style={{ width: '52%', objectFit: 'cover', backgroundSize: 'contain', overflow: 'hidden'}}>
           </img>
@@ -125,7 +130,7 @@ function AddEvent({selectedDate}) {
             <div className="add-event-date-time-select-container">
               <div className="add-event-select-border small">
                 <label className="add-event-select-label">Event Date</label>
-                <input className="add-event-select small" type="date" defaultValue={defaultFormDate} onChange={(event) => setSelectedFormDate(event.target.value)}></input>
+                <input className="add-event-select small" type="date" min={defaultFormDate} defaultValue={defaultFormDate} onChange={(event) => setSelectedFormDate(event.target.value)}></input>
               </div>
               <div className="add-event-select-border small right">
                 <label className="add-event-select-label">Event time</label>
@@ -142,7 +147,7 @@ function AddEvent({selectedDate}) {
               <Link href="/event/calendar" className="add-event-form-button cancel" >Cancel</Link>
             </div>  
           </form>}
-        </div>
+        </div>}
       </div>
     </div>
   )
