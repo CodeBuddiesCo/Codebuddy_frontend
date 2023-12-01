@@ -107,8 +107,13 @@ function Login() {
                 />
               </div>
               <div className="d-flex align-items-center justify-content-between">
-                <div className="d-flex align-items-center"><input name="" type="checkbox" value="" /><span className="pl-2 font-weight-bold">Remember Me</span></div>
-                <div><a href="#">Forgot Password?</a></div>
+                <div className="d-flex align-items-center">
+                  <input name="" type="checkbox" value="" />
+                  <span className="pl-2 font-weight-bold">Remember Me</span>
+                </div>
+                <div>
+                <Link href="/user/forgot-password">Forgot Password?</Link>
+                </div>
               </div>
               <div className="pb-2">
                 <button

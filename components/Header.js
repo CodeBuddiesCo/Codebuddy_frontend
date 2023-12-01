@@ -16,13 +16,10 @@ function Header({currentPage}) {
     window.location = "/"
   }
   
-  
   useEffect(() => {
     setUsername(window.localStorage.getItem("username"));
     setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
   }, [])
-
-  
 
   return (
     <div>
@@ -35,7 +32,7 @@ function Header({currentPage}) {
           <Link href="#">
             {!username &&<div className="header-nav-buttons w-button">What is codebuddy?</div>}
           </Link>
-          <Link href="#">
+          <Link href="become-a-buddy">
             {(username && !isBuddy) &&<div className="header-nav-buttons w-button">Become a buddy</div>}
           </Link>
           <Link href="/user/profile">
