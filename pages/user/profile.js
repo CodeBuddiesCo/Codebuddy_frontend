@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import ReceivedMessages from '../../components/ReceivedMessages';
-import BuddyRequestForm from '../../components/BuddyRequestForm';
 import DeletedMessages from '../../components/DeletedMessages';
 import Header from '../../components/Header';
 import styles from '../../styles/profile.module.css';
@@ -9,15 +8,36 @@ import styles from '../../styles/profile.module.css';
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
-  const [message, setMessage] = useState('');
-  const [formSubmitted, setFormSubmitted] = useState(false);
+
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
   const [deletedMessages, setDeletedMessages] = useState([]);
   const [viewingDeleted, setViewingDeleted] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
 
   setCurrentPage("User Profile")
+
+  const fetchUserDetails = async () => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    if (!userId || !token) return;
+
+    try {
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200) {
+        const userDetails = await response.json();
+        setUserDetails(userDetails);
+      } else {
+        console.error(`Server responded with status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Exception:', error);
+    }
+  };
 
   const handleSoftDelete = async (messageId, index) => {
     const token = localStorage.getItem('token');
@@ -86,6 +106,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
     fetchReceivedMessages();
     fetchDeletedMessages();
+    fetchUserDetails();
   }, []);
 
   const fetchReceivedMessages = async () => {
@@ -110,33 +131,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
   };
 
-  const handleMessageSubmit = async (e) => {
-    e.preventDefault();
-    const sender_id = localStorage.getItem('userId') || session?.user?.id;
-    const token = localStorage.getItem('token');
-    const adminUsernames = ['Hollye', 'Catherine'];
-
-    for (const receiver_username of adminUsernames) {
-      try {
-        const response = await fetch('https://codebuddiesserver.onrender.com/api/users/message', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ sender_id, receiver_username, message_content: message }),
-        });
-
-        if (response.status === 200) {
-          console.log('Message sent successfully to admin:', receiver_username);
-        }
-      } catch (error) {
-        console.error('Exception:', error);
-      }
-    }
-    setFormSubmitted(true);
-  };
-
   const promoteToBuddy = async (userId) => {
     try {
       const token = localStorage.getItem('token');
@@ -159,6 +153,15 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     <div>
       <Header currentPage={currentPage} />
       <h1>Welcome, {name}!</h1>
+      <h2>User Details:</h2>
+      {userDetails ? (
+        <div>
+          <p>Name: {userDetails.name}</p>
+          <p>Email: {userDetails.email}</p>
+\        </div>
+      ) : (
+        <p>Loading user details...</p>
+      )}
       {isAdmin && (
         <div className={styles.receivedMessagesHeader}>
           {viewingDeleted ? (
@@ -175,16 +178,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
           )}
           <h3>You are an admin!</h3>
         </div>
-      )}
-      {isBuddy ? (
-        <h3>You are a buddy!</h3>
-      ) : (
-        <BuddyRequestForm
-          message={message}
-          setMessage={setMessage}
-          handleMessageSubmit={handleMessageSubmit}
-          formSubmitted={formSubmitted}
-        />
       )}
       <h2>This is where you will find your user details and attended event history</h2>
     </div>

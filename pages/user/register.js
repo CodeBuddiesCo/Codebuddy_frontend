@@ -7,6 +7,17 @@ import styles from '../../styles/authForms.module.css';
 import { signIn } from 'next-auth/react';
 
 function Register() {
+  
+  const securityQuestions = [
+    "What was your first pet's name?",
+    "What was the make of your first car?",
+    "What was the name of your elementary school?",
+    "What is the name of the town where you were born?",
+    "What is your mother's maiden name?",
+    "What is the name of the street where you grew up?",
+    "What was the make of your first mobile phone?"
+  ];
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -14,6 +25,14 @@ function Register() {
   const [message, setMessage] = useState('');
   const router = useRouter();
   const [passwordError, setPasswordError] = useState('');
+  const [securityQuestion1, setSecurityQuestion1] = useState(securityQuestions[0]);
+  const [securityQuestion2, setSecurityQuestion2] = useState(securityQuestions[0]);
+  const [securityQuestion3, setSecurityQuestion3] = useState(securityQuestions[0]);
+
+  const [securityAnswer1, setSecurityAnswer1] = useState('');
+  const [securityAnswer2, setSecurityAnswer2] = useState('');
+  const [securityAnswer3, setSecurityAnswer3] = useState('');
+
 
   const handlePasswordBlur = () => {
     if (password.length < 6) {
@@ -55,6 +74,12 @@ function Register() {
           email,
           username,
           password,
+          security_question_1: securityQuestion1,
+          security_answer_1: securityAnswer1,
+          security_question_2: securityQuestion2,
+          security_answer_2: securityAnswer2,
+          security_question_3: securityQuestion3,
+          security_answer_3: securityAnswer3
         }),
       });
 
@@ -131,11 +156,78 @@ function Register() {
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onBlur={handlePasswordBlur} // Add this line
+                onBlur={handlePasswordBlur}
                 required
               />
-              {passwordError && <div className="text-danger">{passwordError}</div>} {/* Display the error */}
             </div>
+            {passwordError && <div className="text-danger">{passwordError}</div>}
+
+            {/* Security Question 1 */}
+            <div className="form-group pb-3">
+              <select
+                className="form-control"
+                value={securityQuestion1}
+                onChange={(e) => setSecurityQuestion1(e.target.value)}
+                required
+              >
+                {securityQuestions.map((question, index) => (
+                  <option key={index} value={question}>{question}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="Security Answer 1"
+                className="form-control"
+                value={securityAnswer1}
+                onChange={(e) => setSecurityAnswer1(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Security Question 2 */}
+            <div className="form-group pb-3">
+              <select
+                className="form-control"
+                value={securityQuestion2}
+                onChange={(e) => setSecurityQuestion2(e.target.value)}
+                required
+              >
+                {securityQuestions.map((question, index) => (
+                  <option key={index} value={question}>{question}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="Security Answer 2"
+                className="form-control"
+                value={securityAnswer2}
+                onChange={(e) => setSecurityAnswer2(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Security Question 3 */}
+            <div className="form-group pb-3">
+              <select
+                className="form-control"
+                value={securityQuestion3}
+                onChange={(e) => setSecurityQuestion3(e.target.value)}
+                required
+              >
+                {securityQuestions.map((question, index) => (
+                  <option key={index} value={question}>{question}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="Security Answer 3"
+                className="form-control"
+                value={securityAnswer3}
+                onChange={(e) => setSecurityAnswer3(e.target.value)}
+                required
+              />
+            </div>
+
             <div className="pb-2">
               <button
                 type="submit"
@@ -153,10 +245,10 @@ function Register() {
                 </button>
               </div>
             </div>
-            <div className="pt-4 text-center">
-              Already have an account? <Link href="/user/login">Sign In</Link>
-            </div>
           </form>
+          <div className="pt-4 text-center">
+            Already have an account? <Link href="/user/login">Sign In</Link>
+          </div>
           {message && (
             <Alert variant="danger" className="mt-3">
               {message}
