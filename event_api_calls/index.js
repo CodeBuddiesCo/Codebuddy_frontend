@@ -120,7 +120,6 @@ export async function fetchUpcomingEvents() {
 }
 
 export async function fetchEventById(eventId) {
-  console.log("eventId in fetchEventById", eventId)
   try {
 
     const url = `https://codebuddiesserver.onrender.com/api/events/search_by_id/${eventId}`;
@@ -144,18 +143,18 @@ export async function fetchEventById(eventId) {
 
 export async function fetchSignup(eventId) {
   try {
+    const header = setHeader()
 
     const url = `https://codebuddiesserver.onrender.com/api/events/signup/${eventId}`;
     const response = await fetch(url, {
-      method: "POST"
+      method: "POST",
+      headers: header
     });
     const data = await response.json();
-
-    if (data.event_id) {
-      console.log('data from fetchSignup :>> ', data);
-      return [data]
-    }
+    console.log("🚀 ~ file: index.js:155 ~ fetchSignup ~ data:", data)
     
+    
+    return data;
   } catch (error) {
     throw error;
   }

@@ -9,7 +9,9 @@ import Header from "../../../components/Header";
 function Details() {
   const router = useRouter()
   const {eventId} = router.query
+
   const [eventById, setEventById] = useState([]);
+  const [eventSignupId, setEventSignupId] = useState([]);
 
   async function getEventById() {
     try {
@@ -17,18 +19,20 @@ function Details() {
       const results = await fetchEventById(eventId)
       console.log("results from getEventById >>", results)
       setEventById(results);
+      setEventSignupId(results[0].event_id)
 
     } catch (error) {
       console.error   
     }
   }
 
-  async function handleSignup(eventId) {
-    console.log(eventId)
+  async function handleSignup() {
+    console.log(eventSignupId)
 
     try {
-      const results = await fetchSignup (33);
+      const results = await fetchSignup (eventSignupId);
       console.log("🚀 ~ file: add.js:58 ~ handleSignup ~ results:", results);
+      getEventById()
       
     } catch (error) {
       console.error(error)
@@ -40,8 +44,8 @@ function Details() {
     if(!eventId){
       return;
     } else {
-
-    getEventById();}
+      getEventById();
+    }
   }, [eventId])
 
 return (
@@ -68,11 +72,12 @@ return (
             <h1 className="event-details-header1">Buddy Code</h1>
           </div>
           <div className="event-details-header-container">
-           <h3 className="event-details-header2">{format(parseISO(event.date_time), 'cccc') + "," + format(parseISO(event.date_time), ' LLLL') +format(parseISO(event.date_time), ' do') }</h3>
-           <h3 className="event-details-header2">{format(parseISO(event.date_time), 'p')}</h3>
+           <h3 className="event-details-header2">{format(parseISO(event.date_time), 'cccc') + "," + format(parseISO(event.date_time), ' LLLL') + format(parseISO(event.date_time), ' do') }</h3>
+           <h3 className="event-details-header2">{"- " + format(parseISO(event.date_time), 'p')}</h3>
           </div>
           <div className="event-details-select-border">
-
+            <h1 className="event-details-select">Attendees:</h1>
+            {(eventById[0].attendees).map ((attendee) => (<h1 className="event-details-select">{attendee}</h1>))}
           </div>
 
           <div className="event-details-button-container">
