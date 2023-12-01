@@ -142,6 +142,22 @@ export async function fetchEventById(eventId) {
   }
 }
 
+export async function fetchSignup(eventId) {
+  try {
 
+    const url = `https://codebuddiesserver.onrender.com/api/events/signup/${eventId}`;
+    const response = await fetch(url, {
+      method: "POST"
+    });
+    const data = await response.json();
 
+    if (data.event_id) {
+      console.log('data from fetchSignup :>> ', data);
+      return [data]
+    }
+    
+  } catch (error) {
+    throw error;
+  }
+}
 
