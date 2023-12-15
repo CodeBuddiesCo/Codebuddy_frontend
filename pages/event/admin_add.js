@@ -8,7 +8,7 @@ const {codeLanguageArray} = require('../../Arrays/CodeLanguageArray')
 
 function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
   const [defaultFormDate, setDefaultFormDate] = useState("")
-  const [defaultFormTime, setDefaultFormTime] = useState("19:00")
+  const [defaultFormTime, setDefaultFormTime] = useState((new Date().toTimeString()).slice(0,5))
   const [selectedFormTime, setSelectedFormTime] = useState("")
   const [selectedFormDate, setSelectedFormDate] = useState("")
   const [primaryBuddy, setPrimaryBuddy] = useState("")
@@ -139,7 +139,7 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
               </div>
               <div className="add-event-select-border small right">
                 <label className="add-event-select-label">Event time</label>
-                <input className="add-event-select small" type="time" defaultValue={defaultFormTime} onChange={(event) => setSelectedFormTime(event.target.value)}></input>
+                <input className="add-event-select small" type="time" required onChange={(event) => setSelectedFormTime(event.target.value)}></input>
               </div>
             </div>
             <div className="add-event-select-border">

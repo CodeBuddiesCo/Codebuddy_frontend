@@ -14,6 +14,7 @@ export default function App({ Component, pageProps, session }) {
   const [isAdmin, setIsAdmin] = useState(false)
   const [selectedDate, setSelectedDate] = useState("")
   const [currentPage, setCurrentPage] = useState("")
+  const [today, setToday] = useState(new Date())
 
 
   return (
@@ -35,6 +36,7 @@ export default function App({ Component, pageProps, session }) {
           setUpcomingEvents={setUpcomingEvents}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
+          today={today}
         /** Event State **/
       />
     </SessionProvider>
