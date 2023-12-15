@@ -9,7 +9,7 @@ const {codeLanguageArray} = require('../../Arrays/CodeLanguageArray')
 
 function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
   const [defaultFormDate, setDefaultFormDate] = useState("")
-  const [defaultFormTime, setDefaultFormTime] = useState("19:00")
+  const [defaultFormTime, setDefaultFormTime] = useState((new Date().toTimeString()).slice(0,5))
   const [selectedFormTime, setSelectedFormTime] = useState("")
   const [selectedFormDate, setSelectedFormDate] = useState("")
   const [openToBuddy, setOpenToBuddy] = useState("")
@@ -21,15 +21,16 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
 
   const formDateFunction = () => {
     if (selectedDate) {
+      console.log(selectedDate)
       setDefaultFormDate(selectedDate.toISOString().slice(0,10))
     } else {
       let d = new Date() 
       let month = ("0" + (d.getMonth() + 1)).slice(-2);
       let date = ("0" + d.getDate()).slice(-2);
       setDefaultFormDate(d.getFullYear()+"-"+month+"-"+date)
-      console.log(defaultFormDate)
     }
   }
+
 
   async function handleAddEvent(event) {
     event.preventDefault();
@@ -57,16 +58,22 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
         secondBuddy = "closed"
       }
      
-      const results = await fetchAddEvent (secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink);
-      console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
+
+      if (selectedDateWithTime > (new Date()).toISOString()) {
+        const results = await fetchAddEvent (secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink);
+        console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
       
-      if(results[0].id){
-        setOpenToBuddy("");
-        setPrimaryLanguage("");
-        setSecondaryLanguage("")
-        setSecondaryLanguageLabel("")
-        setZoomLink("")
-        setSuccessMessage(true)
+        if(results[0].id){
+          setOpenToBuddy("");
+          setPrimaryLanguage("");
+          setSecondaryLanguage("")
+          setSecondaryLanguageLabel("")
+          setZoomLink("")
+          setSuccessMessage(true)
+        }
+      } else {
+        alert("Event time must be in the future")
+        console.error("Selected time must be in the future")
       }
 
     } catch (error) {
@@ -77,7 +84,6 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
   useEffect(() => {
     setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     formDateFunction()
-    console.log(isBuddy)
   }, [])
 
   return (
@@ -134,7 +140,7 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
               </div>
               <div className="add-event-select-border small right">
                 <label className="add-event-select-label">Event time</label>
-                <input className="add-event-select small" type="time" defaultValue={defaultFormTime} onChange={(event) => setSelectedFormTime(event.target.value)}></input>
+                <input className="add-event-select small" type="time" required onChange={(event) => setSelectedFormTime(event.target.value)}></input>
               </div>
             </div>
             <div className="add-event-select-border">

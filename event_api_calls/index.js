@@ -160,3 +160,57 @@ export async function fetchSignup(eventId) {
   }
 }
 
+export async function fetchCancelSignup(eventId) {
+  try {
+    const header = setHeader()
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/cancel_signup/${eventId}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: header
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: index.js:173 ~ fetchCancelSignup ~ data:", data)
+    
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchCancelEvent(eventId) {
+  try {
+    const header = setHeader()
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/cancel/${eventId}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: header
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: index.js:191 ~ fetchCancelSignup ~ data:", data)
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchDeleteEvent(eventId) {
+  try {
+    const header = setHeader()
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/delete/${eventId}`;
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: header
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: index.js:209 ~ fetchDeleteEvent ~ data:", data)
+
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}

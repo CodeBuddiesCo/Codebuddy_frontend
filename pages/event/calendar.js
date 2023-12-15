@@ -1,6 +1,6 @@
 import { useState, useEffect} from "react";
-import { fetchAllEvents, fetchUpcomingEvents } from "../../event_api_calls";
-import { parseISO, format, startOfWeek, getDay, parse } from 'date-fns';
+import { fetchAllEvents } from "../../event_api_calls";
+import { parseISO, format } from 'date-fns';
 import React from 'react'
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -109,7 +109,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
               </div>}
               {isBuddy && !isAdmin &&<div>
                 {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div>
-                  {day.key >= new Date().getDate() && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                  {day.key > 0 && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
                 </div>}
               </div>}
               {isAdmin &&<div>
