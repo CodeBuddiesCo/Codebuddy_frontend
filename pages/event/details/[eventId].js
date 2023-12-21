@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect} from "react";
-import { fetchEventById } from "../../../event_api_calls";
+import { fetchEventById, fetchSignup } from "../../../event_api_calls";
 import { parseISO, format } from 'date-fns';
 import Link from "next/link";
 import Header from "../../../components/Header";
@@ -22,6 +22,18 @@ function Details() {
       console.error   
     }
   }
+
+  async function handleSignup(eventId) {
+    console.log(eventId)
+
+    try {
+      const results = await fetchSignup (33);
+      console.log("🚀 ~ file: add.js:58 ~ handleSignup ~ results:", results);
+      
+    } catch (error) {
+      console.error(error)
+    }
+  }
   
 
   useEffect(() => {
@@ -31,52 +43,6 @@ function Details() {
 
     getEventById();}
   }, [eventId])
-  
-  
-
-//   return (
-//     <div>
-//       <Header/>
-//       <div className="event-details-page">
-
-//                       <div className="home-event-holder-flex-div">
-//                 {eventById.map ((event) => ( 
-//                 <div className="home-event-details-main-div">
-//                   <div className="home-event-details-top-div">
-//                   <img className="event-details-image-container" src="/vincent-van-zalinge-AjtGg8feZhg-unsplash.jpg"
-//               style={{ width: '100%', objectFit: 'cover', backgroundSize: 'contain', overflow: 'hidden'}}>
-//           </img>
-//                   </div>
-//                 <div className="home-event-details-bottom-div">
-//                   <div className="home-event-bottom-details-main-flex-div">
-//                     <div className="home-event-top-text">{event.primary_language} {event.secondary_language !== null && <span> & {event.secondary_language}</span>} Buddy Code</div>  
-//                     <div className="home-event-bottom-details-top-flex-div">
-                    
-//                     <div className="home-event-bottom-text middle">{format(parseISO(event.date_time), 'cccc') + "," + format(parseISO(event.date_time), ' LLLL') +format(parseISO(event.date_time), ' do') }</div>
-//                     <div className="home-event-bottom-text middle">{format(parseISO(event.date_time), 'p')}</div>
-//                     </div>
-//                     <div className="home-event-bottom-details-bottom-flex-div">
-//                     <div className="home-event-bottom-details-top-flex-div">
-//                       {(event.buddy_two === ('open'||'closed')) &&<div className="home-event-bottom-text">Host Buddy: {event.buddy_one}</div>}
-//                       {(event.buddy_two !== ('open'||'closed')) &&<div className="home-event-bottom-text">Host Buddies: {event.buddy_one} & {event.buddy_two}</div>}
-//                     </div>
-//                       <div className="home-event-bottom-text">Available spots: {event.spots_available}</div>
-//                     </div>
-//                     <div className="event-details-button-container">
-//               <button className="event-details-button" type="submit" >Sign Up</button>
-//               <Link href="/event/calendar" className="event-details-button cancel" >Cancel</Link>
-//             </div>  
-//                   </div>
-//                 </div>
-//               </div>))}
-//             </div>
-//       </div>
-//       </div>
-
-//   )
-  
-// }
-
 
 return (
   <div>
@@ -110,7 +76,7 @@ return (
           </div>
 
           <div className="event-details-button-container">
-            <button className="event-details-button" type="submit" >Sign Up</button>
+            <button className="event-details-button" type="submit"  onClick={handleSignup}>Sign Up</button>
             <Link href="/event/calendar" className="event-details-button cancel" >Cancel</Link>
           </div>  
         </div>

@@ -70,42 +70,38 @@ function Login() {
   } else {
 
     return (
-      <div className={styles.container}>
-        <div className="row m-5 no-gutters shadow-lg">
-          <div className="col-md-6 d-none d-md-block">
-            <img
-              src="/logindog2.png"
-              className="img-fluid"
-              style={{ minHeight: '100%', width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </div>
-          <div className={`col-md-6 bg-white p-5 ${styles['form-style']}`}>
-            <h3 className="pb-3">Sign In</h3>
+      <div className="add-event-page">
+          <div className="add-event-main-content-container">
+          <img className="add-event-form-image-container" src="/logindog2.png" alt="Login Image"
+                style={{ width: '52%', objectFit: 'cover', backgroundSize: 'contain', overflow: 'hidden' }}>
+            </img>
+            <div className="add-event-form-container">
+              
+            <div className="add-event-form-header-container">
+                <h1 className="add-event-form-header2">Sign In</h1>
+              </div>
             {showAlert && <Alert variant="danger">{message}</Alert>}
             <form onSubmit={handleUsernamePasswordLogin}>
-              <div className="form-group pb-3">
-                <input
-                  type="text"
-                  placeholder="Username"
-                  className="form-control"
-                  id="exampleInputUsername1"
-                  aria-describedby="usernameHelp"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group pb-3">
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className="form-control"
-                  id="exampleInputPassword1"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+            <div className="add-event-select-border">
+                  <input
+                    className="add-event-select"
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="add-event-select-border">
+                  <input
+                    className="add-event-select"
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
               <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
                   <input name="" type="checkbox" value="" />
@@ -115,21 +111,16 @@ function Login() {
                 <Link href="/user/forgot-password">Forgot Password?</Link>
                 </div>
               </div>
-              <div className="pb-2">
-                <button
-                  type="submit"
-                  className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['form-button']}`}
-                >
-                  Submit
-                </button>
-              </div>
+              <div className="add-event-form-button-container">
+                  <button className="add-event-form-button-login" type="submit">Submit</button>
+                </div>
             </form>
-            <div className={styles.sideline}>OR</div>
+            {/* <div className={styles.sideline}>OR</div>
             <div>
               <button onClick={handleGoogleLogin} className={`btn btn-dark w-100 font-weight-bold mt-2 ${styles['email-form-button']}`}>
                 Login With Google
               </button>
-            </div>
+            </div> */}
             <div className="pt-4 text-center">
               Don't have an account? <Link href="/user/register">Sign Up</Link>
             </div>

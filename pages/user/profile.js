@@ -15,6 +15,12 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [deletedMessages, setDeletedMessages] = useState([]);
   const [viewingDeleted, setViewingDeleted] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
+  const [securityQuestion1, setSecurityQuestion1] = useState('');
+  const [securityAnswer1, setSecurityAnswer1] = useState('');
+  const [securityQuestion2, setSecurityQuestion2] = useState('');
+  const [securityAnswer2, setSecurityAnswer2] = useState('');
+  const [securityQuestion3, setSecurityQuestion3] = useState('');
+  const [securityAnswer3, setSecurityAnswer3] = useState('');
 
   setCurrentPage("User Profile")
 
