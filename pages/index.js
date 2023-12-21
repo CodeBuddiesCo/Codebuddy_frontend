@@ -84,7 +84,7 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
               <div className="home-event-details-bottom-div">
                 <div className="home-event-bottom-details-main-flex-div">
                   <div className="home-event-bottom-details-top-flex-div">
-                    {(upcomingEvent.buddy_two == ('open'||'closed')) &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
+                    {(upcomingEvent.buddy_two == 'open' || upcomingEvent.buddy_two == 'closed') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
                     {(upcomingEvent.buddy_two != ('open'||'closed')) &&<div className="home-event-bottom-text">Host Buddies: {upcomingEvent.buddy_one} & {upcomingEvent.buddy_two}</div>}
                     {/* <a href="#" className="home-event-button w-button">Signup</a> */}
                   </div>
