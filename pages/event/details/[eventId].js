@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { useState, useEffect} from "react";
-import { fetchEventById, fetchSignup, fetchCancelSignup, fetchCancelEvent, fetchDeleteEvent } from "../../../event_api_calls";
+import { fetchEventById, fetchSignup, fetchCancelSignup, fetchCancelEvent, fetchDeleteEvent, fetchBuddySignup } from "../../../event_api_calls";
 import { parseISO, format } from 'date-fns';
 import Link from "next/link";
 import Header from "../../../components/Header";
 
 
-function Details({isAdmin, setIsAdmin, today}) {
+function Details({isAdmin, setIsAdmin, today, isBuddy, setIsBuddy}) {
   const router = useRouter()
   const {eventId} = router.query
   const [eventById, setEventById] = useState([]);
@@ -38,6 +38,23 @@ function Details({isAdmin, setIsAdmin, today}) {
       try {
         const results = await fetchSignup (eventSignupId);
         console.log("🚀 ~ file: add.js:58 ~ handleSignup ~ results:", results);
+        getEventById()
+      
+      }   catch (error) {
+        console.error(error)
+      }
+    } else {
+      alert("You must sign in or register to attend")
+      setUserRequiredMessage(true)
+    }
+  }
+
+  async function handleBuddySignup() {
+    console.log(eventSignupId)
+    if (isBuddy) {
+      try {
+        const results = await fetchBuddySignup (eventSignupId, username);
+        console.log("🚀 ~ file: [eventId].js:56 ~ handleBuddySignup ~ results:", results)
         getEventById()
       
       }   catch (error) {
@@ -105,6 +122,7 @@ function Details({isAdmin, setIsAdmin, today}) {
     } else {
       setUsername(window.localStorage.getItem("username"));
       setIsAdmin(JSON.parse(window.localStorage.getItem("isAdmin")));
+      setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
       getEventById();
       console.log("today", today)
     }
@@ -137,6 +155,7 @@ return (
           </div>
           <div className="event-details-button-container">
             {(today.toISOString() <= event.date_time) && !isSignedUp && <button className="event-details-button" type="submit"  onClick={handleSignup}>Sign Up</button>}
+            {(today.toISOString() <= event.date_time) && !isSignedUp && isBuddy && (event.buddy_two === "open") && <button className="event-details-button" type="submit"  onClick={handleBuddySignup}>Sign Up As Buddy</button>}
             {(today.toISOString() <= event.date_time) && isSignedUp && (username != (event.buddy_one||event.buddy_two))  && <button className="event-details-button" type="submit"  onClick={handleCancelSignup}>Cancel Sign Up</button>}
             {((today.toISOString() <= event.date_time) && (username === event.buddy_one) && event.is_active == true) && <button className="event-details-button" type="submit"  onClick={handleCancelEvent}>Cancel Event</button>}
             {isAdmin && <button className="event-details-button" type="submit"  onClick={handleDeleteEvent}>Delete Event</button>}
