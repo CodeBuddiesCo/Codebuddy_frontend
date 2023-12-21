@@ -1,83 +1,525 @@
-.form-style input {
-  border: 0;
-  height: 50px;
+/* authForms.module.css */
+.loginPage {
+  display: flex;
+  justify-content: center;
+}
+
+.loginMainContentContainer {
+  width: 85%;
+  max-width: 2000px;
+  display: flex;
+  align-items: center;
+  margin-top: 193px;
+  margin-bottom: 75px;
+  min-height: auto;
+  max-height: 600px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+}
+
+.loginFormContainer {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loginFormHeaderContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 35px;
+  justify-content: center;
+}
+
+.loginFormHeader {
+  color: #6A7680;
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 100;
+  font-size: 33px;
+  margin: 0px;
+  padding-left: 10px;
+}
+
+.loginFormImageContainer {
+  flex: 1;
+  /* Takes up half the space */
+  object-fit: cover;
+  /* This ensures the image covers the area without stretching */
+  max-height: 100%;
+  /* Adjust the max-height to fit within the parent container */
+}
+
+.loginInputContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 40px;
   border-radius: 5px;
-  border-bottom: 1px solid #ebebeb;
+  border: none;
+  border-bottom: 1px solid #D9D9D9;
+  padding-left: 5px;
+  margin-bottom: 30px;
+  width: 100%;
 }
 
-.form-style input:focus {
-  border-bottom: 1px solid #007bff;
-  box-shadow: none;
-  outline: 0;
-  background-color: #ebebeb;
+.loginFormInputContainer {
+  width: 100%;
 }
 
-.sideline {
+.loginInputField {
+  width: 100%;
+  height: 27px;
+  border: none;
+  color: #6A7680;
+  margin: 0px;
+  padding-left: 6px;
+  font-size: 14px;
+  font-family: Noto Sans Display, sans-serif;
+  font-weight: 300;
+}
+
+
+.loginSelectBorder {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  border-bottom: 1px solid #D9D9D9;
+  justify-content: center;
+  padding-left: 5px;
+  margin-bottom: 30px;
+}
+
+.loginSelectBorder:focus-within {
+  border: 1px solid #D9D9D9;
+  /* Change to a full border on focus-within */
+  border-radius: 5px;
+  /* Add border-radius to maintain rounded corners */
+  padding: 4px;
+  /* Adjust padding to ensure the text doesn't touch the border */
+}
+
+.loginSelect:focus,
+.loginInputField:focus,
+.loginSelectBorder:focus {
+  outline: none;
+}
+
+.loginSelect {
+  border: none;
+}
+
+.loginInputField {
+  width: 97.5%;
+  height: 27px;
+  border: none;
+  color: #6A7680;
+  margin: 0px;
+  padding-left: 6px;
+  font-size: 14px;
+  font-family: Noto Sans Display, sans-serif;
+  font-weight: 300;
+}
+
+.loginRememberMeContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* Align items vertically in the center */
+  padding: 5px 0;
+  /* Add vertical padding to create space */
+}
+
+.loginCheckbox {
+  /* Add margin to create space between the checkbox and label */
+  margin-right: 10px;
+  /* Adjust the margin as needed */
+}
+
+.loginRememberMeLabel {
+  /* Your existing styles for the label */
+  color: #6A7680;
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 100;
+  font-size: 14px;
+  /* Add any other styles you need */
+}
+
+.loginSubmitButtonContainer {
   display: flex;
   width: 100%;
-  justify-content: center;
+  margin-top: 50px;
+  justify-content: space-between;
+}
+
+.loginSubmitButton {
+  width: 100%;
+  height: 43px;
+  background: none;
+  background-color: #BF6A4B;
+  color: #FFF;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  border: none;
+  outline: inherit;
+  border-radius: 5px;
+  letter-spacing: .5px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
   align-items: center;
-  text-align: center;
-  color: #ccc;
+  justify-content: center;
 }
 
-.sideline:before,
-.sideline:after {
-  content: '';
-  border-top: 1px solid #ebebeb;
-  margin: 0 20px 0 0;
-  flex: 1 0 20px;
-}
-
-.sideline:after {
-  margin: 0 0 0 20px;
-}
-
-.container {
+.loginCancelButton {
+  background-color: #8A99A6;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 70%;
-  margin: 0 auto;
 }
 
-.form-style {
-  padding: 2em;
+.loginFormContainer {
+  height: auto;
+  padding: 40px;
+  width: 48%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
-.my-card {
-  border-radius: 5px !important;
-  overflow: hidden;
+.loginFormContainer a[href='/user/register'],
+.loginFormContainer a[href='/user/register']:visited {
+  color: #BF6A4B;
+  /* Change the text color to match the button color */
+  text-decoration: none;
+  /* Remove the underline */
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 16px;
+  /* Adjust the font size as needed */
+  font-weight: 300;
+  margin-top: 10px;
+  /* Add margin to separate it from the button */
+  display: inline-block;
+  /* Make it an inline block to control its width */
 }
 
-.right {
-  border-radius: 10px;
+/* Style the link for "Forgot Password?" */
+.loginFormContainer a[href='/user/forgot-password'],
+.loginFormContainer a[href='/user/forgot-password']:visited {
+  color: #BF6A4B;
+  /* Change the text color to match the button color */
+  text-decoration: none;
+  /* Remove the underline */
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 16px;
+  /* Adjust the font size as needed */
+  font-weight: 300;
+  margin-top: 0px;
+  /* Add margin to separate it from the button */
+  display: inline-block;
+  /* Make it an inline block to control its width */
 }
 
-.left {
+
+.dontHaveAccountText {
+  color: #6A7680;
+  /* Set the text color */
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 100;
+  font-size: 16px;
+  /* Adjust the font size as needed */
+  margin: 0;
+  /* Remove any default margins */
+}
+
+/* Style the "Sign Up" link within the text */
+.signUpLink {
+  color: #BF6A4B;
+  /* Set the link color to match the button color */
+  text-decoration: none;
+  /* Remove the underline */
+  font-weight: 300;
+  margin-left: 5px;
+  /* Add some space between the text and the link */
+}
+
+.forgotPasswordLink {
+  color: #BF6A4B;
+  /* Set the link color to match the button color */
+  text-decoration: none;
+  /* Remove the underline */
+  font-weight: 300;
+  margin-left: auto;
+  /* Push the link to the right */
+  margin-top: 5px;
+  /* Add some vertical spacing */
+}
+
+@media (max-width: 990px) {
+  .loginFormImageContainer {
+    display: none;
+    /* Hide the image when the screen width is 768px or less */
+  }
+}
+
+/* Register */
+/* authForms.module.css */
+.registerPage {
+  display: flex;
+  justify-content: center;
+}
+
+.registerMainContentContainer {
+  width: 85%;
+  max-width: 2000px;
+  display: flex;
+  align-items: center;
+  margin-top: 193px;
+  margin-bottom: 75px;
+  min-height: auto;
+  max-height: 600px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+}
+
+.registerFormContainer {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.registerFormHeaderContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 35px;
+  justify-content: center;
+}
+
+.registerFormHeader {
+  color: #6A7680;
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 100;
+  font-size: 33px;
+  margin: 0px;
+  padding-left: 10px;
+}
+
+.registerFormImageContainer {
+  flex: 1;
+  /* Takes up half the space */
+  object-fit: cover;
+  /* This ensures the image covers the area without stretching */
+  max-height: 100%;
+  /* Adjust the max-height to fit within the parent container */
+}
+
+.registerInputContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 40px;
   border-radius: 5px;
+  border: none;
+  border-bottom: 1px solid #D9D9D9;
+  padding-left: 5px;
+  margin-bottom: 30px;
+  width: 100%;
 }
 
-.form-button {
-  background-color: #BF6A4B  ;
-  color: #fff;
+.registerFormInputContainer {
+  width: 100%;
+}
+
+.registerInputField {
+  width: 100%;
+  height: 27px;
+  border: none;
+  color: #6A7680;
+  margin: 0px;
+  padding-left: 6px;
+  font-size: 14px;
+  font-family: Noto Sans Display, sans-serif;
+  font-weight: 300;
+}
+
+.registerSelectBorder {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  border-bottom: 1px solid #D9D9D9;
+  justify-content: center;
+  padding-left: 5px;
+  margin-bottom: 30px;
+}
+
+.registerSelectBorder:focus-within {
+  border: 1px solid #D9D9D9;
+  /* Change to a full border on focus-within */
+  border-radius: 5px;
+  /* Add border-radius to maintain rounded corners */
+  padding: 4px;
+  /* Adjust padding to ensure the text doesn't touch the border */
+}
+
+/* authForms.module.css */
+.registerSelect:focus,
+.registerInputField:focus,
+.registerSelectBorder:focus {
+  outline: none;
+}
+
+.registerSelect {
   border: none;
 }
 
-.form-button:hover {
-  background-color: #a0573d; 
-}
-
-.email-form-button {
-  background-color: #4BBFAD    ;
-  color: #fff;
+.registerInputField {
+  width: 97.5%;
+  height: 27px;
   border: none;
+  color: #6A7680;
+  margin: 0px;
+  padding-left: 6px;
+  font-size: 14px;
+  font-family: Noto Sans Display, sans-serif;
+  font-weight: 300;
 }
 
-.email-form-button:hover {
-  background-color: #3CAE99; 
+.registerRememberMeContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* Align items vertically in the center */
+  padding: 5px 0;
+  /* Add vertical padding to create space */
 }
 
-.error {
-  color: red;
+.registerCheckbox {
+  /* Add margin to create space between the checkbox and label */
+  margin-right: 10px;
+  /* Adjust the margin as needed */
+}
+
+.registerRememberMeLabel {
+  /* Your existing styles for the label */
+  color: #6A7680;
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 100;
+  font-size: 14px;
+  /* Add any other styles you need */
+}
+
+.registerSubmitButtonContainer {
+  display: flex;
+  width: 100%;
+  margin-top: 50px;
+  justify-content: space-between;
+}
+
+.registerSubmitButton {
+  width: 100%;
+  height: 43px;
+  background: none;
+  background-color: #BF6A4B;
+  color: #FFF;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  border: none;
+  outline: inherit;
+  border-radius: 5px;
+  letter-spacing: .5px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.registerCancelButton {
+  background-color: #8A99A6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registerFormContainer {
+  height: auto;
+  padding: 40px;
+  width: 48%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* authForms.module.css */
+
+/* Style the link for "Sign Up" */
+.registerFormContainer a[href='/user/register'],
+.registerFormContainer a[href='/user/register']:visited {
+  color: #BF6A4B;
+  /* Change the text color to match the button color */
+  text-decoration: none;
+  /* Remove the underline */
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 16px;
+  /* Adjust the font size as needed */
+  font-weight: 300;
+  margin-top: 10px;
+  /* Add margin to separate it from the button */
+  display: inline-block;
+  /* Make it an inline block to control its width */
+}
+
+/* Style the link for "Forgot Password?" */
+.registerFormContainer a[href='/user/forgot-password'],
+.registerFormContainer a[href='/user/forgot-password']:visited {
+  color: #BF6A4B;
+  /* Change the text color to match the button color */
+  text-decoration: none;
+  /* Remove the underline */
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 16px;
+  /* Adjust the font size as needed */
+  font-weight: 300;
+  margin-top: 0px;
+  /* Add margin to separate it from the button */
+  display: inline-block;
+  /* Make it an inline block to control its width */
+}
+
+
+
+
+
+.alreadyHaveAccountText {
+  color: #6A7680;
+  /* Set the text color */
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 100;
+  font-size: 16px;
+  /* Adjust the font size as needed */
+  margin: 0;
+  /* Remove any default margins */
+}
+
+/* Style the "Sign Up" link within the text */
+.signUpLink {
+  color: #BF6A4B;
+  /* Set the link color to match the button color */
+  text-decoration: none;
+  /* Remove the underline */
+  font-weight: 300;
+  margin-left: 5px;
+  /* Add some space between the text and the link */
+}
+@media (max-width: 990px) {
+  .registerFormImageContainer {
+    display: none;
+    /* Hide the image when the screen width is 768px or less */
+  }
 }
