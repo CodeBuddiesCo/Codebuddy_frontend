@@ -17,10 +17,16 @@
 }
 
 .loginFormContainer {
-  flex: 1;
-  justify-content: center;
+  height: auto;
+  padding: 40px;
+  width: 48%;
   align-items: center;
   flex-direction: column;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 35px;
+  justify-content: center;
 }
 
 .loginFormHeaderContainer {
@@ -180,15 +186,6 @@
   align-items: center;
 }
 
-.loginFormContainer {
-  height: auto;
-  padding: 40px;
-  width: 48%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
 .loginFormContainer a[href='/user/register'],
 .loginFormContainer a[href='/user/register']:visited {
   color: #BF6A4B;
@@ -290,13 +287,27 @@
   flex-direction: column;
 }
 
-.registerFormHeaderContainer {
+
+.registerFormContainer {
+  height: auto;
+  padding: 40px;
+  width: 48%;
+  align-items: center;
+  flex-direction: column;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 35px;
   justify-content: center;
 }
+
+/* .registerFormHeaderContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 35px;
+  justify-content: center;
+} */
 
 .registerFormHeader {
   color: #6A7680;
@@ -447,14 +458,6 @@
   align-items: center;
 }
 
-.registerFormContainer {
-  height: auto;
-  padding: 40px;
-  width: 48%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
 
 /* authForms.module.css */
 
@@ -517,7 +520,7 @@
   margin-left: 5px;
   /* Add some space between the text and the link */
 }
-@media (max-width: 990px) {
+@media (max-width: 990px) {  bb  
   .registerFormImageContainer {
     display: none;
     /* Hide the image when the screen width is 768px or less */
