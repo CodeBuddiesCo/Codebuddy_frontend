@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect} from "react";
-import { fetchEventById, fetchSignup, fetchCancelSignup, fetchCancelEvent, fetchDeleteEvent, fetchBuddySignup } from "../../../event_api_calls";
+import { fetchEventById, fetchSignup, fetchCancelSignup, fetchCancelEvent, fetchDeleteEvent, fetchBuddySignup, fetchCancelBuddySignup } from "../../../event_api_calls";
 import { parseISO, format } from 'date-fns';
 import Link from "next/link";
 import Header from "../../../components/Header";
@@ -71,6 +71,20 @@ function Details({isAdmin, setIsAdmin, today, isBuddy, setIsBuddy}) {
     try {
       const results = await fetchCancelSignup (eventSignupId);
       console.log("🚀 ~ file: add.js:58 ~ handleSignup ~ results:", results);
+      getEventById()
+      setIsSignedUp(false)
+      
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function handleCancelBuddySignup() {
+    console.log(eventSignupId)
+
+    try {
+      const results = await fetchCancelBuddySignup (eventSignupId, username);
+      console.log("🚀 ~ file: [eventId].js:87 ~ handleCancelBuddySignup ~ results:", results)
       getEventById()
       setIsSignedUp(false)
       
@@ -154,9 +168,10 @@ return (
             </div>))}
           </div>
           <div className="event-details-button-container">
-            {(today.toISOString() <= event.date_time) && !isSignedUp && <button className="event-details-button" type="submit"  onClick={handleSignup}>Sign Up</button>}
-            {(today.toISOString() <= event.date_time) && !isSignedUp && isBuddy && (event.buddy_two === "open") && <button className="event-details-button" type="submit"  onClick={handleBuddySignup}>Sign Up As Buddy</button>}
-            {(today.toISOString() <= event.date_time) && isSignedUp && (username != (event.buddy_one||event.buddy_two))  && <button className="event-details-button" type="submit"  onClick={handleCancelSignup}>Cancel Sign Up</button>}
+            {(today.toISOString() <= event.date_time) && !isSignedUp && <button className="event-details-button" type="submit"  onClick={handleSignup}>Attend Event</button>}
+            {(today.toISOString() <= event.date_time) && !isSignedUp && isBuddy && (event.buddy_two === "open") && <button className="event-details-button" type="submit"  onClick={handleBuddySignup}>Attend As Buddy</button>}
+            {(today.toISOString() <= event.date_time) && isSignedUp && (username != event.buddy_one) && (username != event.buddy_two)  && <button className="event-details-button" type="submit"  onClick={handleCancelSignup}>Not Attending?</button>}
+            {(today.toISOString() <= event.date_time) && isSignedUp && (username == (event.buddy_two))  && <button className="event-details-button" type="submit"  onClick={handleCancelBuddySignup}>Not Attending?</button>}
             {((today.toISOString() <= event.date_time) && (username === event.buddy_one) && event.is_active == true) && <button className="event-details-button" type="submit"  onClick={handleCancelEvent}>Cancel Event</button>}
             {isAdmin && <button className="event-details-button" type="submit"  onClick={handleDeleteEvent}>Delete Event</button>}
             <Link href="/event/calendar" className="event-details-button cancel" >Return to Calendar</Link>
