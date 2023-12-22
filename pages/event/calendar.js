@@ -73,7 +73,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
             <h1>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h1>
             <button onClick={prevMonth}>Previous</button>
             <button onClick={nextMonth}>Next</button>
-            {!isAdmin &&<Link href="/event/add"><button>Add Event</button></Link>}
+            {isBuddy && !isAdmin &&<Link href="/event/add"><button>Add Event</button></Link>}
             {isAdmin &&<Link href="/event/admin_add"><button>Add Event</button></Link>}
           </div>
           <div className="calendar-days-container"> 

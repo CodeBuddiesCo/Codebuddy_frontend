@@ -201,6 +201,30 @@ export async function fetchCancelSignup(eventId) {
   }
 }
 
+export async function fetchCancelBuddySignup(eventId, buddyUserName) {
+  try {
+    const header = setHeader()
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/buddy_cancel_signup/${eventId}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: header,
+      body: JSON.stringify(
+        {
+          buddyUserName: buddyUserName, 
+        }
+      )
+    });
+    const data = await response.json();
+    console.log("🚀 ~ file: index.js:219 ~ fetchCancelBuddySignup ~ data:", data)
+    
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 export async function fetchCancelEvent(eventId) {
   try {
     const header = setHeader()
