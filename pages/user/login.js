@@ -112,15 +112,8 @@ function Login() {
                 <Link href="/user/forgot-password" className={styles.forgotPasswordLink}>Forgot Password?</Link>
               </div>
               <div className={styles.loginSubmitButtonContainer}>
-                <button className={styles.loginSubmitButton} type="submit">Submit</button>
+              <button className={styles.loginSubmitButton} onClick={handleUsernamePasswordLogin}>Submit</button>
               </div>
-              {/* Uncomment if needed */}
-              {/*
-              <div className={styles.loginDivider}>OR</div>
-              <div className={styles.loginSocialButtonContainer}>
-                <button onClick={handleGoogleLogin} className={styles.loginGoogleButton}>Login With Google</button>
-              </div>
-              */}
               <p className={styles.dontHaveAccountText}>Don't have an account? <Link href="/user/register" className={styles.signUpLink}>Sign Up</Link></p>
             </div>
           </div>
