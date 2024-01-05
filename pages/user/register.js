@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import styles from '../../styles/authForms.module.css'; // Import your custom styles here
+import styles from '../../styles/authForms.module.css';
 import { signIn } from 'next-auth/react';
 import Header from '../../components/Header';
 
 function Register() {
   const securityQuestions = [
+    "Select a security question",
     "What was your first pet's name?",
     "What was the make of your first car?",
     "What was the name of your elementary school?",
@@ -26,7 +27,6 @@ function Register() {
   const [securityQuestion1, setSecurityQuestion1] = useState(securityQuestions[0]);
   const [securityQuestion2, setSecurityQuestion2] = useState(securityQuestions[0]);
   const [securityQuestion3, setSecurityQuestion3] = useState(securityQuestions[0]);
-
   const [securityAnswer1, setSecurityAnswer1] = useState('');
   const [securityAnswer2, setSecurityAnswer2] = useState('');
   const [securityAnswer3, setSecurityAnswer3] = useState('');
@@ -43,15 +43,11 @@ function Register() {
     try {
       const result = await signIn(provider, { callbackUrl: '/user/register' });
       if (!result.error) {
-        // Handle successful registration
-        // router.push('/user/profile');
         console.log(result);
       } else {
-        // Handle registration error
         console.error(result.error);
       }
     } catch (error) {
-      // Handle unexpected errors
       console.error(error);
     }
   };
@@ -104,6 +100,10 @@ function Register() {
     }
   };
 
+  const isQuestionSelected = (question) => {
+    return question !== securityQuestions[0];
+  };
+
   return (
     <div className={styles.registerPage}>
       <Header />
@@ -130,7 +130,6 @@ function Register() {
                   required
                 />
               </div>
-
               <div className={styles.registerSelectBorder}>
                 <input
                   className={styles.registerSelect}
@@ -141,7 +140,6 @@ function Register() {
                   required
                 />
               </div>
-
               <div className={styles.registerSelectBorder}>
                 <input
                   className={styles.registerSelect}
@@ -152,7 +150,6 @@ function Register() {
                   required
                 />
               </div>
-
               <div className={styles.registerSelectBorder}>
                 <input
                   className={styles.registerSelect}
@@ -166,8 +163,9 @@ function Register() {
               </div>
               {passwordError && <div className={styles.registerPasswordError}>{passwordError}</div>}
 
-              {/* Security Question 1 */}
               <div className={styles.registerFormInputContainer}>
+              <div className={styles.securityQuestionContainer}>
+
                 <select
                   className={styles.registerSelect}
                   value={securityQuestion1}
@@ -178,18 +176,22 @@ function Register() {
                     <option key={index} value={question}>{question}</option>
                   ))}
                 </select>
-                <input
-                  type="text"
-                  placeholder="Security Answer 1"
-                  className={styles.registerSelect}
-                  value={securityAnswer1}
-                  onChange={(e) => setSecurityAnswer1(e.target.value)}
-                  required
-                />
+                {isQuestionSelected(securityQuestion1) && (
+                  <input
+                    type="text"
+                    placeholder="Security Answer 1"
+                    className={styles.registerSelect}
+                    value={securityAnswer1}
+                    onChange={(e) => setSecurityAnswer1(e.target.value)}
+                    required
+                  />
+                )}
+              </div>
               </div>
 
-              {/* Security Question 2 */}
               <div className={styles.registerFormInputContainer}>
+              <div className={styles.securityQuestionContainer}>
+
                 <select
                   className={styles.registerSelect}
                   value={securityQuestion2}
@@ -200,18 +202,22 @@ function Register() {
                     <option key={index} value={question}>{question}</option>
                   ))}
                 </select>
-                <input
-                  type="text"
-                  placeholder="Security Answer 2"
-                  className={styles.registerSelect}
-                  value={securityAnswer2}
-                  onChange={(e) => setSecurityAnswer2(e.target.value)}
-                  required
-                />
+                {isQuestionSelected(securityQuestion2) && (
+                  <input
+                    type="text"
+                    placeholder="Security Answer 2"
+                    className={styles.registerSelect}
+                    value={securityAnswer2}
+                    onChange={(e) => setSecurityAnswer2(e.target.value)}
+                    required
+                  />
+                )}
+              </div>
               </div>
 
-              {/* Security Question 3 */}
               <div className={styles.registerFormInputContainer}>
+              <div className={styles.securityQuestionContainer}>
+
                 <select
                   className={styles.registerSelect}
                   value={securityQuestion3}
@@ -222,14 +228,17 @@ function Register() {
                     <option key={index} value={question}>{question}</option>
                   ))}
                 </select>
-                <input
-                  type="text"
-                  placeholder="Security Answer 3"
-                  className={styles.registerSelect}
-                  value={securityAnswer3}
-                  onChange={(e) => setSecurityAnswer3(e.target.value)}
-                  required
-                />
+                {isQuestionSelected(securityQuestion3) && (
+                  <input
+                    type="text"
+                    placeholder="Security Answer 3"
+                    className={styles.registerSelect}
+                    value={securityAnswer3}
+                    onChange={(e) => setSecurityAnswer3(e.target.value)}
+                    required
+                  />
+                )}
+              </div>
               </div>
 
               <div className={styles.registerSubmitButtonContainer}>
@@ -237,7 +246,7 @@ function Register() {
               </div>
 
               <p className={styles.alreadyHaveAccountText}>
-                Already have an account? <Link href="/user/login" className={styles.registerSignUpLink}>Sign In</Link>
+                Already have an account? <Link href="/user/login" className={styles.SignInLink}>Sign In</Link>
               </p>
             </div>
           </form>
