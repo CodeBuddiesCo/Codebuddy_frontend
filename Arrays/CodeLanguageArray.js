@@ -1,5 +1,5 @@
 const codeLanguageArray = [
-  "C and C++",
+  "C/C++",
   "C#",
   "CSS",
   "Go",
