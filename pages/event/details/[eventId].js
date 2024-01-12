@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, useEffect} from "react";
+import { useState, useEffect, use} from "react";
 import { fetchEventById, fetchSignup, fetchCancelSignup, fetchCancelEvent, fetchDeleteEvent, fetchBuddySignup, fetchCancelBuddySignup } from "../../../event_api_calls";
 import { parseISO, format } from 'date-fns';
 import Link from "next/link";
@@ -9,7 +9,8 @@ import Header from "../../../components/Header";
 function Details({isAdmin, setIsAdmin, today, isBuddy, setIsBuddy}) {
   const router = useRouter()
   const {eventId} = router.query
-  const [eventById, setEventById] = useState([]);
+  const [eventByIdArray, setEventByIdArray] = useState([]);
+  const [eventByIdObject, setEventByIdObject] = useState({});
   const [eventSignupId, setEventSignupId] = useState([]);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [attendees, setAttendees] = useState([]);
@@ -22,13 +23,44 @@ function Details({isAdmin, setIsAdmin, today, isBuddy, setIsBuddy}) {
       
       const results = await fetchEventById(eventId)
       console.log("results from getEventById >>", results)
-      setEventById(results);
+      setEventByIdArray(results);
+      setEventByIdObject(results[0])
       setEventSignupId(results[0].event_id)
       setAttendees(results[0].attendees)
       findIsSignedUp(results[0].attendees)
 
     } catch (error) {
       console.error   
+    }
+  }
+
+  function handleAddToGoogle() {
+    if (eventByIdObject.date_time) {
+      let title = "";
+      let details = "";
+      const meetingLink = eventByIdObject.meeting_link;
+      const eventStartISO = eventByIdObject.date_time
+      const startDateObject = new Date(eventStartISO)
+      const endDateObject = new Date(startDateObject.getTime() + 40*60000)
+      const eventEndISO = endDateObject.toISOString();
+      const eventStartAndEnd = (eventStartISO.replace(/\W/ig, ""))+"/"+(eventEndISO.replace(/\W/ig, ""))
+
+      if (eventByIdObject.secondary_language) {
+        title = (`${eventByIdObject.primary_language} and ${eventByIdObject.secondary_language} Buddy Code`)
+      } else {
+        title = (`${eventByIdObject.primary_language} Buddy Code`)
+      }
+
+      if (eventByIdObject.buddy_two === "open" || eventByIdObject.buddy_two === "closed") {
+        details = (`Join host buddy ${eventByIdObject.buddy_one} for a fun CodeBuddy event`)
+      } else {
+        details = (`Join host buddies ${eventByIdObject.buddy_one} and ${eventByIdObject.buddy_two} for a fun CodeBuddy event`)
+      }
+
+      window.open(`https://calendar.google.com/calendar/u/0/r/eventedit?text=${title}+&details=${details}&location=${meetingLink}&dates=${eventStartAndEnd}`)
+    } else {
+      console.error()
+      alert("Error occurred when adding to google")
     }
   }
 
@@ -129,7 +161,6 @@ function Details({isAdmin, setIsAdmin, today, isBuddy, setIsBuddy}) {
     }
   }
 
-  
   useEffect(() => {
     if(!eventId){
       return;
@@ -146,13 +177,13 @@ return (
   <div>
     <Header/>
     <div className="event-details-page">
-      {eventById.map ((event) => (<div className="event-details-main-content-container">
+      {eventByIdArray.map ((event) => (<div className="event-details-main-content-container">
         <img className="event-details-image-container" src="/anoir-chafik-2_3c4dIFYFU-unsplash (1) 1-min.jpg"
             style={{ width: '100%', height: 'auto', objectFit: 'cover', backgroundSize: 'cover', overflow: 'hidden'}}>
         </img>
         <div className="event-details-container" >
           <div className="event-details-header-container">
-            <h1 className="event-details-header1">{event.primary_language} {event.secondary_language !== null && <span> & {event.secondary_language}</span>}</h1>
+            <h1 className="event-details-header1">{event.primary_language} {event.secondary_language && <span>& {event.secondary_language}</span>}</h1>
             <h1 className="event-details-header1">Buddy Code</h1>
           </div>
           <div className="event-details-header-container">
@@ -173,6 +204,7 @@ return (
             {(today.toISOString() <= event.date_time) && isSignedUp && (username != event.buddy_one) && (username != event.buddy_two)  && <button className="event-details-button" type="submit"  onClick={handleCancelSignup}>Not Attending?</button>}
             {(today.toISOString() <= event.date_time) && isSignedUp && (username == (event.buddy_two))  && <button className="event-details-button" type="submit"  onClick={handleCancelBuddySignup}>Not Attending?</button>}
             {((today.toISOString() <= event.date_time) && (username === event.buddy_one) && event.is_active == true) && <button className="event-details-button" type="submit"  onClick={handleCancelEvent}>Cancel Event</button>}
+            {((today.toISOString() <= event.date_time) && isSignedUp && event.is_active == true) && <button className="event-details-button" type="submit"  onClick={handleAddToGoogle}>Add to Google</button>}
             {isAdmin && <button className="event-details-button" type="submit"  onClick={handleDeleteEvent}>Delete Event</button>}
             <Link href="/event/calendar" className="event-details-button cancel" >Return to Calendar</Link>
           </div>  

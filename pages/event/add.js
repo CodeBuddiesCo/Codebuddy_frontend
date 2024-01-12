@@ -54,7 +54,7 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
 
       if (openToBuddy === "allow") {
         secondBuddy = "open"
-      } else if (openToBuddy === "don't Allow"){
+      } else if (openToBuddy === "don't allow"){
         secondBuddy = "closed"
       }
      
@@ -101,7 +101,7 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
               <h1 className="add-event-form-header1">The crew is on the way!</h1>
             </div>
             <div className="add-event-form-button-container">
-              <Link href="/event/add"className="add-event-form-button" >Add Another Event</Link>
+            <Link onClick={(event) => (setSuccessMessage(false))} href="/event/add"className="add-event-form-button" >Add Another Event</Link>
               <Link href="/event/calendar" className="add-event-form-button cancel" >Return to calendar</Link>
             </div>  
           </div>}
