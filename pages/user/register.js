@@ -4,6 +4,7 @@ import Link from 'next/link';
 import styles from '../../styles/authForms.module.css';
 import { signIn } from 'next-auth/react';
 import Header from '../../components/Header';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Register() {
   const securityQuestions = [
@@ -39,18 +40,18 @@ function Register() {
     }
   };
 
-  const handleOAuthRegister = async (provider) => {
-    try {
-      const result = await signIn(provider, { callbackUrl: '/user/register' });
-      if (!result.error) {
-        console.log(result);
-      } else {
-        console.error(result.error);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const handleOAuthRegister = async (provider) => {
+  //   try {
+  //     const result = await signIn(provider, { callbackUrl: '/user/register' });
+  //     if (!result.error) {
+  //       console.log(result);
+  //     } else {
+  //       console.error(result.error);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -118,7 +119,7 @@ function Register() {
             <h1 className={styles.registerFormHeader}>Register</h1>
           </div>
           {message && <div className={styles.registerAlert}>{message}</div>}
-          <form onSubmit={handleSubmit}>
+          <div className={styles.registerFormInputContainer} onSubmit={handleSubmit}>
             <div className={styles.registerFormInputContainer}>
               <div className={styles.registerSelectBorder}>
                 <input
@@ -161,84 +162,87 @@ function Register() {
                   required
                 />
               </div>
-              {passwordError && <div className={styles.registerPasswordError}>{passwordError}</div>}
-
+              {passwordError && (
+                <div className="alert alert-danger" role="alert">
+                  {passwordError}
+                </div>
+              )}
               <div className={styles.registerFormInputContainer}>
-              <div className={styles.securityQuestionContainer}>
+                <div className={styles.securityQuestionContainer}>
 
-                <select
-                  className={styles.registerSelect}
-                  value={securityQuestion1}
-                  onChange={(e) => setSecurityQuestion1(e.target.value)}
-                  required
-                >
-                  {securityQuestions.map((question, index) => (
-                    <option key={index} value={question}>{question}</option>
-                  ))}
-                </select>
-                {isQuestionSelected(securityQuestion1) && (
-                  <input
-                    type="text"
-                    placeholder="Security Answer 1"
+                  <select
                     className={styles.registerSelect}
-                    value={securityAnswer1}
-                    onChange={(e) => setSecurityAnswer1(e.target.value)}
+                    value={securityQuestion1}
+                    onChange={(e) => setSecurityQuestion1(e.target.value)}
                     required
-                  />
-                )}
-              </div>
-              </div>
-
-              <div className={styles.registerFormInputContainer}>
-              <div className={styles.securityQuestionContainer}>
-
-                <select
-                  className={styles.registerSelect}
-                  value={securityQuestion2}
-                  onChange={(e) => setSecurityQuestion2(e.target.value)}
-                  required
-                >
-                  {securityQuestions.map((question, index) => (
-                    <option key={index} value={question}>{question}</option>
-                  ))}
-                </select>
-                {isQuestionSelected(securityQuestion2) && (
-                  <input
-                    type="text"
-                    placeholder="Security Answer 2"
-                    className={styles.registerSelect}
-                    value={securityAnswer2}
-                    onChange={(e) => setSecurityAnswer2(e.target.value)}
-                    required
-                  />
-                )}
-              </div>
+                  >
+                    {securityQuestions.map((question, index) => (
+                      <option key={index} value={question}>{question}</option>
+                    ))}
+                  </select>
+                  {isQuestionSelected(securityQuestion1) && (
+                    <input
+                      type="text"
+                      placeholder="Security Answer 1"
+                      className={styles.registerSelect}
+                      value={securityAnswer1}
+                      onChange={(e) => setSecurityAnswer1(e.target.value)}
+                      required
+                    />
+                  )}
+                </div>
               </div>
 
               <div className={styles.registerFormInputContainer}>
-              <div className={styles.securityQuestionContainer}>
+                <div className={styles.securityQuestionContainer}>
 
-                <select
-                  className={styles.registerSelect}
-                  value={securityQuestion3}
-                  onChange={(e) => setSecurityQuestion3(e.target.value)}
-                  required
-                >
-                  {securityQuestions.map((question, index) => (
-                    <option key={index} value={question}>{question}</option>
-                  ))}
-                </select>
-                {isQuestionSelected(securityQuestion3) && (
-                  <input
-                    type="text"
-                    placeholder="Security Answer 3"
+                  <select
                     className={styles.registerSelect}
-                    value={securityAnswer3}
-                    onChange={(e) => setSecurityAnswer3(e.target.value)}
+                    value={securityQuestion2}
+                    onChange={(e) => setSecurityQuestion2(e.target.value)}
                     required
-                  />
-                )}
+                  >
+                    {securityQuestions.map((question, index) => (
+                      <option key={index} value={question}>{question}</option>
+                    ))}
+                  </select>
+                  {isQuestionSelected(securityQuestion2) && (
+                    <input
+                      type="text"
+                      placeholder="Security Answer 2"
+                      className={styles.registerSelect}
+                      value={securityAnswer2}
+                      onChange={(e) => setSecurityAnswer2(e.target.value)}
+                      required
+                    />
+                  )}
+                </div>
               </div>
+
+              <div className={styles.registerFormInputContainer}>
+                <div className={styles.securityQuestionContainer}>
+
+                  <select
+                    className={styles.registerSelect}
+                    value={securityQuestion3}
+                    onChange={(e) => setSecurityQuestion3(e.target.value)}
+                    required
+                  >
+                    {securityQuestions.map((question, index) => (
+                      <option key={index} value={question}>{question}</option>
+                    ))}
+                  </select>
+                  {isQuestionSelected(securityQuestion3) && (
+                    <input
+                      type="text"
+                      placeholder="Security Answer 3"
+                      className={styles.registerSelect}
+                      value={securityAnswer3}
+                      onChange={(e) => setSecurityAnswer3(e.target.value)}
+                      required
+                    />
+                  )}
+                </div>
               </div>
 
               <div className={styles.registerSubmitButtonContainer}>
@@ -249,7 +253,7 @@ function Register() {
                 Already have an account? <Link href="/user/login" className={styles.SignInLink}>Sign In</Link>
               </p>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
