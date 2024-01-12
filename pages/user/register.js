@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styles from '../../styles/authForms.module.css';
@@ -31,7 +31,17 @@ function Register() {
   const [securityAnswer1, setSecurityAnswer1] = useState('');
   const [securityAnswer2, setSecurityAnswer2] = useState('');
   const [securityAnswer3, setSecurityAnswer3] = useState('');
+  const [filteredQuestions1, setFilteredQuestions1] = useState(securityQuestions);
+  const [filteredQuestions2, setFilteredQuestions2] = useState(securityQuestions);
+  const [filteredQuestions3, setFilteredQuestions3] = useState(securityQuestions);
 
+  useEffect(() => {
+    setFilteredQuestions1(securityQuestions.filter(q => q === securityQuestions[0] || (q !== securityQuestion2 && q !== securityQuestion3)));
+    setFilteredQuestions2(securityQuestions.filter(q => q === securityQuestions[0] || (q !== securityQuestion1 && q !== securityQuestion3)));
+    setFilteredQuestions3(securityQuestions.filter(q => q === securityQuestions[0] || (q !== securityQuestion1 && q !== securityQuestion2)));
+  }, [securityQuestion1, securityQuestion2, securityQuestion3]);
+
+  
   const handlePasswordBlur = () => {
     if (password.length < 6) {
       setPasswordError('Password must be at least 6 characters');
@@ -105,6 +115,12 @@ function Register() {
     return question !== securityQuestions[0];
   };
 
+  const getFilteredQuestions = (currentQuestion, otherQuestion1, otherQuestion2) => {
+    return securityQuestions.filter(question => {
+      return question !== otherQuestion1 && question !== otherQuestion2;
+    });
+  };  
+
   return (
     <div className={styles.registerPage}>
       <Header />
@@ -115,14 +131,15 @@ function Register() {
           alt="Register Image"
         />
         <div className={styles.registerFormContainer}>
-          <div className={styles.registerFormHeaderContainer}>
-            <h1 className={styles.registerFormHeader}>Register</h1>
-          </div>
-          {message && <div className={styles.registerAlert}>{message}</div>}
-          <div className={styles.registerFormInputContainer} onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
+            <div className={styles.registerFormHeaderContainer}>
+              <h1 className={styles.registerFormHeader}>Register</h1>
+            </div>
+            {message && <div className={styles.registerAlert}>{message}</div>}
+
             <div className={styles.registerFormInputContainer}>
               <div className={styles.registerSelectBorder}>
-                <input
+                <inputv
                   className={styles.registerSelect}
                   type="text"
                   placeholder="Name"
@@ -167,16 +184,16 @@ function Register() {
                   {passwordError}
                 </div>
               )}
+              {/* Security Question 1 */}
               <div className={styles.registerFormInputContainer}>
                 <div className={styles.securityQuestionContainer}>
-
                   <select
                     className={styles.registerSelect}
                     value={securityQuestion1}
                     onChange={(e) => setSecurityQuestion1(e.target.value)}
                     required
                   >
-                    {securityQuestions.map((question, index) => (
+                    {filteredQuestions1.map((question, index) => (
                       <option key={index} value={question}>{question}</option>
                     ))}
                   </select>
@@ -193,16 +210,16 @@ function Register() {
                 </div>
               </div>
 
+              {/* Security Question 2 */}
               <div className={styles.registerFormInputContainer}>
                 <div className={styles.securityQuestionContainer}>
-
                   <select
                     className={styles.registerSelect}
                     value={securityQuestion2}
                     onChange={(e) => setSecurityQuestion2(e.target.value)}
                     required
                   >
-                    {securityQuestions.map((question, index) => (
+                    {filteredQuestions2.map((question, index) => (
                       <option key={index} value={question}>{question}</option>
                     ))}
                   </select>
@@ -219,16 +236,16 @@ function Register() {
                 </div>
               </div>
 
+              {/* Security Question 3 */}
               <div className={styles.registerFormInputContainer}>
                 <div className={styles.securityQuestionContainer}>
-
                   <select
                     className={styles.registerSelect}
                     value={securityQuestion3}
                     onChange={(e) => setSecurityQuestion3(e.target.value)}
                     required
                   >
-                    {securityQuestions.map((question, index) => (
+                    {filteredQuestions3.map((question, index) => (
                       <option key={index} value={question}>{question}</option>
                     ))}
                   </select>
@@ -244,7 +261,6 @@ function Register() {
                   )}
                 </div>
               </div>
-
               <div className={styles.registerSubmitButtonContainer}>
                 <button className={styles.registerSubmitButton} type="submit">Register</button>
               </div>
@@ -253,7 +269,7 @@ function Register() {
                 Already have an account? <Link href="/user/login" className={styles.SignInLink}>Sign In</Link>
               </p>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
