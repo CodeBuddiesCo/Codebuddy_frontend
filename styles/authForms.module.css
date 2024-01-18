@@ -383,7 +383,7 @@
   font-family: Noto Sans Display, sans-serif;
   font-weight:300;}
 
-.registerInputField {
+/* .registerInputField {
   width: 97.5%;
   height: 27px;
   border: none;
@@ -393,7 +393,7 @@
   font-size: 14px;
   font-family: Noto Sans Display, sans-serif;
   font-weight: 300;
-}
+} */
 
 .registerRememberMeContainer {
   width: 100%;

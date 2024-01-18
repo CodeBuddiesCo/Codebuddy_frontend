@@ -35,11 +35,25 @@ function Register() {
   const [filteredQuestions2, setFilteredQuestions2] = useState(securityQuestions);
   const [filteredQuestions3, setFilteredQuestions3] = useState(securityQuestions);
 
-  useEffect(() => {
-    setFilteredQuestions1(securityQuestions.filter(q => q === securityQuestions[0] || (q !== securityQuestion2 && q !== securityQuestion3)));
-    setFilteredQuestions2(securityQuestions.filter(q => q === securityQuestions[0] || (q !== securityQuestion1 && q !== securityQuestion3)));
-    setFilteredQuestions3(securityQuestions.filter(q => q === securityQuestions[0] || (q !== securityQuestion1 && q !== securityQuestion2)));
-  }, [securityQuestion1, securityQuestion2, securityQuestion3]);
+useEffect(() => {
+    // Check if a question is selected and not the default
+    const isSelected = (question) => question !== securityQuestions[0];
+
+    // Update filtered questions only if a question has been selected
+    if (isSelected(securityQuestion1)) {
+      setFilteredQuestions2(securityQuestions.filter(q => q !== securityQuestion1));
+      setFilteredQuestions3(securityQuestions.filter(q => q !== securityQuestion1));
+    }
+    if (isSelected(securityQuestion2)) {
+      setFilteredQuestions1(securityQuestions.filter(q => q !== securityQuestion2));
+      setFilteredQuestions3(securityQuestions.filter(q => q !== securityQuestion2));
+    }
+    if (isSelected(securityQuestion3)) {
+      setFilteredQuestions1(securityQuestions.filter(q => q !== securityQuestion3));
+      setFilteredQuestions2(securityQuestions.filter(q => q !== securityQuestion3));
+    }
+  }, [securityQuestion1, securityQuestion2, securityQuestion3, securityQuestions]);
+
 
   
   const handlePasswordBlur = () => {
@@ -139,7 +153,7 @@ function Register() {
 
             <div className={styles.registerFormInputContainer}>
               <div className={styles.registerSelectBorder}>
-                <inputv
+                <input
                   className={styles.registerSelect}
                   type="text"
                   placeholder="Name"
