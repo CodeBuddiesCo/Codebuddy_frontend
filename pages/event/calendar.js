@@ -86,8 +86,8 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
               <Link href={`/event/details/${event.event_id}`}><div key={event.event_id} >
                 {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
                   {format(parseISO(event.date_time), 'd') === day.key  && <div>
-                    <h6>{event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</h6>
-                    <h6>{format(parseISO(event.date_time), 'p')}</h6>
+                    <h6>{format(parseISO(event.date_time), 'p')} - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</h6>
+                    <h6></h6>
                   </div>}
                 </div>}
               </div></Link>))}
