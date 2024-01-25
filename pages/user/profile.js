@@ -1,36 +1,49 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import ReceivedMessages from '../../components/ReceivedMessages';
 import DeletedMessages from '../../components/DeletedMessages';
+import DemoteBuddy from '../../components/DemoteBuddy';
 import Header from '../../components/Header';
-import styles from '../../styles/profile.module.css';
+import RequestToBecomeBuddy from './become-a-buddy';
+import styles from '../../styles/authForms.module.css';
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
-
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
   const [deletedMessages, setDeletedMessages] = useState([]);
   const [viewingDeleted, setViewingDeleted] = useState(false);
+  const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
+  const [buddies, setBuddies] = useState([]);
 
-  setCurrentPage("User Profile")
+  useEffect(() => {
+    setCurrentPage("User Profile");
+    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
+    setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
+    fetchReceivedMessages();
+    fetchDeletedMessages();
+    fetchUserDetails();
+    fetchBuddies();
+  }, [setCurrentPage, session?.user?.name]);
+
 
   const fetchUserDetails = async () => {
     const userId = localStorage.getItem('userId');
-    const token = localStorage.getItem('token');
-    if (!userId || !token) return;
+    if (!userId) return;
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.status === 200) {
-        const userDetails = await response.json();
-        setUserDetails(userDetails);
+        const userData = await response.json();
+        setUserDetails(userData);
       } else {
         console.error(`Server responded with status: ${response.status}`);
       }
@@ -100,15 +113,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
   };
 
-  useEffect(() => {
-    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
-    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
-    setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
-    fetchReceivedMessages();
-    fetchDeletedMessages();
-    fetchUserDetails();
-  }, []);
-
   const fetchReceivedMessages = async () => {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
@@ -149,6 +153,48 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
   };
 
+  const demoteFromBuddy = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/demote/${userId}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (response.status === 200) {
+        alert('User successfully demoted from buddy');
+        fetchBuddies();
+      } else {
+        const errorResponse = await response.json();
+        alert(`Failed to demote user: ${errorResponse.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Exception:', error);
+      alert('Error while demoting user');
+    }
+  };  
+
+  const fetchBuddies = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (response.status === 200) {
+        const allUsers = await response.json();
+        const buddies = allUsers.filter(user => user.is_buddy);
+        setBuddies(buddies);
+      } else {
+        console.error(`Server responded with status: ${response.status}`);
+        alert('Failed to fetch users');
+      }
+    } catch (error) {
+      console.error('Exception:', error);
+      alert('Error while fetching users');
+    }
+  };  
+
   return (
     <div>
       <Header currentPage={currentPage} />
@@ -158,25 +204,37 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         <div>
           <p>Name: {userDetails.name}</p>
           <p>Email: {userDetails.email}</p>
-\        </div>
+        </div>
       ) : (
-        <p>Loading user details...</p>
+        <p className='loading-user-details'>Loading user details...</p>
+      )}
+      {!isBuddy && (
+        <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
       )}
       {isAdmin && (
-        <div className={styles.receivedMessagesHeader}>
-          {viewingDeleted ? (
-            <DeletedMessages messages={deletedMessages} viewingDeleted={viewingDeleted} setViewingDeleted={setViewingDeleted} />
+        <div>
+          <button onClick={() => setViewingDemoteBuddy(!viewingDemoteBuddy)}>
+            {viewingDemoteBuddy ? 'Hide Demote Buddies' : 'Manage Buddies'}
+          </button>
+          {viewingDemoteBuddy ? (
+            <DemoteBuddy buddies={buddies} demoteFromBuddy={demoteFromBuddy} />
           ) : (
-            <ReceivedMessages
-              messages={receivedMessages}
-              promoteToBuddy={promoteToBuddy}
-              handleSoftDelete={handleSoftDelete}
-              fetchReceivedMessages={fetchReceivedMessages}
-              viewingDeleted={viewingDeleted}
-              setViewingDeleted={setViewingDeleted}
-            />
+            <div className={styles.receivedMessagesHeader}>
+              {viewingDeleted ? (
+                <DeletedMessages messages={deletedMessages} viewingDeleted={viewingDeleted} setViewingDeleted={setViewingDeleted} />
+              ) : (
+                <ReceivedMessages
+                  messages={receivedMessages}
+                  promoteToBuddy={promoteToBuddy}
+                  handleSoftDelete={handleSoftDelete}
+                  fetchReceivedMessages={fetchReceivedMessages}
+                  viewingDeleted={viewingDeleted}
+                  setViewingDeleted={setViewingDeleted}
+                />
+              )}
+              <h3>You are an admin!</h3>
+            </div>
           )}
-          <h3>You are an admin!</h3>
         </div>
       )}
       <h2>This is where you will find your user details and attended event history</h2>
