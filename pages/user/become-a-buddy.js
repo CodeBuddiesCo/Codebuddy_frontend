@@ -43,7 +43,6 @@ const RequestToBecomeBuddy = ({ setCurrentPage, currentPage }) => {
   return (
     <div>
       <Header currentPage={currentPage} />
-      <h1>Request to Become a Buddy</h1>
       {isBuddy ? (
         <h3>You are a buddy!</h3>
       ) : (

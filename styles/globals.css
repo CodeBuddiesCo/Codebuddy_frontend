@@ -757,4 +757,6 @@ display: flex;
 justify-content: center;
 align-items: center;
 }
-
+.loading-user-details{
+  margin-top: 100px;
+}

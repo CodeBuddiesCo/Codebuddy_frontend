@@ -251,6 +251,14 @@
   }
 }
 
+@media (max-width: 990px) {
+.loginFormContainer{
+  width: 100%;
+}
+}
+
+
+
 @media (max-width: 1085px) {
   .registerFormImageContainer {
     display: none;
@@ -263,6 +271,7 @@
     padding: 20px; /* Adjust padding for smaller screens */
   }
 }
+
 
 
 .registerPage {
