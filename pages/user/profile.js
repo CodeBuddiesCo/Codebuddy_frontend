@@ -18,6 +18,13 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const [buddies, setBuddies] = useState([]);
+  const [editable, setEditable] = useState(false);
+  const [updatedTitle, setUpdatedTitle] = useState('');
+  const [updatedPfpUrl, setUpdatedPfpUrl] = useState('');
+  const [updatedPrimaryLanguage, setUpdatedPrimaryLanguage] = useState('');
+  const [updatedSecondaryLanguage, setUpdatedSecondaryLanguage] = useState('');
+  const [updatedBuddyBio, setUpdatedBuddyBio] = useState('');
+
 
   useEffect(() => {
     setCurrentPage("User Profile");
@@ -30,6 +37,56 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     fetchBuddies();
   }, [setCurrentPage, session?.user?.name]);
 
+  useEffect(() => {
+    if (userDetails) {
+      setUpdatedTitle(userDetails.title || '');
+      setUpdatedPfpUrl(userDetails.pfp_url || '');
+      setUpdatedPrimaryLanguage(userDetails.primary_language || '');
+      setUpdatedSecondaryLanguage(userDetails.secondary_language || '');
+      setUpdatedBuddyBio(userDetails.buddy_bio || '');
+    }
+  }, [userDetails]);
+
+  const toggleEditMode = () => {
+    setEditable(!editable);
+  };
+
+  const handleInputChange = (e, setter) => {
+    setter(e.target.value);
+  };
+
+  const handleProfileUpdate = async () => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    const updatedData = {
+      title: updatedTitle,
+      pfp_url: updatedPfpUrl,
+      primary_language: updatedPrimaryLanguage,
+      secondary_language: updatedSecondaryLanguage,
+      buddy_bio: updatedBuddyBio
+    };
+
+    try {
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (response.status === 200) {
+        alert('User details updated successfully');
+        fetchUserDetails();
+      } else {
+        alert('Failed to update user details');
+      }
+    } catch (error) {
+      console.error('Exception:', error);
+      alert('Error while updating user details');
+    }
+  };
 
   const fetchUserDetails = async () => {
     const userId = localStorage.getItem('userId');
@@ -160,7 +217,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (response.status === 200) {
         alert('User successfully demoted from buddy');
         fetchBuddies();
@@ -172,7 +229,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error('Exception:', error);
       alert('Error while demoting user');
     }
-  };  
+  };
 
   const fetchBuddies = async () => {
     try {
@@ -180,7 +237,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (response.status === 200) {
         const allUsers = await response.json();
         const buddies = allUsers.filter(user => user.is_buddy);
@@ -193,21 +250,53 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error('Exception:', error);
       alert('Error while fetching users');
     }
-  };  
+  };
 
   return (
     <div>
       <Header currentPage={currentPage} />
       <h1>Welcome, {name}!</h1>
+
       <h2>User Details:</h2>
-      {userDetails ? (
-        <div>
-          <p>Name: {userDetails.name}</p>
-          <p>Email: {userDetails.email}</p>
-        </div>
-      ) : (
-        <p className='loading-user-details'>Loading user details...</p>
+      <button onClick={toggleEditMode}>
+        {editable ? 'Cancel Edit' : 'Edit Profile'}
+      </button>
+      {editable && (
+        <button onClick={handleProfileUpdate}>
+          Save Changes
+        </button>
       )}
+      {
+        userDetails ? (
+          <div>
+            <p>Name: {userDetails.name}</p>
+            <p>Username: {userDetails.username}</p>
+            <p>Primary Language: {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
+            <p>SecondaryLanguage: {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
+            <p>Title:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
+            <p>Bio:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)} /> : userDetails.buddy_bio}</p>
+            <div>
+              <p>Pfp:</p>
+              {editable ? (
+                <>
+                  <input type="text" value={updatedPfpUrl} onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)} />
+                  {/* Display the image next to the input field when in edit mode */}
+                  {updatedPfpUrl && (
+                    <img src={updatedPfpUrl} alt="Profile Preview" style={{ maxWidth: '100px', maxHeight: '100px', marginLeft: '10px' }} />
+                  )}
+                </>
+              ) : userDetails.pfp_url ? (
+                // Display the image directly when not in edit mode
+                <img src={userDetails.pfp_url} alt="Profile" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+              ) : (
+                <p>No profile picture set.</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <p className='loading-user-details'>Loading user details...</p>
+        )
+      }
       {!isBuddy && (
         <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
       )}
