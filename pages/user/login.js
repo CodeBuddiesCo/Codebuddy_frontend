@@ -84,7 +84,7 @@ function Login() {
               <h1 className={styles.loginFormHeader}>Sign In</h1>
             </div>
             {showAlert && <Alert variant="danger">{message}</Alert>}
-            <div className={styles.loginFormInputContainer} form onSubmit={handleUsernamePasswordLogin}>
+            <form className={styles.loginFormInputContainer} onSubmit={handleUsernamePasswordLogin}>
               <div className={styles.loginSelectBorder}>
                 <input
                   className={styles.loginSelect}
@@ -112,10 +112,10 @@ function Login() {
                 <Link href="/user/forgot-password" className={styles.forgotPasswordLink}>Forgot Password?</Link>
               </div>
               <div className={styles.loginSubmitButtonContainer}>
-              <button className={styles.loginSubmitButton} onClick={handleUsernamePasswordLogin}>Submit</button>
+                <button type="submit" className={styles.loginSubmitButton}>Submit</button>
               </div>
-              <p className={styles.dontHaveAccountText}>Don't have an account? <Link href="/user/register" className={styles.signUpLink}>Sign Up</Link></p>
-            </div>
+              <p className={styles.dontHaveAccountText}>Don't have an account? <Link href="/user/register">Sign Up</Link></p>
+            </form>
           </div>
         </div>
       </div>

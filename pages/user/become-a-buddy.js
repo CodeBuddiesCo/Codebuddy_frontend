@@ -7,7 +7,10 @@ const RequestToBecomeBuddy = ({ setCurrentPage, currentPage }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
 
-  setCurrentPage("Buddy Request")
+  useEffect(() => {
+    setCurrentPage("Buddy Request");
+    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
+  }, [setCurrentPage]);
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
