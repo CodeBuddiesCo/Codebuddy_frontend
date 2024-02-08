@@ -16,6 +16,8 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
   const [primaryLanguage, setPrimaryLanguage] = useState("")
   const [secondaryLanguage, setSecondaryLanguage] = useState("")
   const [secondaryLanguageLabel, setSecondaryLanguageLabel] = useState(false)
+  const [secondaryLanguageArray, setSecondaryLanguageArray] = useState(codeLanguageArray)
+  const [primaryLanguageArray, setPrimaryLanguageArray] = useState(codeLanguageArray)
   const [zoomLink, setZoomLink] = useState("")
   const [successMessage, setSuccessMessage] = useState(false)
 
@@ -31,6 +33,29 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
     }
   }
 
+  const filterPrimaryLanguageArray = (selectedSecondary) => {
+    if (primaryLanguage === "") {
+      let filteredArray = []
+      for (let i=0; i < codeLanguageArray.length; i++) {
+        if (codeLanguageArray[i] != selectedSecondary) {
+          filteredArray.push(codeLanguageArray[i])
+        } 
+        setPrimaryLanguageArray(filteredArray)
+      } 
+    } return 
+  }
+
+  const filterSecondLanguageArray = (selectedPrimary) => {
+    if (secondaryLanguage === "") {
+      let filteredArray = []
+      for (let i=0; i < codeLanguageArray.length; i++) {
+        if (codeLanguageArray[i] != selectedPrimary) {
+          filteredArray.push(codeLanguageArray[i])
+        } 
+        setSecondaryLanguageArray(filteredArray)
+      } 
+    } return 
+  }
 
   async function handleAddEvent(event) {
     event.preventDefault();
@@ -57,9 +82,9 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
       } else if (openToBuddy === "don't allow"){
         secondBuddy = "closed"
       }
-     
 
       if (selectedDateWithTime > (new Date()).toISOString()) {
+        
         const results = await fetchAddEvent (secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink);
         console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
       
@@ -120,17 +145,17 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
             </div>
             <div className="add-event-select-border">
               {primaryLanguage && <label className="add-event-select-label">Primary Code Language</label>}
-              <select className="add-event-select" id="Primary-Language" onChange={(event) => setPrimaryLanguage(event.target.value)} required>
+              <select className="add-event-select" id="Primary-Language" onChange={(event) => {setPrimaryLanguage(event.target.value); filterSecondLanguageArray(event.target.value)}} required>
                 <option value="" disabled selected>Primary Code Language</option>
-                {codeLanguageArray.map((language) => <option value={language}>{language}</option>)}
+                {primaryLanguageArray.map((language) => <option value={language}>{language}</option>)}
                 </select>
             </div>
             <div className="add-event-select-border">
               {secondaryLanguageLabel && <label className="add-event-select-label">Secondary Code Language</label>}
-              <select className="add-event-select" id="Secondary-Language" onChange={(event) => {setSecondaryLanguageLabel(true); setSecondaryLanguage(event.target.value)}} >
-              <option value="" disabled selected>Secondary Code Language</option>
-              <option value="">None</option>
-              {codeLanguageArray.map((language) => <option value={language}>{language}</option>)}
+              <select className="add-event-select" id="Secondary-Language" onChange={(event) => {setSecondaryLanguageLabel(true); setSecondaryLanguage(event.target.value), filterPrimaryLanguageArray(event.target.value)}}>
+                <option value="" disabled selected>Secondary Code Language</option>
+                <option value="">None</option>
+                {secondaryLanguageArray.map((language) => <option value={language}>{language}</option>)}
               </select>
             </div>
             <div className="add-event-date-time-select-container">

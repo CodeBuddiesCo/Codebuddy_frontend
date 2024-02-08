@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect, Children} from "react";
 import { fetchAllEvents } from "../../event_api_calls";
 import { parseISO, format } from 'date-fns';
 import React from 'react'
@@ -62,11 +62,14 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
   }, [])
 
   return (
-    <div className="calendar-page">
+    <div className="calendar-page" id="test">
       <Header {...currentPage={currentPage}}/>
       <div className="header-background"></div>
       {loading && <Loading/>}
       {!loading &&<div>
+        <div className="calendar-all-content">
+          
+        <div className="calendar-main-content">
         <h1 className="calendar-header">Codebuddy Calendar of Events</h1>
         <div>
           <div className="calendar-month">
@@ -81,16 +84,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
           </div>
           <div className="calendar-dates-container">
             {days.map((day) =>(<div key={day.key} className="calendar-dates">
-              {day.key > 0 && <h4>{day.key}</h4>}
-              {allEvents[0] && allEvents.map(event =>(
-              <Link href={`/event/details/${event.event_id}`}><div key={event.event_id} >
-                {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
-                  {format(parseISO(event.date_time), 'd') === day.key  && <div>
-                    <h6>{format(parseISO(event.date_time), 'p')} - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</h6>
-                    <h6></h6>
-                  </div>}
-                </div>}
-              </div></Link>))}
+              <div>{day.key > 0 && <h4 className="calendar-date-num">{day.key}</h4>}
               {isBuddy && !isAdmin &&<div>
                 {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
                   {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
@@ -117,13 +111,27 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                   {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
                 </div>}
               </div>}
+              
+            
+              </div>
+             
+              {allEvents[0] && allEvents.map(event =>(
+              <Link href={`/event/details/${event.event_id}`}><div className="calendar-event-container" key={event.event_id} >
+                {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
+                  {format(parseISO(event.date_time), 'd') === day.key  && <div>
+                    <div className="calendar-event-text">{format(parseISO(event.date_time), 'p')} - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</div>
+                  </div>}
+                </div>}
+              </div></Link>))}
             </div>))}
           </div>
+        </div>
+        </div>
+        <div className="calendar-popout-container"></div>
         </div>
       </div>}
     </div>
   )
-
 }
 
   export default CalendarOfEvents;

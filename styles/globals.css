@@ -394,7 +394,6 @@ input:-webkit-autofill:active{
   border: .25px #8a99a6;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
-
   display: flex;
 }
 .home-event-bottom-details-top-flex-div {
@@ -418,6 +417,7 @@ input:-webkit-autofill:active{
   color: #6a7680;
   display: flex;
   justify-content: center;
+  width: 100vw;
   margin-top: 150px;
 }
 .calendar-days-container {
@@ -450,13 +450,41 @@ input:-webkit-autofill:active{
   border: .1px solid #D9D9D9;
   margin-top: -1px;
   margin-left: -1px;
+  overflow: auto;
 
+}
+.calendar-date-num {
+margin: 5px;
+}
+.calendar-event-container {
+ background-color:#F2EBEC;
+ border-radius: 5px;
+ margin: 4px;
+ color: #8c4c35;
+}
+.calendar-event-text{
+  font-weight: 600px;
+  font-family: Noto Sans, sans-serif;
+  font-size: 11px;
+  margin: 3px;
+  padding: 3px;
 }
 .add-event-calendar-button{
   display: none;
 }
 .calendar-dates:hover .add-event-calendar-button {
   display: block;
+}
+.calendar-popout-container {
+  height: 100vh;
+  width: 60px;
+  position: relative;
+  top: 150px;
+  background-color: #8a99a6;
+}
+.calendar-all-content {
+  display: flex;  
+  justify-content: space-between;
 }
 
 /** Loading Component */
