@@ -224,7 +224,6 @@ export async function fetchCancelBuddySignup(eventId, buddyUserName) {
   }
 }
 
-
 export async function fetchCancelEvent(eventId) {
   try {
     const header = setHeader()
