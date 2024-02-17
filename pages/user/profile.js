@@ -6,8 +6,9 @@ import DemoteBuddy from '../../components/DemoteBuddy';
 import Header from '../../components/Header';
 import RequestToBecomeBuddy from './become-a-buddy';
 import styles from '../../styles/authForms.module.css';
+import { codeLanguageArray } from '../../Arrays/CodeLanguageArray';
 
-const techOptions = ['JavaScript', 'Python', 'React', 'Node.js', 'Java', 'C#', 'Ruby'];
+// const techOptions = ['JavaScript', 'Python', 'React', 'Node.js', 'Java', 'C#', 'Ruby'];
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
@@ -116,7 +117,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 
   const renderTechDropdown = () => (
     <select multiple value={selectedTech} onChange={handleTechChange} className={styles.techSelect}>
-      {techOptions.map((tech) => (
+      {codeLanguageArray.map((tech) => (
         <option key={tech} value={tech}>
           {tech}
         </option>
@@ -342,7 +343,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   {editable && (
     <div>
       <p>Select Programming Languages and Technologies:</p>
-      {techOptions.map((tech, index) => (
+      {codeLanguageArray.map((tech, index) => (
         <div key={index}>
           <input
             type="checkbox"
