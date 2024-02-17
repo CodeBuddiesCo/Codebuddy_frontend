@@ -14,6 +14,8 @@ function Login() {
   const [message, setMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [isUsernameLogin, setIsUsernameLogin] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -21,6 +23,10 @@ function Login() {
       setIsUsernameLogin(true);
     }
   }, []);
+
+  const handleRememberMeChange = (e) => {
+    setRememberMe(e.target.checked);
+  };
 
   const handleUsernamePasswordLogin = async (e) => {
     e.preventDefault();
@@ -95,7 +101,6 @@ function Login() {
                   required
                 />
               </div>
-
               <div className={styles.loginSelectBorder}>
                 <input
                   className={styles.loginSelect}
@@ -107,7 +112,13 @@ function Login() {
                 />
               </div>
               <div className={styles.loginRememberMeContainer}>
-                <input name="rememberMe" type="checkbox" className={styles.loginCheckbox} />
+                <input
+                  name="rememberMe"
+                  type="checkbox"
+                  className={styles.loginCheckbox}
+                  checked={rememberMe}
+                  onChange={handleRememberMeChange}
+                />
                 <label htmlFor="rememberMe" className={styles.loginRememberMeLabel}>Remember Me</label>
                 <Link href="/user/forgot-password" className={styles.forgotPasswordLink}>Forgot Password?</Link>
               </div>
