@@ -7,6 +7,8 @@ import Header from '../../components/Header';
 import RequestToBecomeBuddy from './become-a-buddy';
 import styles from '../../styles/authForms.module.css';
 
+const techOptions = ['JavaScript', 'Python', 'React', 'Node.js', 'Java', 'C#', 'Ruby'];
+
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
@@ -16,7 +18,14 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [deletedMessages, setDeletedMessages] = useState([]);
   const [viewingDeleted, setViewingDeleted] = useState(false);
   const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
-  const [userDetails, setUserDetails] = useState(null);
+  const [userDetails, setUserDetails] = useState({
+    title: '',
+    pfp_url: '',
+    primary_language: '',
+    secondary_language: '',
+    buddy_bio: '',
+    programmingLanguages: [] // Ensure this is initialized correctly
+  });
   const [buddies, setBuddies] = useState([]);
   const [editable, setEditable] = useState(false);
   const [updatedTitle, setUpdatedTitle] = useState('');
@@ -24,7 +33,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [updatedPrimaryLanguage, setUpdatedPrimaryLanguage] = useState('');
   const [updatedSecondaryLanguage, setUpdatedSecondaryLanguage] = useState('');
   const [updatedBuddyBio, setUpdatedBuddyBio] = useState('');
-
+  const [selectedTech, setSelectedTech] = useState([]);
 
   useEffect(() => {
     setCurrentPage("User Profile");
@@ -44,7 +53,12 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       setUpdatedPrimaryLanguage(userDetails.primary_language || '');
       setUpdatedSecondaryLanguage(userDetails.secondary_language || '');
       setUpdatedBuddyBio(userDetails.buddy_bio || '');
+
     }
+  }, [userDetails]);
+
+  useEffect(() => {
+    console.log(userDetails.programmingLanguages);
   }, [userDetails]);
 
   const toggleEditMode = () => {
@@ -55,6 +69,16 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     setter(e.target.value);
   };
 
+  const handleTechChange = (event) => {
+    const { value, checked } = event.target;
+
+    if (checked) {
+      setSelectedTech(prev => [...prev, value]);
+    } else {
+      setSelectedTech(prev => prev.filter(tech => tech !== value));
+    }
+  };
+
   const handleProfileUpdate = async () => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
@@ -63,7 +87,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       pfp_url: updatedPfpUrl,
       primary_language: updatedPrimaryLanguage,
       secondary_language: updatedSecondaryLanguage,
-      buddy_bio: updatedBuddyBio
+      buddy_bio: updatedBuddyBio,
+      programmingLanguages: selectedTech,
     };
 
     try {
@@ -86,7 +111,18 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error('Exception:', error);
       alert('Error while updating user details');
     }
+    console.log("Updated Data:", updatedData);
   };
+
+  const renderTechDropdown = () => (
+    <select multiple value={selectedTech} onChange={handleTechChange} className={styles.techSelect}>
+      {techOptions.map((tech) => (
+        <option key={tech} value={tech}>
+          {tech}
+        </option>
+      ))}
+    </select>
+  );
 
   const fetchUserDetails = async () => {
     const userId = localStorage.getItem('userId');
@@ -100,6 +136,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 
       if (response.status === 200) {
         const userData = await response.json();
+        console.log('Fetched User Data:', userData);
+
         setUserDetails(userData);
       } else {
         console.error(`Server responded with status: ${response.status}`);
@@ -269,6 +307,21 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       {
         userDetails ? (
           <div>
+            <div>
+              <p>Pfp:</p>
+              {editable ? (
+                <>
+                  <input type="text" value={updatedPfpUrl} onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)} />
+                  {updatedPfpUrl && (
+                    <img src={updatedPfpUrl} alt="Profile Preview" style={{ maxWidth: '100px', maxHeight: '100px', marginLeft: '10px' }} />
+                  )}
+                </>
+              ) : userDetails.pfp_url ? (
+                <img src={userDetails.pfp_url} alt="Profile" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+              ) : (
+                <p>No profile picture set.</p>
+              )}
+            </div>
             <p>Name: {userDetails.name}</p>
             <p>Username: {userDetails.username}</p>
             <p>Primary Language: {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
@@ -276,22 +329,36 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <p>Title:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
             <p>Bio:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)} /> : userDetails.buddy_bio}</p>
             <div>
-              <p>Pfp:</p>
-              {editable ? (
-                <>
-                  <input type="text" value={updatedPfpUrl} onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)} />
-                  {/* Display the image next to the input field when in edit mode */}
-                  {updatedPfpUrl && (
-                    <img src={updatedPfpUrl} alt="Profile Preview" style={{ maxWidth: '100px', maxHeight: '100px', marginLeft: '10px' }} />
-                  )}
-                </>
-              ) : userDetails.pfp_url ? (
-                // Display the image directly when not in edit mode
-                <img src={userDetails.pfp_url} alt="Profile" style={{ maxWidth: '100px', maxHeight: '100px' }} />
-              ) : (
-                <p>No profile picture set.</p>
-              )}
-            </div>
+  {!editable && (
+    <div>
+      <p>Programming Languages and Technologies:</p>
+      <ul>
+        {userDetails.programmingLanguages && userDetails.programmingLanguages.map((language, index) => (
+          <li key={index}>{language}</li>
+        ))}
+      </ul>
+    </div>
+  )}
+  {editable && (
+    <div>
+      <p>Select Programming Languages and Technologies:</p>
+      {techOptions.map((tech, index) => (
+        <div key={index}>
+          <input
+            type="checkbox"
+            id={`tech-${index}`}
+            name="tech"
+            value={tech}
+            checked={selectedTech.includes(tech)}
+            onChange={handleTechChange}
+          />
+          <label htmlFor={`tech-${index}`}>{tech}</label>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
           </div>
         ) : (
           <p className='loading-user-details'>Loading user details...</p>

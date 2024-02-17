@@ -45,6 +45,7 @@ export default NextAuth({
 
   secret: process.env.JWT_SECRET,
 
+  
   // callbacks: {
   //   redirect: async () => {
   //     return Promise.resolve('/user/profile');
