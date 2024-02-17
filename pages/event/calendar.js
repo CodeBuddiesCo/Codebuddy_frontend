@@ -11,6 +11,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
   const [state, setState] = useState({currentDate: new Date(),});
   const [popout, setPopout] = useState(false)
   const [detailedDay, setDetailedDay] = useState(10)
+  const [toggle, setToggle] = useState("calendar-popout-container")
   const { currentDate } = state;
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
@@ -66,12 +67,12 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
   }, [])
 
   return (
-    <div className="calendar-page" id="test">
+    <div className="calendar-page" id="test" onClick={()=> setToggle("calendar-popout-container")}>
       <Header {...currentPage={currentPage}}/>
       <div className="header-background"></div>
       {loading && <Loading/>}
       {!loading &&<div>
-        <div className="calendar-all-content" onClick={()=> setPopout(false)}>
+        <div className="calendar-all-content">
           <div className="calendar-main-content">
             <h1 className="calendar-header">Codebuddy Calendar of Events</h1>
             <div>
@@ -86,7 +87,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                 {daysOfWeek.map((day)=>(<div className="calendar-days">{day}</div>))}
               </div>
               <div className="calendar-dates-container">
-                {days.map((day) =>(<div key={day.key} className="calendar-dates" onClick={(e) => {e.stopPropagation(); if (day.key > 0) {setPopout(true); setDetailedDay(day.key)} else {setPopout(false)}}} >
+                {days.map((day) =>(<div key={day.key} className="calendar-dates" onClick={(e) => {e.stopPropagation(); if (day.key > 0) {setToggle("calendar-popout-container open"); setDetailedDay(day.key)} else {setToggle("calendar-popout-container")}}} >
                   <div>{day.key > 0 && <h4 className="calendar-date-num">{day.key}</h4>}
                     {isBuddy && !isAdmin &&<div>
                       {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
@@ -128,8 +129,8 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
               </div>
             </div>
           </div>
-          {popout && <div className="calendar-popout-container">
-            <button onClick={()=> {if (detailedDay > 0) {setPopout(false)}}}>x</button>
+          <div className={toggle}>
+            <button onClick={()=> {if (detailedDay > 0) {setToggle("calendar-popout-container")}}}>x</button>
             <p>{format(parseISO(detailedDate), 'iiii LLLL do')}</p>
             {allEvents[0] && allEvents.map(event => (<Link href={`/event/details/${event.event_id}`}>
               <div className="calendar-detained-event-container" key={event.event_id} >
@@ -140,7 +141,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                 </div>}
               </div>
             </Link>))}
-          </div>}
+          </div>
         </div>
       </div>}
     </div>

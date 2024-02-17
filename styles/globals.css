@@ -478,16 +478,19 @@ margin: 5px;
 }
 .calendar-popout-container {
   width: 350px;
-  height: 80%;
+  height: 80vw;
   position: fixed;
   top: 150px;
   bottom: 0%;
-  left: auto;
-  right: -3%;
+  right: -25%;
   z-index: 0;
   box-shadow: -6px 6px 2px 0px rgba(0, 0, 0, 0.10);
   border-radius: 10px;
   background-color:#F2EBEC;
+  transition: right .3s ease;
+}
+.calendar-popout-container.open {
+  right: -3%;
 }
 .calendar-all-content {
   display: flex;  
