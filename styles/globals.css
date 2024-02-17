@@ -99,6 +99,7 @@ input:-webkit-autofill:active{
   left: 0%;
   right: 0%;
   overflow: hidden;
+  z-index: 1;
   box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
 }
 .logo-div {
@@ -417,7 +418,7 @@ input:-webkit-autofill:active{
   color: #6a7680;
   display: flex;
   justify-content: center;
-  width: 100vw;
+  width: 100%;
   margin-top: 150px;
 }
 .calendar-days-container {
@@ -476,15 +477,20 @@ margin: 5px;
   display: block;
 }
 .calendar-popout-container {
-  height: 100vh;
-  width: 60px;
-  position: relative;
+  width: 350px;
+  height: 80%;
+  position: fixed;
   top: 150px;
-  background-color: #8a99a6;
+  bottom: 0%;
+  left: auto;
+  right: -3%;
+  z-index: 0;
+  box-shadow: -6px 6px 2px 0px rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  background-color:#F2EBEC;
 }
 .calendar-all-content {
   display: flex;  
-  justify-content: space-between;
 }
 
 /** Loading Component */
