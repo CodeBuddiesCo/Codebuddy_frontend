@@ -9,6 +9,8 @@ import Link from "next/link";
 
 function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage}) {
   const [state, setState] = useState({currentDate: new Date(),});
+  const [popout, setPopout] = useState(false)
+  const [detailedDay, setDetailedDay] = useState(10)
   const { currentDate } = state;
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
@@ -21,7 +23,8 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
   get the amount of days in that month. */
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
-  
+  const detailedDate = (new Date(currentDate.getFullYear(), (currentDate.getMonth()), detailedDay)).toISOString()
+
   for (let i = 0; i < firstDayOfMonth; i++) {
     days.push(<div className="calendar-day empty" key={`empty-${i}`}></div>);
   }
@@ -59,6 +62,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
     setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     setIsAdmin(JSON.parse(window.localStorage.getItem("isAdmin")));
     getAllEvents();
+    console.log(new Date(currentDate.getFullYear(), (currentDate.getMonth()), detailedDay))
   }, [])
 
   return (
@@ -67,67 +71,76 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
       <div className="header-background"></div>
       {loading && <Loading/>}
       {!loading &&<div>
-        <div className="calendar-all-content">
-          
-        <div className="calendar-main-content">
-        <h1 className="calendar-header">Codebuddy Calendar of Events</h1>
-        <div>
-          <div className="calendar-month">
-            <h1>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h1>
-            <button onClick={prevMonth}>Previous</button>
-            <button onClick={nextMonth}>Next</button>
-            {isBuddy && !isAdmin &&<Link href="/event/add"><button>Add Event</button></Link>}
-            {isAdmin &&<Link href="/event/admin_add"><button>Add Event</button></Link>}
-          </div>
-          <div className="calendar-days-container"> 
-            {daysOfWeek.map((day)=>(<div className="calendar-days">{day}</div>))}
-          </div>
-          <div className="calendar-dates-container">
-            {days.map((day) =>(<div key={day.key} className="calendar-dates">
-              <div>{day.key > 0 && <h4 className="calendar-date-num">{day.key}</h4>}
-              {isBuddy && !isAdmin &&<div>
-                {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
-                  {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
-                </div>}
-                {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
-                  {day.key >= new Date().getDate() && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
-                </div>}
-              </div>}
-              {isAdmin &&<div>
-                {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
-                  {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
-                </div>}
-                {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
-                  {day.key >= new Date().getDate() && <Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
-                </div>}
-              </div>}
-              {isBuddy && !isAdmin &&<div>
-                {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div>
-                  {day.key > 0 && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
-                </div>}
-              </div>}
-              {isAdmin &&<div>
-                {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div>
-                  {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
-                </div>}
-              </div>}
-              
-            
+        <div className="calendar-all-content" onClick={()=> setPopout(false)}>
+          <div className="calendar-main-content">
+            <h1 className="calendar-header">Codebuddy Calendar of Events</h1>
+            <div>
+              <div className="calendar-month">
+                <h1>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h1>
+                <button onClick={prevMonth}>Previous</button>
+                <button onClick={nextMonth}>Next</button>
+                {isBuddy && !isAdmin &&<Link href="/event/add"><button>Add Event</button></Link>}
+                {isAdmin &&<Link href="/event/admin_add"><button>Add Event</button></Link>}
               </div>
-             
-              {allEvents[0] && allEvents.map(event =>(
-              <Link href={`/event/details/${event.event_id}`}><div className="calendar-event-container" key={event.event_id} >
+              <div className="calendar-days-container"> 
+                {daysOfWeek.map((day)=>(<div className="calendar-days">{day}</div>))}
+              </div>
+              <div className="calendar-dates-container">
+                {days.map((day) =>(<div key={day.key} className="calendar-dates" onClick={(e) => {e.stopPropagation(); if (day.key > 0) {setPopout(true); setDetailedDay(day.key)} else {setPopout(false)}}} >
+                  <div>{day.key > 0 && <h4 className="calendar-date-num">{day.key}</h4>}
+                    {isBuddy && !isAdmin &&<div>
+                      {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
+                        {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                      </div>}
+                      {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
+                        {day.key >= new Date().getDate() && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                      </div>}
+                    </div>}
+                    {isAdmin &&<div>
+                      {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
+                        {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                      </div>}
+                      {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
+                        {day.key >= new Date().getDate() && <Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                      </div>}
+                    </div>}
+                    {isBuddy && !isAdmin &&<div>
+                      {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div>
+                        {day.key > 0 && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                      </div>}
+                    </div>}
+                    {isAdmin &&<div>
+                      {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div>
+                        {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                      </div>}
+                    </div>}
+                  </div>
+                  {allEvents[0] && allEvents.map(event => (<Link href={`/event/details/${event.event_id}`}>
+                    <div className="calendar-event-container" key={event.event_id} >
+                      {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
+                        {format(parseISO(event.date_time), 'd') === day.key  && <div>
+                          <div className="calendar-event-text">{format(parseISO(event.date_time), 'p')} - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</div>
+                        </div>}
+                      </div>}
+                    </div>
+                  </Link>))}
+                </div>))}
+              </div>
+            </div>
+          </div>
+          {popout && <div className="calendar-popout-container">
+            <button onClick={()=> {if (detailedDay > 0) {setPopout(false)}}}>x</button>
+            <p>{format(parseISO(detailedDate), 'iiii LLLL do')}</p>
+            {allEvents[0] && allEvents.map(event => (<Link href={`/event/details/${event.event_id}`}>
+              <div className="calendar-detained-event-container" key={event.event_id} >
                 {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
-                  {format(parseISO(event.date_time), 'd') === day.key  && <div>
+                  {format(parseISO(event.date_time), 'd') === detailedDay  && <div>
                     <div className="calendar-event-text">{format(parseISO(event.date_time), 'p')} - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</div>
                   </div>}
                 </div>}
-              </div></Link>))}
-            </div>))}
-          </div>
-        </div>
-        </div>
-        <div className="calendar-popout-container"></div>
+              </div>
+            </Link>))}
+          </div>}
         </div>
       </div>}
     </div>
