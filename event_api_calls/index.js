@@ -37,7 +37,7 @@ export async function fetchAllEvents() {
   }
 }
 
-export async function fetchAddEvent(secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink) {
+export async function fetchAddEvent(secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink, additionalInfo) {
   try {
     const header = setHeader()
     const username = window.localStorage.getItem("username")
@@ -54,7 +54,8 @@ export async function fetchAddEvent(secondBuddy, primaryLanguage, secondaryLangu
           secondary_language: secondaryLanguage,
           date_time: selectedDateWithTime,
           spots_available: 3,
-          meeting_link: zoomLink
+          meeting_link: zoomLink,
+          additional_info: additionalInfo
         }
       )
     });
