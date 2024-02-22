@@ -8,8 +8,6 @@ import RequestToBecomeBuddy from './become-a-buddy';
 import styles from '../../styles/authForms.module.css';
 import { codeLanguageArray } from '../../Arrays/CodeLanguageArray';
 
-// const techOptions = ['JavaScript', 'Python', 'React', 'Node.js', 'Java', 'C#', 'Ruby'];
-
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
@@ -20,15 +18,19 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [viewingDeleted, setViewingDeleted] = useState(false);
   const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
   const [userDetails, setUserDetails] = useState({
+    username: '',
+    email: '',
     title: '',
     pfp_url: '',
     primary_language: '',
     secondary_language: '',
     buddy_bio: '',
-    programmingLanguages: [] // Ensure this is initialized correctly
+    programmingLanguages: []
   });
   const [buddies, setBuddies] = useState([]);
   const [editable, setEditable] = useState(false);
+  const [updatedUsername, setUpdatedUsername] = useState('');
+  const [updatedEmail, setUpdatedEmail] = useState('');
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedPfpUrl, setUpdatedPfpUrl] = useState('');
   const [updatedPrimaryLanguage, setUpdatedPrimaryLanguage] = useState('');
@@ -49,6 +51,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 
   useEffect(() => {
     if (userDetails) {
+      setUpdatedUsername(userDetails.username || '');
+      setUpdatedEmail(userDetails.email || '');
       setUpdatedTitle(userDetails.title || '');
       setUpdatedPfpUrl(userDetails.pfp_url || '');
       setUpdatedPrimaryLanguage(userDetails.primary_language || '');
@@ -84,6 +88,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
     const updatedData = {
+      username: updatedUsername,
+      email: updatedEmail,
       title: updatedTitle,
       pfp_url: updatedPfpUrl,
       primary_language: updatedPrimaryLanguage,
@@ -114,16 +120,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
     console.log("Updated Data:", updatedData);
   };
-
-  const renderTechDropdown = () => (
-    <select multiple value={selectedTech} onChange={handleTechChange} className={styles.techSelect}>
-      {codeLanguageArray.map((tech) => (
-        <option key={tech} value={tech}>
-          {tech}
-        </option>
-      ))}
-    </select>
-  );
 
   const fetchUserDetails = async () => {
     const userId = localStorage.getItem('userId');
@@ -324,7 +320,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
               )}
             </div>
             <p>Name: {userDetails.name}</p>
-            <p>Username: {userDetails.username}</p>
+            <p>Username:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
+            <p>Email:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedEmail)} /> : userDetails.email}</p>
             <p>Primary Language: {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
             <p>SecondaryLanguage: {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
             <p>Title:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
