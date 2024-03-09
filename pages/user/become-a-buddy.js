@@ -16,7 +16,7 @@ const RequestToBecomeBuddy = ({ setCurrentPage, currentPage }) => {
     e.preventDefault();
     const sender_id = localStorage.getItem('userId') || session?.user?.id;
     const token = localStorage.getItem('token');
-    const adminUsernames = ['Hollye', 'Catherine'];
+    const adminUsernames = ['Hollye', 'cmugnai'];
 
     for (const receiver_username of adminUsernames) {
       try {

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useSession } from 'next-auth/react';
 import ReceivedMessages from '../../components/ReceivedMessages';
 import DeletedMessages from '../../components/DeletedMessages';
 import DemoteBuddy from '../../components/DemoteBuddy';
 import Header from '../../components/Header';
 import RequestToBecomeBuddy from './become-a-buddy';
-import styles from '../../styles/authForms.module.css';
+import styles from '../../styles/profile.module.css';
 import { codeLanguageArray } from '../../Arrays/CodeLanguageArray';
 
 const Profile = ({ setCurrentPage, currentPage }) => {
@@ -288,112 +290,119 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   };
 
   return (
-    <div>
+    <div className={styles.profilePageContainer}>
       <Header currentPage={currentPage} />
-      <h1>Welcome, {name}!</h1>
-
-      <h2>User Details:</h2>
-      <button onClick={toggleEditMode}>
-        {editable ? 'Cancel Edit' : 'Edit Profile'}
-      </button>
-      {editable && (
-        <button onClick={handleProfileUpdate}>
-          Save Changes
-        </button>
-      )}
-      {
-        userDetails ? (
-          <div>
-            <div>
-              <p>Pfp:</p>
-              {editable ? (
-                <>
-                  <input type="text" value={updatedPfpUrl} onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)} />
-                  {updatedPfpUrl && (
-                    <img src={updatedPfpUrl} alt="Profile Preview" style={{ maxWidth: '100px', maxHeight: '100px', marginLeft: '10px' }} />
-                  )}
-                </>
-              ) : userDetails.pfp_url ? (
-                <img src={userDetails.pfp_url} alt="Profile" style={{ maxWidth: '100px', maxHeight: '100px' }} />
-              ) : (
-                <p>No profile picture set.</p>
-              )}
-            </div>
-            <p>Name: {userDetails.name}</p>
-            <p>Username:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
-            <p>Email:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedEmail)} /> : userDetails.email}</p>
-            <p>Primary Language: {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
-            <p>SecondaryLanguage: {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
-            <p>Title:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
-            <p>Bio:  {editable ? <input type="text" onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)} /> : userDetails.buddy_bio}</p>
-            <div>
-  {!editable && (
-    <div>
-      <p>Programming Languages and Technologies:</p>
-      <ul>
-        {userDetails.programmingLanguages && userDetails.programmingLanguages.map((language, index) => (
-          <li key={index}>{language}</li>
-        ))}
-      </ul>
-    </div>
-  )}
-  {editable && (
-    <div>
-      <p>Select Programming Languages and Technologies:</p>
-      {codeLanguageArray.map((tech, index) => (
-        <div key={index}>
-          <input
-            type="checkbox"
-            id={`tech-${index}`}
-            name="tech"
-            value={tech}
-            checked={selectedTech.includes(tech)}
-            onChange={handleTechChange}
-          />
-          <label htmlFor={`tech-${index}`}>{tech}</label>
+      <div className={styles.mainContent}>
+        <aside className={styles.profileSidebar}>
+        <div className={styles.editIcon} onClick={toggleEditMode} style={{ position: 'absolute', top: '0', right: '0' }}>
+          <FontAwesomeIcon icon={faEdit} />
         </div>
-      ))}
-    </div>
-  )}
-</div>
-
+          <div className={styles.profilePictureSection}>
+            {editable ? (
+              <>
+                <input type="text" value={updatedPfpUrl} onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)} />
+                {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
+              </>
+            ) : userDetails.pfp_url ? (
+              <img src={userDetails.pfp_url} alt="Profile" className={styles.profilePicture} />
+            ) : (
+              <p>No profile picture set.</p>
+            )}
           </div>
-        ) : (
-          <p className='loading-user-details'>Loading user details...</p>
-        )
-      }
-      {!isBuddy && (
-        <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
-      )}
-      {isAdmin && (
-        <div>
-          <button onClick={() => setViewingDemoteBuddy(!viewingDemoteBuddy)}>
-            {viewingDemoteBuddy ? 'Hide Demote Buddies' : 'Manage Buddies'}
-          </button>
-          {viewingDemoteBuddy ? (
-            <DemoteBuddy buddies={buddies} demoteFromBuddy={demoteFromBuddy} />
-          ) : (
-            <div className={styles.receivedMessagesHeader}>
-              {viewingDeleted ? (
-                <DeletedMessages messages={deletedMessages} viewingDeleted={viewingDeleted} setViewingDeleted={setViewingDeleted} />
-              ) : (
-                <ReceivedMessages
-                  messages={receivedMessages}
-                  promoteToBuddy={promoteToBuddy}
-                  handleSoftDelete={handleSoftDelete}
-                  fetchReceivedMessages={fetchReceivedMessages}
-                  viewingDeleted={viewingDeleted}
-                  setViewingDeleted={setViewingDeleted}
-                />
-              )}
-              <h3>You are an admin!</h3>
+          <div className={styles.profileDetails}>
+            <p>Name: {userDetails.name}</p>
+            <p>Title: {editable ? <input type="text" value={updatedTitle} onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
+            <p>Username: {editable ? <input type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
+            <p>Status: {isAdmin ? 'Admin' : isBuddy ? 'Buddy' : 'User'}</p>
+            <p>Primary Language: {editable ? <input type="text" value={updatedPrimaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
+            <p>Secondary Language: {editable ? <input type="text" value={updatedSecondaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
+            <div className={styles.programmingLanguagesSection}>
+              <p>Programming Languages and Technologies:</p>
+              <ul>
+                {userDetails.programmingLanguages.map((language, index) => (
+                  <li key={index}>{language}</li>
+                ))}
+              </ul>
             </div>
+            {editable && (
+              <div>
+                <p>Email: <input type="text" value={updatedEmail} onChange={(e) => handleInputChange(e, setUpdatedEmail)} /></p>
+                <p>Select Programming Languages and Technologies:</p>
+                {codeLanguageArray.map((tech, index) => (
+                  <div key={index}>
+                    <input
+                      type="checkbox"
+                      id={`tech-${index}`}
+                      name="tech"
+                      value={tech}
+                      checked={selectedTech.includes(tech)}
+                      onChange={handleTechChange}
+                    />
+                    <label htmlFor={`tech-${index}`}>{tech}</label>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </aside>
+        <div className={styles.contentRightOfSidebar}>
+          <div className={styles.topContent}>
+            <div className={styles.profileBio}>
+              <h2>Bio</h2>
+              {editable ? (
+                <textarea onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)} value={updatedBuddyBio}></textarea>
+              ) : (
+                <p>{userDetails.buddy_bio}</p>
+              )}
+            </div>
+            <div className={styles.messagesBox}>
+              {!isBuddy && (
+                <div className={styles.requestToBecomeBuddySection}>
+                  <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
+                </div>
+              )}
+              {isAdmin && (
+                <div className={styles.adminSection}>
+                  <button onClick={() => setViewingDemoteBuddy(!viewingDemoteBuddy)}>
+                    {viewingDemoteBuddy ? 'Hide Demote Buddies' : 'Manage Buddies'}
+                  </button>
+                  {viewingDemoteBuddy ? (
+                    <DemoteBuddy buddies={buddies} demoteFromBuddy={demoteFromBuddy} />
+                  ) : (
+                    <div>
+                      {viewingDeleted ? (
+                        <DeletedMessages messages={deletedMessages} viewingDeleted={viewingDeleted} setViewingDeleted={setViewingDeleted} />
+                      ) : (
+                        <ReceivedMessages
+                          messages={receivedMessages}
+                          promoteToBuddy={promoteToBuddy}
+                          handleSoftDelete={handleSoftDelete}
+                          fetchReceivedMessages={fetchReceivedMessages}
+                          viewingDeleted={viewingDeleted}
+                          setViewingDeleted={setViewingDeleted}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className={styles.editButtonSection}>
+          <button onClick={toggleEditMode} className={styles.editButton}>
+            {editable ? 'Cancel Edit' : 'Edit Profile'}
+          </button>
+          {editable && (
+            <button onClick={handleProfileUpdate} className={styles.saveChangesButton}>
+              Save Changes
+            </button>
           )}
         </div>
-      )}
-      <h2>This is where you will find your user details and attended event history</h2>
+      </div>
     </div>
   );
-};
+  
+}
 
 export default Profile;
