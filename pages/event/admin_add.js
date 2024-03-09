@@ -15,6 +15,7 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
   const [secondaryBuddy, setSecondaryBuddy] = useState("")
   const [primaryLanguage, setPrimaryLanguage] = useState("")
   const [secondaryLanguage, setSecondaryLanguage] = useState("")
+  const [additionalInfo, setAdditionalInfo] = useState("")
   const [secondaryLanguageLabel, setSecondaryLanguageLabel] = useState(false)
   const [secondaryLanguageArray, setSecondaryLanguageArray] = useState(codeLanguageArray)
   const [primaryLanguageArray, setPrimaryLanguageArray] = useState(codeLanguageArray)
@@ -77,7 +78,7 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
         selectedDateWithTime = connectedDateAndTime.toISOString();
       }
 
-      const results = await fetchAdminAddEvent (primaryBuddy, secondaryBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink);
+      const results = await fetchAdminAddEvent (primaryBuddy, secondaryBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink, additionalInfo);
       console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
 
       
@@ -88,7 +89,8 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
         setSecondaryLanguage("");
         setSecondaryLanguageLabel("");
         setZoomLink("");
-        setSuccessMessage(true)
+        setSuccessMessage(true);
+        setAdditionalInfo("")
       }
 
     } catch (error) {
@@ -140,7 +142,7 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
                 <option value="open">open</option>
                 <option value="closed">closed</option>
                 <option value="Hollye">Hollye</option>
-                <option value="Catherine">Catherine</option>
+                <option value="cmugnai">cmugnai</option>
               </select>  
             </div>
             <div className="add-event-select-border">
@@ -171,6 +173,11 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
             <div className="add-event-select-border">
               {zoomLink && <label className="add-event-select-label">Zoom Meeting Link</label>}
               <input className="add-event-select text-entry" type="text" placeholder="Zoom Meeting Link" id="zoom-link" onChange={(event) => {setZoomLink(event.target.value)}} required>
+              </input>
+            </div>
+            <div className="add-event-select-border">
+              {additionalInfo && <label className="add-event-select-label">Additional Event Details</label>}
+              <input className="add-event-select text-entry" type="text" placeholder="Additional Event Details" id="add-info" onChange={(event) => {setAdditionalInfo(event.target.value)}} required>
               </input>
             </div>
             <div className="add-event-form-button-container">
