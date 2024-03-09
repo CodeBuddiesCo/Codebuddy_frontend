@@ -25,6 +25,11 @@
   margin-left: 20px; /* Space between sidebar and this section */
 }
 
+.profilePicture{
+  max-height: 200px;;
+  max-width: 200px;
+}
+
 .profileBio {
   flex: 1; /* Allows it to take up space appropriately */
   margin-right: 20px; /* Spacing between bio and details */
