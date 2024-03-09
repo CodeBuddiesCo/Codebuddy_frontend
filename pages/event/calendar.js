@@ -74,10 +74,9 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
       {!loading &&<div>
         <div className="calendar-all-content">
           <div className="calendar-main-content">
-            <h1 className="calendar-header">Codebuddy Calendar of Events</h1>
             <div>
               <div className="calendar-month">
-                <h1>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h1>
+              <h1 className="calendar-header">{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()} Events</h1>
                 <button onClick={prevMonth}>Previous</button>
                 <button onClick={nextMonth}>Next</button>
                 {isBuddy && !isAdmin &&<Link href="/event/add"><button>Add Event</button></Link>}
@@ -120,7 +119,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                     <div className="calendar-event-container" key={event.event_id} >
                       {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
                         {format(parseISO(event.date_time), 'd') === day.key  && <div>
-                          <div className="calendar-event-text">{format(parseISO(event.date_time), 'p')} - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</div>
+                          <div className="calendar-event-text"><span className="calendar-event-text bold">{format(parseISO(event.date_time), 'p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code</div>
                         </div>}
                       </div>}
                     </div>

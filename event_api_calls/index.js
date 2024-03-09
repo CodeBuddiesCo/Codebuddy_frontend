@@ -68,7 +68,7 @@ export async function fetchAddEvent(secondBuddy, primaryLanguage, secondaryLangu
   }
 }
 
-export async function fetchAdminAddEvent(primaryBuddy, secondaryBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink) {
+export async function fetchAdminAddEvent(primaryBuddy, secondaryBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink, additionalInfo) {
   try {
     const header = setHeader()
 
@@ -84,7 +84,8 @@ export async function fetchAdminAddEvent(primaryBuddy, secondaryBuddy, primaryLa
           secondary_language: secondaryLanguage,
           date_time: selectedDateWithTime,
           spots_available: 3,
-          meeting_link: zoomLink
+          meeting_link: zoomLink,
+          additional_info: additionalInfo
         }
       )
     });

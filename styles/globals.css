@@ -424,14 +424,17 @@ input:-webkit-autofill:active{
 .calendar-days-container {
   display: flex;
   flex-wrap: wrap;
-  width: 75vw;
+  width: 85vw;
   margin-top: 40px;
   padding: 0;
 }
 .calendar-days {
   display: flex;
   width: 14%;
-  height: 25px;
+  height: 44px;
+  color: #8C4C35;
+  font-size: 14px;
+  font-weight: 300;
   border: .1px solid #D9D9D9;
   background-color:#F2EBEC;
   text-align: center;
@@ -442,7 +445,7 @@ input:-webkit-autofill:active{
 .calendar-dates-container {
   display: flex;
   flex-wrap: wrap;
-  width: 75vw;
+  width: 85vw;
   color: #8C4C35;
 }
 .calendar-dates {
@@ -451,17 +454,18 @@ input:-webkit-autofill:active{
   border: .1px solid #D9D9D9;
   margin-top: -1px;
   margin-left: -1px;
-  overflow: auto;
-
+  overflow: hidden;
 }
 .calendar-date-num {
-margin: 5px;
+  display: flex;
+  justify-content: end;
+  margin: 5px;
 }
 .calendar-event-container {
- background-color:#F2EBEC;
- border-radius: 5px;
- margin: 4px;
- color: #8c4c35;
+  border-left: 2px solid #8C4C35;
+  border-radius: 5px;
+  margin: 7px;
+  color: #939393;
 }
 .calendar-event-text{
   font-weight: 600px;
@@ -469,6 +473,12 @@ margin: 5px;
   font-size: 11px;
   margin: 3px;
   padding: 3px;
+}
+.calendar-event-text.bold{
+  font-weight: 900;
+  color:#8C4C35;
+  padding: 0;
+  margin: 0;
 }
 .add-event-calendar-button{
   display: none;
@@ -478,15 +488,16 @@ margin: 5px;
 }
 .calendar-popout-container {
   width: 350px;
-  height: 80vw;
+  height: auto;
+  min-height: 500px;
   position: fixed;
-  top: 150px;
-  bottom: 0%;
-  right: -25%;
+  top: 175px;
+  right: -500%;
   z-index: 0;
   box-shadow: -6px 6px 2px 0px rgba(0, 0, 0, 0.10);
   border-radius: 10px;
-  background-color:#F2EBEC;
+  background-color: white;
+  border: .1px solid rgba(0, 0, 0, 0.10);
   transition: right .3s ease;
 }
 .calendar-popout-container.open {
