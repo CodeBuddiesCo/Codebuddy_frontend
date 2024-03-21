@@ -94,10 +94,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     if (isBioEditable) setIsBioEditable(false);
   };
 
-  // Function to toggle edit mode for the bio section
   const toggleBioEditMode = () => {
     setIsBioEditable(!isBioEditable);
-    // Optionally, disable sidebar editing when enabling bio editing
     if (isSidebarEditable) setIsSidebarEditable(false);
   };
 
