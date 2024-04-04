@@ -23,3 +23,13 @@ function StyleStandards() {
   }
   
   export default StyleStandards;
+
+  // .color1 { background-color: #F2EBEC; } Light pink 
+  // .color2 { background-color: #8A99A6; }  Gray-blue 
+  // .color3 { background-color: #D98D62; }  Terracotta orange 
+  // .color4 { background-color: #8C4C35; } Deep brown 
+  // .color5 { background-color: #BF6A4B; }  Warm brow
+  // .color6 { background-color: #6A7680; }  Dark gray-blue 
+  // .color7 { background-color: #D9D9D9; }  Light gray 
+  // .color8 { background-color: #939393; }  Medium gray 
+  // .color9 { background-color: #ededed; }  Very light gray 
