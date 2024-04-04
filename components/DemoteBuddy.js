@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../styles/authForms.module.css';
+import styles from '../styles/profile.module.css';
 
 const DemoteBuddy = ({ buddies, demoteFromBuddy }) => {
   return (

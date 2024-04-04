@@ -44,6 +44,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [isSidebarEditable, setIsSidebarEditable] = useState(false);
   const [isBioEditable, setIsBioEditable] = useState(false);
 
+
   useEffect(() => {
     setCurrentPage("User Profile");
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
@@ -132,6 +133,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     } catch (error) {
       console.error('Exception:', error);
       alert('Error while updating user details');
+
+
     }
     console.log("Updated Data:", updatedData);
   };
@@ -306,17 +309,18 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     <div className={styles.profilePageContainer}>
       < Header />
       <div className={styles.mainContent}>
+
         <aside className={`${styles.profileSidebar} ${styles.relativePosition}`}>
-          {!isSidebarEditable ? ( 
-            <div className={styles.editIcon} onClick={toggleSidebarEditMode} style={{ cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
+          {!isSidebarEditable ? (
+            <div className={styles.editIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
               <FontAwesomeIcon icon={faEdit} />
             </div>
-          ) : ( 
-            <div className={styles.editOptions} style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+          ) : (
+            <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
               <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
                 <FontAwesomeIcon icon={faSave} />
               </div>
-              <div className={styles.cancelIcon} onClick={toggleSidebarEditMode} style={{ cursor: 'pointer' }}>
+              <div className={styles.cancelIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer' }}>
                 <FontAwesomeIcon icon={faTimes} />
               </div>
             </div>
@@ -340,30 +344,35 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             )}
           </div>
           <div className={styles.profileName}>
-            <p>{userDetails.name}</p>
+            <p className={styles.nameHeader}>{userDetails.name}</p>
           </div>
           <div className={styles.profileUsername}>
-            <p>{isSidebarEditable ? <input type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
+            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
           </div>
           <div className={styles.profileDetails}>
-            <p><strong>Title:</strong><br />{isSidebarEditable ? <input type="text" value={updatedTitle} onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
-            <p><strong>Status:</strong><br />{isAdmin ? 'Admin' : isBuddy ? 'Buddy' : 'User'}</p>
-            <p><strong>Primary Language:</strong><br />{isSidebarEditable ? <input type="text" value={updatedPrimaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
-            <p><strong>Secondary Language:</strong><br />{isSidebarEditable ? <input type="text" value={updatedSecondaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
+            <p className={styles.detailTitle}><strong>Title</strong></p>
+            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedTitle} onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
+            <p className={styles.detailTitle}><strong>Status</strong></p>
+            <p className={styles.dataContent}>{isAdmin ? 'Admin' : isBuddy ? 'Buddy' : 'User'}</p>
+            <p className={styles.detailTitle}><strong>Primary Language</strong></p>
+            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedPrimaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
+            <p className={styles.detailTitle}><strong>Secondary Language</strong></p>
+            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedSecondaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
             <div className={styles.programmingLanguagesSection}>
-              <p><strong>Programming Languages and Technologies:</strong></p>
-              <ul>
+              <p className={styles.detailTitle}><strong>Programming Languages and Technologies</strong></p>
+              <ul className={styles.techList}>
                 {userDetails.programmingLanguages.map((language, index) => (
-                  <li key={index}>{language}</li>
+                  <li key={index} className={styles.dataContent}>{language}</li>
                 ))}
               </ul>
             </div>
             {isSidebarEditable && (
               <div>
-                <p>Email:<br /><input type="text" value={updatedEmail} onChange={(e) => handleInputChange(e, setUpdatedEmail)} /></p>
-                <p>Select Programming Languages and Technologies:</p>
+                <p className={styles.detailTitle}>Email:</p>
+                <p className={styles.dataContent}><input type="text" value={updatedEmail} onChange={(e) => handleInputChange(e, setUpdatedEmail)} /></p>
+                <p className={styles.detailTitle}>Select Programming Languages and Technologies:</p>
                 {codeLanguageArray.map((tech, index) => (
-                  <div key={index}>
+                  <div key={index} className={styles.dataContent}>
                     <input
                       type="checkbox"
                       id={`tech-${index}`}
@@ -379,7 +388,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             )}
           </div>
         </aside>
-
         <div className={styles.contentRightOfSidebar}>
           <div className={styles.topContent}>
             <div className={`${styles.profileBio} ${styles.relativePosition}`}>
@@ -397,7 +405,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
                   </div>
                 </div>
               )}
-              <h2>Bio</h2>
+              <h2 className={styles.bioHeader}>Bio</h2>
               {isBioEditable ? (
                 <textarea
                   className={`${styles.textAreaField} ${isBioEditable ? styles.bioEdit : ''}`}
@@ -410,43 +418,64 @@ const Profile = ({ setCurrentPage, currentPage }) => {
               )}
             </div>
             <div className={styles.messagesBox}>
-              {!isBuddy && (
-                <div className={styles.requestToBecomeBuddySection}>
-                  <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
-                </div>
-              )}
-              {isAdmin && (
-                <div className={styles.adminSection}>
-                  <button onClick={() => setViewingDemoteBuddy(!viewingDemoteBuddy)}>
-                    {viewingDemoteBuddy ? 'Hide Demote Buddies' : 'Manage Buddies'}
-                  </button>
-                  {viewingDemoteBuddy ? (
-                    <DemoteBuddy buddies={buddies} demoteFromBuddy={demoteFromBuddy} />
-                  ) : (
-                    <div>
-                      {viewingDeleted ? (
-                        <DeletedMessages messages={deletedMessages} viewingDeleted={viewingDeleted} setViewingDeleted={setViewingDeleted} />
-                      ) : (
-                        <ReceivedMessages
-                          messages={receivedMessages}
-                          promoteToBuddy={promoteToBuddy}
-                          handleSoftDelete={handleSoftDelete}
-                          fetchReceivedMessages={fetchReceivedMessages}
-                          viewingDeleted={viewingDeleted}
-                          setViewingDeleted={setViewingDeleted}
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+  {!isBuddy && (
+    <div className={styles.requestToBecomeBuddySection}>
+      <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
+    </div>
+  )}
+  {isAdmin && (
+    <div className={styles.adminSection}>
+      <div className={styles.tabs}>
+        <button
+          onClick={() => setViewingDemoteBuddy(false)}
+          className={!viewingDemoteBuddy ? styles.activeTabMain : styles.tabButtonMain}
+        >
+          Requests
+        </button>
+        <button
+          onClick={() => setViewingDemoteBuddy(true)}
+          className={viewingDemoteBuddy ? styles.activeTabMain : styles.tabButtonMain}
+        >
+          Manage Buddies
+        </button>
+      </div>
+      
+      {!viewingDemoteBuddy ? (
+        <>
+          {viewingDeleted ? (
+            <DeletedMessages 
+              messages={deletedMessages} 
+              viewingDeleted={viewingDeleted} 
+              setViewingDeleted={setViewingDeleted} />
+          ) : (
+            <ReceivedMessages
+              messages={receivedMessages}
+              promoteToBuddy={promoteToBuddy}
+              handleSoftDelete={handleSoftDelete}
+              fetchReceivedMessages={fetchReceivedMessages}
+              viewingDeleted={viewingDeleted}
+              setViewingDeleted={setViewingDeleted}
+            />
+          )}
+        </>
+      ) : (
+        <DemoteBuddy 
+          buddies={buddies} 
+          demoteFromBuddy={demoteFromBuddy} />
+      )}
+    </div>
+  )}
+</div>
+
+
+
+            
             <div className={styles.eventsBox}>
-              <h2>Events</h2>
+              <h2 className={styles.eventsHeader}>Events</h2>
               {/* Events content goes here */}
             </div>
             <div className={styles.placeholderBox}>
-              <h2>Placeholder</h2>
+              <h2 className={styles.placeholderHeader}>Placeholder</h2>
               {/* Placeholder or additional content */}
             </div>
           </div>
