@@ -419,10 +419,14 @@ input:-webkit-autofill:active{
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 125px;
+  margin-top: 135px;
 }
 .calendar-all-content {
   display: flex;  
+}
+.calendar-main-content{
+  display: flex;
+  align-items: center;
 }
 .calendar-controls{
   display: flex;
@@ -442,23 +446,32 @@ input:-webkit-autofill:active{
   font-weight: 600;
   color:#6A7680;
   padding: 0px;
+  margin: 0px;
 }
 .calendar-add-button-container{
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   margin-top: -40px;
-  margin-right: 6px;
   margin-bottom: 8px;
+}
+.material-symbols-outlined.return{
+  border:none;
+  height:auto;
+  font-size: 40px;
+  margin: 0px;
+  margin-left: -5px;
+  padding: 0px;
+  margin-right: auto;
 }
 .material-symbols-outlined.add-button{
   border:none;
   height:auto;
   font-size: 40px;
   margin: 0px;
+  margin-left: auto;
 }
 .calendar-days-container {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
   width: 85vw;
   margin-top: 5px;
@@ -466,7 +479,7 @@ input:-webkit-autofill:active{
 }
 .calendar-days {
   display: flex;
-  width: 14%;
+  width: 14.19%;
   height: 44px;
   color: #8C4C35;
   font-size: 14px;
@@ -480,31 +493,46 @@ input:-webkit-autofill:active{
 }
 .calendar-dates-container {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
   width: 85vw;
   color: #8C4C35;
 }
 .calendar-dates {
-  width: 14%;
+  width: 14.19%;
   height: 150px;
   border: .1px solid #D9D9D9;
   margin-top: -1px;
   margin-left: -1px;
   overflow: hidden;
 }
-.calendar-dates.overflow{
-  background-color: #6a7680;
+.calendar-num-add-container{
+  display: flex;
+  justify-content: end;
+  margin: 7px;
+}
+.material-symbols-outlined.add-buttons{
+  display: none;
+  border:none;
+  height: auto;
+  padding: 0px;
+  padding-top: 2px;
+  text-align: left;
+  font-size: 24px;
+  margin: 0px;
+  margin-right: auto;
+}
+.calendar-dates:hover .material-symbols-outlined.add-buttons {
+  display: block;
 }
 .calendar-date-num {
-  display: flex;
-  justify-content: flex-end;
   margin: 5px;
+  margin-left: auto;
 }
 .calendar-event-container {
   border-left: 2px solid #8C4C35;
   border-radius: 5px;
-  margin: 7px;
+  margin: 5px;
+  margin-left: 9px;
   color: #939393;
 }
 .calendar-event-text{
@@ -520,15 +548,10 @@ input:-webkit-autofill:active{
   padding: 0;
   margin: 0;
 }
-.add-event-calendar-button{
-  display: none;
-}
-.calendar-dates:hover .add-event-calendar-button {
-  display: block;
-}
 .calendar-popout-container {
-  width: 275px;
+  width: 320px;
   height: auto;
+  padding: 20px;
   min-height: 500px;
   position: fixed;
   top: 175px;
@@ -567,7 +590,9 @@ input:-webkit-autofill:active{
   width: 200px;
   margin-bottom: 10px;
 }
-
+.empty-control:empty{
+  display: none;
+}
 /** Loading Component */
 
 .loading-page{

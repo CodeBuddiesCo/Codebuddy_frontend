@@ -1,27 +1,21 @@
 import { useState, useEffect, useRef} from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { fetchAllEvents } from "../../event_api_calls";
 import { parseISO, format } from 'date-fns';
 import React from 'react'
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Link from "next/link";
-
+import { useRouter } from "next/router";
 
 function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage}) {
+  const router = useRouter()
   const [state, setState] = useState({currentDate: new Date(),});
-  const [popout, setPopout] = useState(false);
   const [detailedDay, setDetailedDay] = useState(10)
   const [toggle, setToggle] = useState("calendar-popout-container")
   const { currentDate } = state;
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
   const days = [];
-  // const [isOverflowing, setIsOverflowing] = useState(false);
-  // const [overflowStyling, setOverFlowStyling] = useState("calendar-dates")
-  // const divRef = useRef(null);
-
 
   /* This is constructing a date object with the year, the month following the current month, and then calling the day
   before the first of that month (0), to get the previous day which was the last day of that month and then calling getDate to
@@ -62,36 +56,22 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
       console.error   
     }
   }
-  
-  // const handleOverflowCheck = () => {
-  //   const div = divRef.current;
-  //   if (div) {
-  //     const isOverflowingVertically = div.scrollHeight > div.clientHeight;
-  //     console.log(div.clientHeight)
-  //     if (isOverflowingVertically) {
-  //       setOverFlowStyling("calendar-dates overflow")
-  //     }
-  //     setIsOverflowing(isOverflowingVertically);
-  //   }
-  // }
-  
+
+  const backToCurrentMonth = () => {
+    Link
+  }
 
   useEffect(() => {
-    // window.addEventListener('resize', handleOverflowCheck);
     setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     setIsAdmin(JSON.parse(window.localStorage.getItem("isAdmin")));
     getAllEvents();
     setCurrentPage("Event Calendar")
-    // handleOverflowCheck();
     console.log(new Date(currentDate.getFullYear(), (currentDate.getMonth()), detailedDay))
   }, []);
 
   return (
-    
-    <div className="calendar-page" id="test" onClick={()=> setToggle("calendar-popout-container")}>
-      <head>
+    <div className="calendar-page" id="empty-control" onClick={()=> setToggle("calendar-popout-container")}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" />
-      </head>
       <Header {...currentPage={currentPage}}/>
       <div className="header-background"></div>
       {loading && <Loading/>}
@@ -103,43 +83,45 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                 <button className="material-symbols-outlined" onClick={prevMonth}>arrow_back</button>
                 <p className="calendar-header">{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</p>
                 <button className="material-symbols-outlined" onClick={nextMonth}>arrow_forward</button>
-              </div>--
+              </div>
               <div className="calendar-add-button-container">
-                {isBuddy && !isAdmin &&<Link href="/event/add" title="add event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
-                {isAdmin &&<Link href="/event/admin_add" title="add event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
+                {(currentDate.getMonth() +1) > (new Date().getMonth() +1) &&<button onClick={() => router.reload()} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
+                {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
+                {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
               </div>     
               <div className="calendar-days-container"> 
                 {daysOfWeek.map((day)=>(<div key={day} className="calendar-days">{day}</div>))}
               </div>
               <div className="calendar-dates-container">
                 {days.map((day) =>(<div key={day.key} className="calendar-dates" onClick={(e) => {e.stopPropagation(); if (day.key > 0) {setToggle("calendar-popout-container open"); setDetailedDay(day.key)} else {setToggle("calendar-popout-container")}}} >
-                  <div>{day.key > 0 && <h4 className="calendar-date-num">{day.key}</h4>}
-                    {isBuddy && !isAdmin &&<div>
+                  <div className="calendar-num-add-container">
+                    {isBuddy && !isAdmin &&<div className="empty-control">
                       {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
-                        {day.key > 0 &&<Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                        {day.key > 0 &&<Link href="/event/add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>calendar_add_on</button></Link>}
                       </div>}
                       {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
-                        {day.key >= new Date().getDate() && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                        {day.key >= new Date().getDate() && <Link href="/event/add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>calendar_add_on</button></Link>}
                       </div>}
                     </div>}
-                    {isAdmin &&<div>
+                    {isAdmin &&<div className="empty-control">
                       {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) > (new Date().getMonth() +1)) && <div>
-                        {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                        {day.key > 0 &&<Link href="/event/admin_add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>calendar_add_on</button></Link>}
                       </div>}
                       {(currentDate.getFullYear() == new Date().getFullYear()) && ((currentDate.getMonth() +1) == (new Date().getMonth() +1)) && <div>
-                        {day.key >= new Date().getDate() && <Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                        {day.key >= new Date().getDate() && <Link href="/event/admin_add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>calendar_add_on</button></Link>}
                       </div>}
                     </div>}
-                    {isBuddy && !isAdmin &&<div>
-                      {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div>
-                        {day.key > 0 && <Link href="/event/add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                    {isBuddy && !isAdmin &&<div className="empty-control" >
+                      {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div className="empty-control">
+                        {day.key > 0 && <Link href="/event/add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>calendar_add_on</button></Link>}
                       </div>}
                     </div>}
-                    {isAdmin &&<div>
-                      {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div>
-                        {day.key > 0 &&<Link href="/event/admin_add"><button className="add-event-calendar-button" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>Add Event</button></Link>}
+                    {isAdmin &&<div className="empty-control">
+                      {((currentDate.getFullYear()) === (new Date().getFullYear()+1)) && <div className="empty-control">
+                        {day.key > 0 &&<Link href="/event/admin_add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day.key))}>calendar_add_on</button></Link>}
                       </div>}
                     </div>}
+                    {day.key > 0 && <h4 className="calendar-date-num">{day.key}</h4>}
                   </div>
                   {allEvents[0] && allEvents.map(event => (<Link href={`/event/details/${event.event_id}`}>
                     <div className="calendar-event-container" key={event.event_id} >
@@ -155,7 +137,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
             </div>
           </div>
           <div className={toggle}>
-            <button onClick={()=> {if (detailedDay > 0) {setToggle("calendar-popout-container")}}}><FontAwesomeIcon icon={faArrowRight}/></button>
+            <button onClick={()=> {if (detailedDay > 0) {setToggle("calendar-popout-container")}}}></button>
             <p>{format(parseISO(detailedDate), 'iiii LLLL do')}</p>
             {allEvents[0] && allEvents.map(event => (<Link href={`/event/details/${event.event_id}`}>
               <div  key={event.event_id} >
