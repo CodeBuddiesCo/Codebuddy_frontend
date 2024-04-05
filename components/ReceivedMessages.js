@@ -55,7 +55,7 @@ const ReceivedMessages = ({ messages, promoteToBuddy, handleSoftDelete, viewingD
                         <p>No messages available.</p>
                     </div>
                 )}
-                <button className={styles.refreshButton} onClick={fetchReceivedMessages}><FontAwesomeIcon icon={faTrash} /> Refresh Messages</button>
+                <button className={styles.refreshButton} onClick={fetchReceivedMessages}> Refresh Messages</button>
             </div>
         </div>
     );
