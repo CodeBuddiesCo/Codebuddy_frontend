@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/profile.module.css';
 
 const ReceivedMessages = ({ messages, promoteToBuddy, handleSoftDelete, viewingDeleted, setViewingDeleted, fetchReceivedMessages }) => {
@@ -12,41 +14,48 @@ const ReceivedMessages = ({ messages, promoteToBuddy, handleSoftDelete, viewingD
     return (
         <div className={styles.receivedMessagesContainer}>
             <div className={styles.tabContainer}>
-                <button 
-                  className={`${styles.tabButton} ${!viewingDeleted ? styles.activeTab : ''}`} 
-                  onClick={() => setViewingDeleted(false)}
+                <button
+                    className={`${styles.tabButton} ${!viewingDeleted ? styles.activeTab : ''}`}
+                    onClick={() => setViewingDeleted(false)}
                 >
-                  Buddy Requests
+                    Buddy Requests
                 </button>
-                <button 
-                  className={`${styles.tabButton} ${viewingDeleted ? styles.activeTab : ''}`} 
-                  onClick={() => setViewingDeleted(true)}
+                <button
+                    className={`${styles.tabButton} ${viewingDeleted ? styles.activeTab : ''}`}
+                    onClick={() => setViewingDeleted(true)}
                 >
-                  Deleted Requests
+                    Deleted Requests
                 </button>
             </div>
-            {/* <h3 className={styles.receivedMessagesHeader}>Buddy Requests:</h3> */}
             <div className={styles.messagesList}>
-                {messages.map((msg, index) => (
-                    <div key={index} className={styles.messageItem}>
-                        <button onClick={() => handleSoftDelete(msg.id, index)}>Delete</button>
-                        {promotedMessages[index] ? (
-                            <p><strong>{msg.sender_name} ({msg.sender_username}) has been promoted to a buddy.</strong></p>
-                        ) : (
-                            <div>
-                                <div className={styles.messageHeader}>
-                                    <span><strong>From:</strong> {msg.sender_name} ({msg.sender_username})</span>
-                                    <span>{new Date(msg.timestamp).toLocaleString()}</span>
+                {messages.length > 0 ? (
+                    messages.map((msg, index) => (
+                        <div key={index} className={styles.messageItem}>
+                            {promotedMessages[index] ? (
+                                <p><strong>{msg.sender_name} ({msg.sender_username}) has been promoted to a buddy.</strong></p>
+                            ) : (
+                                <div>
+                                    <div className={styles.messageHeader}>
+                                        <span><strong>From:</strong> {msg.sender_name} ({msg.sender_username})</span>
+                                        <span>{new Date(msg.timestamp).toLocaleString()}</span>
+                                    </div>
+                                    <p className={styles.messageContent}><strong>Message:</strong> {msg.message_content}</p>
+                                    <div className={styles.messageActions}>
+                                        <button className={styles.promoteButton} onClick={() => handlePromotion(msg.sender_id, index)}>Promote to Buddy</button>
+                                        <button className={styles.deleteButton} onClick={() => handleSoftDelete(msg.id, index)}>
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <p className={styles.messageContent}><strong>Message:</strong> {msg.message_content}</p>
-                                <div className={styles.messageActions}>
-                                    <button className={styles.promoteButton} onClick={() => handlePromotion(msg.sender_id, index)}>Promote to Buddy</button>
-                                </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    <div className={styles.noMessages}>
+                        <p>No messages available.</p>
                     </div>
-                ))}
-                <button onClick={fetchReceivedMessages}>Refresh Messages</button>
+                )}
+                <button className={styles.refreshButton} onClick={fetchReceivedMessages}><FontAwesomeIcon icon={faTrash} /> Refresh Messages</button>
             </div>
         </div>
     );
