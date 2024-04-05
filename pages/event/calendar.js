@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef, Children} from "react";
 import { fetchAllEvents } from "../../event_api_calls";
 import { parseISO, format } from 'date-fns';
 import React from 'react'
@@ -23,6 +23,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
   const detailedDate = (new Date(currentDate.getFullYear(), (currentDate.getMonth()), detailedDay)).toISOString()
+  
 
   for (let i = 0; i < firstDayOfMonth; i++) {
     days.push(<div className="calendar-day empty" key={`empty-${i}`}></div>);
@@ -123,6 +124,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                     </div>}
                     {day.key > 0 && <h4 className="calendar-date-num">{day.key}</h4>}
                   </div>
+                  <div>
                   {allEvents[0] && allEvents.map(event => (<Link href={`/event/details/${event.event_id}`}>
                     <div className="calendar-event-container" key={event.event_id} >
                       {format(parseISO(event.date_time), 'M') == (currentDate.getMonth() +1) && format(parseISO(event.date_time), 'y') == (currentDate.getFullYear()) && <div>
@@ -132,6 +134,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                       </div>}
                     </div>
                   </Link>))}
+                  </div>
                 </div>))}
               </div>
             </div>
