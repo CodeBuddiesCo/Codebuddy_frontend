@@ -426,12 +426,17 @@ input:-webkit-autofill:active{
 }
 .calendar-main-content{
   display: flex;
-  align-items: center;
+  flex-direction: column; 
+}
+.calendar-header{
+  display: flex;
+  flex-direction: column;
+  width: 84vw;
 }
 .calendar-controls{
   display: flex;
-   align-items: center;
-   justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 .material-symbols-outlined{
   color:#939393;
@@ -441,7 +446,7 @@ input:-webkit-autofill:active{
   border: 1px solid #939393;
   margin: 25px;
 }
-.calendar-header{
+.calendar-month{
   font-size: 42px;
   font-weight: 600;
   color:#6A7680;
@@ -451,9 +456,9 @@ input:-webkit-autofill:active{
 .calendar-add-button-container{
   display: flex;
   justify-content: space-between;
-  margin-top: -40px;
   margin-bottom: 8px;
   min-height: 40px;
+  width: 100%;
 }
 .material-symbols-outlined.return{
   border:none;
@@ -473,14 +478,13 @@ input:-webkit-autofill:active{
 }
 .calendar-days-container {
   display: flex;
-  flex-wrap: wrap;
   width: 85vw;
   margin-top: 5px;
-  padding: 0;
 }
 .calendar-days {
   display: flex;
-  width: 14.19%;
+  flex-wrap: nowrap;
+  width: 14.05%;
   height: 44px;
   color: #8C4C35;
   font-size: 14px;
@@ -499,7 +503,7 @@ input:-webkit-autofill:active{
   color: #8C4C35;
 }
 .calendar-dates {
-  width: 14.19%;
+  width: 14.05%;
   height: 150px;
   border: .1px solid #D9D9D9;
   margin-top: -1px;
@@ -520,7 +524,7 @@ input:-webkit-autofill:active{
   text-align: left;
   font-size: 24px;
   margin: 0px;
-  margin-right: auto;
+  /* margin-right: auto; */
 }
 .calendar-dates:hover .material-symbols-outlined.add-buttons {
   display: block;

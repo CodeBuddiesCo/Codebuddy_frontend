@@ -88,24 +88,23 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
     <div  className="calendar-page" onClick={()=> setToggle("calendar-popout-container")}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" />
       <Header {...currentPage={currentPage}} />
-      <div className="header-background"></div>
       {loading && <Loading/>}
-      {!loading &&<div >
-        <div  className="calendar-all-content">
+        {!loading &&<div  className="calendar-all-content">
           <div className="calendar-main-content">
-            <div>
+            <div className="calendar-header">
               <div className="calendar-controls">
                 <button title="Previous Month" className="material-symbols-outlined" onClick={prevMonth}>arrow_back</button>
-                <p className="calendar-header">{monthNames[chosenDate.getMonth()]} {chosenDate.getFullYear()}</p>
+                <p className="calendar-month">{monthNames[chosenDate.getMonth()]} {chosenDate.getFullYear()}</p>
                 <button title="Next Month" className="material-symbols-outlined" onClick={nextMonth}>arrow_forward</button>
               </div>
               <div className="calendar-add-button-container">
                 {chosenDate > todaysFullDate && <button onClick={() => router.reload()} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
                 {chosenDate < todaysYearMon && <button onClick={() => router.reload()} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
-                {console.log((chosenDate) , (new Date()))}
                 {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
                 {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
               </div>     
+            </div>
+              <div className="calendar-grid">
               <div className="calendar-days-container"> 
                 {daysOfWeek.map((day)=>(<div key={day} className="calendar-days">{day}</div>))}
               </div>
@@ -123,7 +122,8 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                         <Link href="/event/admin_add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(chosenDate.getFullYear(), chosenDate.getMonth(), day.key))}>calendar_add_on</button></Link>
                       </div>}
                     </div>}
-                    {day.key > 0 && <h4 className="calendar-date-num">{day.key} (Events: {eventCounts.find(e => e.day === day.key)?.count || 0})</h4>}
+                    {day.key > 0 && <h4 className="calendar-date-num">{day.key} </h4>}
+                    {/* <p>(Events: {eventCounts.find(e => e.day === day.key)?.count || 0})</p> */}
                   </div>
 
 
@@ -146,8 +146,9 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
             {/* you need to read and understand this text to see if you should use it or not*/} 
 
                 </div>))}
+                </div>
               </div>
-            </div>
+
           </div>
           <div className={toggle}>
             <button onClick={()=> {if (selectedDayToDetail > 0) {setToggle("calendar-popout-container")}}}></button>
@@ -169,8 +170,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
               </div>
             </Link>))}
           </div>
-        </div>
-      </div>}
+        </div>}
     </div>
   )
 }
