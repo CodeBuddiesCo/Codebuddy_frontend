@@ -465,7 +465,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         <div className={styles.centerColumns}>
           <div className={styles.centerColumn}>
 
-            <div className={`${styles.profileBio} ${styles.relativePosition}`}>
+            <div className={`${styles.topCenterPlaceholder} ${styles.relativePosition}`}>
               {!isBioEditable ? (
                 <div className={styles.editIcon} onClick={toggleBioEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
                   <FontAwesomeIcon icon={faEdit} />
@@ -480,7 +480,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
                   </div>
                 </div>
               )}
-              <h2 className={styles.bioHeader}>Biography</h2>
+              <h2 className={styles.bioHeader}>Placeholder</h2>
               {isBioEditable ? (
                 <textarea
                   className={`${styles.textAreaField} ${isBioEditable ? styles.bioEdit : ''}`}
