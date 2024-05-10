@@ -28,7 +28,7 @@
 
 .sidebarItem {
   flex-shrink: 1;
-  overflow: hidden;
+  /* overflow: hidden; */
   text-overflow: ellipsis;
   white-space: nowrap;
 }
