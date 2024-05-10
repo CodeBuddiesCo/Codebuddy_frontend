@@ -9,16 +9,18 @@ import Header from '../../components/Header';
 import RequestToBecomeBuddy from './become-a-buddy';
 import styles from '../../styles/profile.module.css';
 import { codeLanguageArray } from '../../Arrays/CodeLanguageArray';
+import { useRouter } from 'next/router';
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
-  const [receivedMessages, setReceivedMessages] = useState([]);
+  // const [receivedMessages, setReceivedMessages] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
-  const [deletedMessages, setDeletedMessages] = useState([]);
-  const [viewingDeleted, setViewingDeleted] = useState(false);
-  const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
+  // const [deletedMessages, setDeletedMessages] = useState([]);
+  // const [viewingDeleted, setViewingDeleted] = useState(false);
+  // const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
+  const router = useRouter();
 
   const [userDetails, setUserDetails] = useState({
     username: '',
@@ -31,7 +33,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     programmingLanguages: []
   });
 
-  const [buddies, setBuddies] = useState([]);
+  // const [buddies, setBuddies] = useState([]);
   const [updatedUsername, setUpdatedUsername] = useState('');
   const [updatedEmail, setUpdatedEmail] = useState('');
   const [updatedTitle, setUpdatedTitle] = useState('');
@@ -50,10 +52,10 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
-    fetchReceivedMessages();
-    fetchDeletedMessages();
+    // fetchReceivedMessages();
+    // fetchDeletedMessages();
     fetchUserDetails();
-    fetchBuddies();
+    // fetchBuddies();
   }, [setCurrentPage, session?.user?.name]);
 
   useEffect(() => {
@@ -91,7 +93,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 
   const toggleSidebarEditMode = () => {
     setIsSidebarEditable(!isSidebarEditable);
-    // Optionally, disable bio editing when enabling sidebar editing
     if (isBioEditable) setIsBioEditable(false);
   };
 
@@ -162,241 +163,315 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
   };
 
-  const handleSoftDelete = async (messageId, index) => {
-    const token = localStorage.getItem('token');
-    const newReceivedMessages = [...receivedMessages];
-    const deletedMsg = newReceivedMessages.splice(index, 1)[0];
-
-    setDeletedMessages([...deletedMessages, deletedMsg]);
-    setReceivedMessages(newReceivedMessages);
-
-    try {
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/message/${messageId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 200) {
-        try {
-          const textResponse = await response.text();
-          console.log('Raw server response:', textResponse);
-
-
-          const deletedMessageData = JSON.parse(textResponse);
-          console.log('Parsed server response:', deletedMessageData);
-        } catch (error) {
-          console.error('Failed to parse JSON:', error);
-        }
-        alert('Message marked for deletion');
-        fetchReceivedMessages();
-      } else {
-        newReceivedMessages.splice(index, 0, deletedMsg);
-        setReceivedMessages(newReceivedMessages);
-      }
-    } catch (error) {
-      console.error('Exception:', error);
-    }
-  };
-
-  const fetchDeletedMessages = async () => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/deletedMessages/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 200) {
-        setDeletedMessages(await response.json());
-      } else {
-        console.error(`Server responded with status: ${response.status}`);
-        const data = await response.json();
-        console.log('Server response:', data);
-
-        const responseData = await response.json();
-        console.error('Response data:', responseData);
-      }
-    } catch (error) {
-      console.error('Exception:', error);
-    }
-  };
-
-  const fetchReceivedMessages = async () => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/messages/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 200) {
-        const allMessages = await response.json();
-        const filteredMessages = allMessages.filter(msg => !msg.marked_for_deletion && !msg.sender_is_buddy);
-        setReceivedMessages(filteredMessages);
-        console.log('All messages:', allMessages);
-
-      }
-    } catch (error) {
-      console.error('Exception:', error);
-    }
-  };
-
-  const promoteToBuddy = async (userId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/promote/${userId}`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 200) {
-        alert('User successfully promoted to buddy');
-      } else {
-        alert('Failed to promote user: ' + (await response.json()).message || 'Unknown error');
-      }
-    } catch (error) {
-      console.error('Exception:', error);
-    }
-  };
-
-  const demoteFromBuddy = async (userId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/demote/${userId}`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 200) {
-        alert('User successfully demoted from buddy');
-        fetchBuddies();
-      } else {
-        const errorResponse = await response.json();
-        alert(`Failed to demote user: ${errorResponse.error || 'Unknown error'}`);
-      }
-    } catch (error) {
-      console.error('Exception:', error);
-      alert('Error while demoting user');
-    }
-  };
-
-  const fetchBuddies = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 200) {
-        const allUsers = await response.json();
-        const buddies = allUsers.filter(user => user.is_buddy);
-        setBuddies(buddies);
-      } else {
-        console.error(`Server responded with status: ${response.status}`);
-        alert('Failed to fetch users');
-      }
-    } catch (error) {
-      console.error('Exception:', error);
-      alert('Error while fetching users');
-    }
-  };
 
   return (
-    <div className={styles.profilePageContainer}>
-      < Header />
-      <div className={styles.mainContent}>
 
-        <aside className={`${styles.profileSidebar} ${styles.relativePosition}`}>
-          {!isSidebarEditable ? (
-            <div className={styles.editIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
-              <FontAwesomeIcon icon={faEdit} />
-            </div>
-          ) : (
-            <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
-              <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
-                <FontAwesomeIcon icon={faSave} />
+    //   <div className={styles.profilePageContainer}>
+    //     < Header />
+
+
+    //     <div className={styles.mainContent}>
+
+    //       <aside className={`${styles.profileSidebar} ${styles.relativePosition}`}>
+    //         {!isSidebarEditable ? (
+    //           <div className={styles.editIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
+    //             <FontAwesomeIcon icon={faEdit} />
+    //           </div>
+    //         ) : (
+    //           <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+    //             <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
+    //               <FontAwesomeIcon icon={faSave} />
+    //             </div>
+    //             <div className={styles.cancelIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer' }}>
+    //               <FontAwesomeIcon icon={faTimes} />
+    //             </div>
+    //           </div>
+    //         )}
+    //         <div className={styles.profilePictureSection}>
+    //           {isSidebarEditable ? (
+    //             <div className={styles.profilePictureWrapper}>
+    //               {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
+    //               <input
+    //                 type="text"
+    //                 placeholder="Enter new profile URL"
+    //                 value={updatedPfpUrl}
+    //                 onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)}
+    //                 className={styles.profileUrlInput}
+    //               />
+    //             </div>
+    //           ) : userDetails.pfp_url ? (
+    //             <img src={userDetails.pfp_url} alt="Profile" className={styles.profilePicture} />
+    //           ) : (
+    //             <p>No profile picture set.</p>
+    //           )}
+    //         </div>
+    //         <div className={styles.profileName}>
+    //           <p className={styles.nameHeader}>{userDetails.name}</p>
+    //         </div>
+    //         <div className={styles.profileUsername}>
+    //           <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
+    //         </div>
+    //         <div className={styles.profileDetails}>
+
+    //           {isAdmin && (
+    //             <div>
+    //               <div className={styles.adminSection}>
+    //                 <button onClick={() => router.push('/user/manage-buddies')}>Manage Buddies</button>
+    //               </div>
+    //               <div className="messagesLink">
+    //                 <button onClick={() => router.push('/user/messages')}>Manage Messages</button>
+    //               </div>
+    //             </div>
+    //           )}
+
+
+    //           <div className={styles.messagesBox}>
+    //             {!isBuddy && !isAdmin && (
+    //               <div className={styles.requestToBecomeBuddySection}>
+    //                 <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
+    //               </div>
+    //             )}
+    //           </div>
+
+
+    //           <p className={styles.detailTitle}><strong>Title</strong></p>
+    //           <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedTitle} onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
+    //           <p className={styles.detailTitle}><strong>Status</strong></p>
+    //           <p className={styles.dataContent}>{isAdmin ? 'Admin' : isBuddy ? 'Buddy' : 'User'}</p>
+    //           <p className={styles.detailTitle}><strong>Primary Language</strong></p>
+    //           <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedPrimaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
+    //           <p className={styles.detailTitle}><strong>Secondary Language</strong></p>
+    //           <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedSecondaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
+    //           <div className={styles.programmingLanguagesSection}>
+    //             <p className={styles.detailTitle}><strong>Programming Languages and Technologies</strong></p>
+    //             <ul className={styles.techList}>
+    //               {userDetails.programmingLanguages.map((language, index) => (
+    //                 <li key={index} className={styles.dataContent}>{language}</li>
+    //               ))}
+    //             </ul>
+    //           </div>
+    //           {isSidebarEditable && (
+    //             <div>
+    //               <p className={styles.detailTitle}>Email:</p>
+    //               <p className={styles.dataContent}><input type="text" value={updatedEmail} onChange={(e) => handleInputChange(e, setUpdatedEmail)} /></p>
+    //               <p className={styles.detailTitle}>Select Programming Languages and Technologies:</p>
+    //               {codeLanguageArray.map((tech, index) => (
+    //                 <div key={index} className={styles.dataContent}>
+    //                   <input
+    //                     type="checkbox"
+    //                     id={`tech-${index}`}
+    //                     name="tech"
+    //                     value={tech}
+    //                     checked={selectedTech.includes(tech)}
+    //                     onChange={handleTechChange}
+    //                   />
+    //                   <label htmlFor={`tech-${index}`}>{tech}</label>
+    //                 </div>
+    //               ))}
+    //             </div>
+    //           )}
+    //         </div>
+    //       </aside>
+
+    //       <div className={styles.contentRightOfSidebar}>
+    //         <div className={styles.topContent}>
+
+
+
+
+
+    //           <div className={styles.eventsBox}>
+    //             <h2 className={styles.eventsHeader}>Events</h2>
+    //           </div>
+    //           <div className={styles.placeholderBox}>
+    //             <h2 className={styles.placeholderHeader}>Placeholder</h2>
+    //           </div>
+    //         </div>
+    //       </div>
+
+    //     </div>
+
+    //     <div className={`${styles.profileBio} ${styles.relativePosition}`}>
+    //       {!isBioEditable ? (
+    //         <div className={styles.editIcon} onClick={toggleBioEditMode} style={{ cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
+    //           <FontAwesomeIcon icon={faEdit} />
+    //         </div>
+    //       ) : (
+    //         <div className={styles.editOptions} style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+    //           <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
+    //             <FontAwesomeIcon icon={faSave} />
+    //           </div>
+    //           <div className={styles.cancelIcon} onClick={toggleBioEditMode} style={{ cursor: 'pointer' }}>
+    //             <FontAwesomeIcon icon={faTimes} />
+    //           </div>
+    //         </div>
+    //       )}
+    //       <h2 className={styles.bioHeader}>Bio</h2>
+    //       {isBioEditable ? (
+    //         <textarea
+    //           className={`${styles.textAreaField} ${isBioEditable ? styles.bioEdit : ''}`}
+    //           onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)}
+    //           value={updatedBuddyBio}
+    //         ></textarea>
+
+    //       ) : (
+    //         <p>{userDetails.buddy_bio}</p>
+    //       )}
+    //     </div>
+    //   </div>
+    // );
+    <div className={styles.profileContainer}>
+      < Header />
+
+
+      <div className={styles.mainContent}>
+        <div className={styles.leftSidebar}>
+          <aside className={`${styles.profileSidebar} ${styles.relativePosition}`}>
+            {!isSidebarEditable ? (
+              <div className={styles.editIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
+                <FontAwesomeIcon icon={faEdit} />
               </div>
-              <div className={styles.cancelIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer' }}>
-                <FontAwesomeIcon icon={faTimes} />
-              </div>
-            </div>
-          )}
-          <div className={styles.profilePictureSection}>
-            {isSidebarEditable ? (
-              <div className={styles.profilePictureWrapper}>
-                {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
-                <input
-                  type="text"
-                  placeholder="Enter new profile URL"
-                  value={updatedPfpUrl}
-                  onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)}
-                  className={styles.profileUrlInput}
-                />
-              </div>
-            ) : userDetails.pfp_url ? (
-              <img src={userDetails.pfp_url} alt="Profile" className={styles.profilePicture} />
             ) : (
-              <p>No profile picture set.</p>
-            )}
-          </div>
-          <div className={styles.profileName}>
-            <p className={styles.nameHeader}>{userDetails.name}</p>
-          </div>
-          <div className={styles.profileUsername}>
-            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
-          </div>
-          <div className={styles.profileDetails}>
-            <p className={styles.detailTitle}><strong>Title</strong></p>
-            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedTitle} onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
-            <p className={styles.detailTitle}><strong>Status</strong></p>
-            <p className={styles.dataContent}>{isAdmin ? 'Admin' : isBuddy ? 'Buddy' : 'User'}</p>
-            <p className={styles.detailTitle}><strong>Primary Language</strong></p>
-            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedPrimaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
-            <p className={styles.detailTitle}><strong>Secondary Language</strong></p>
-            <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedSecondaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p>
-            <div className={styles.programmingLanguagesSection}>
-              <p className={styles.detailTitle}><strong>Programming Languages and Technologies</strong></p>
-              <ul className={styles.techList}>
-                {userDetails.programmingLanguages.map((language, index) => (
-                  <li key={index} className={styles.dataContent}>{language}</li>
-                ))}
-              </ul>
-            </div>
-            {isSidebarEditable && (
-              <div>
-                <p className={styles.detailTitle}>Email:</p>
-                <p className={styles.dataContent}><input type="text" value={updatedEmail} onChange={(e) => handleInputChange(e, setUpdatedEmail)} /></p>
-                <p className={styles.detailTitle}>Select Programming Languages and Technologies:</p>
-                {codeLanguageArray.map((tech, index) => (
-                  <div key={index} className={styles.dataContent}>
-                    <input
-                      type="checkbox"
-                      id={`tech-${index}`}
-                      name="tech"
-                      value={tech}
-                      checked={selectedTech.includes(tech)}
-                      onChange={handleTechChange}
-                    />
-                    <label htmlFor={`tech-${index}`}>{tech}</label>
-                  </div>
-                ))}
+              <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+                <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
+                  <FontAwesomeIcon icon={faSave} />
+                </div>
+                <div className={styles.cancelIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer' }}>
+                  <FontAwesomeIcon icon={faTimes} />
+                </div>
               </div>
             )}
-          </div>
-        </aside>
-        <div className={styles.contentRightOfSidebar}>
-          <div className={styles.topContent}>
+            <div className={`${styles.profilePictureSection} ${styles.sidebarItem}`}>
+              {isSidebarEditable ? (
+                <div className={styles.profilePictureWrapper}>
+                  {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
+                  <input
+                    type="text"
+                    placeholder="Enter new profile URL"
+                    value={updatedPfpUrl}
+                    onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)}
+                    className={styles.profileUrlInput}
+                  />
+                </div>
+              ) : userDetails.pfp_url ? (
+                <img src={userDetails.pfp_url} alt="Profile" className={styles.profilePicture} />
+              ) : (
+                <p>No profile picture set.</p>
+              )}
+            </div>
+            <div className={`${styles.profileName} ${styles.sidebarItem}`}>
+              <p className={styles.nameHeader}>{userDetails.name}</p>
+            </div>
+            <div className={styles.profileUsername}>
+              <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
+            </div>
+            <div className={styles.profileDetails}>
+
+
+
+
+              <div className={styles.messagesBox}>
+                {!isBuddy && !isAdmin && (
+                  <div className={styles.requestToBecomeBuddySection}>
+                    <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
+                  </div>
+                )}
+              </div>
+
+
+              <div className={styles.detailRow}>
+                <p className={styles.detailTitle}><strong>Title:</strong></p>
+                <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedTitle} onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
+              </div>
+
+              <div className={styles.detailRow}>
+                <p className={styles.detailTitle}><strong>Status:</strong></p>
+                <p className={`${styles.dataContent} ${styles.adminHeader}`}>{isAdmin ? 'Admin' : isBuddy ? 'Buddy' : 'User'}</p>
+              </div>
+              <p className={`${styles.dataContent} ${styles.languageBubble}`}>
+                {isSidebarEditable ? (
+                  <input
+                    type="text"
+                    value={updatedPrimaryLanguage}
+                    onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)}
+                  />
+                ) : (
+                  <>
+                    <span className={styles.goldStar}>★</span> {userDetails.primary_language}
+                  </>
+                )}
+              </p>
+
+              <p className={`${styles.dataContent} ${styles.languageBubble}`}>
+                {isSidebarEditable ? (
+                  <input
+                    type="text"
+                    value={updatedSecondaryLanguage}
+                    onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)}
+                  />
+                ) : (
+                  <>
+                    <span className={styles.silverStar}>★</span> {userDetails.secondary_language}
+                  </>
+                )}
+              </p>
+              {/* <p className={styles.detailTitle}><strong>Primary Language</strong></p>
+         <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedPrimaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} /> : userDetails.primary_language}</p>
+         <p className={styles.detailTitle}><strong>Secondary Language</strong></p>
+         <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedSecondaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} /> : userDetails.secondary_language}</p> */}
+              {/* <div className={styles.programmingLanguagesSection}>
+           <p className={styles.detailTitle}><strong>Programming Languages and Technologies</strong></p>
+           <ul className={styles.techList}>
+             {userDetails.programmingLanguages.map((language, index) => (
+               <li key={index} className={styles.dataContent}>{language}</li>
+             ))}
+           </ul>
+         </div> */}
+              {isSidebarEditable && (
+                <div>
+                  <p className={styles.detailTitle}>Email:</p>
+                  <p className={styles.dataContent}><input type="text" value={updatedEmail} onChange={(e) => handleInputChange(e, setUpdatedEmail)} /></p>
+                  {/* <p className={styles.detailTitle}>Select Programming Languages and Technologies:</p> */}
+                  {/* {codeLanguageArray.map((tech, index) => (
+               <div key={index} className={styles.dataContent}>
+                 <input
+                   type="checkbox"
+                   id={`tech-${index}`}
+                   name="tech"
+                   value={tech}
+                   checked={selectedTech.includes(tech)}
+                   onChange={handleTechChange}
+                 />
+                 <label htmlFor={`tech-${index}`}>{tech}</label>
+               </div>
+             ))} */}
+                </div>
+              )}
+            </div>
+            {isAdmin && (
+              <div>
+                <div className={styles.adminSection}>
+
+                  <button className={styles.buddiesButton} onClick={() => router.push('/user/manage-buddies')}>Manage Buddies</button>
+
+                  <button className={styles.messagesButton} onClick={() => router.push('/user/messages')}>Manage Messages</button>
+                </div>
+              </div>
+
+            )}
+          </aside>
+        </div>
+
+        <div className={styles.centerColumns}>
+          <div className={styles.centerColumn}>
+
             <div className={`${styles.profileBio} ${styles.relativePosition}`}>
               {!isBioEditable ? (
-                <div className={styles.editIcon} onClick={toggleBioEditMode} style={{ cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
+                <div className={styles.editIcon} onClick={toggleBioEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
                   <FontAwesomeIcon icon={faEdit} />
                 </div>
               ) : (
-                <div className={styles.editOptions} style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+                <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
                   <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
                     <FontAwesomeIcon icon={faSave} />
                   </div>
@@ -405,7 +480,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
                   </div>
                 </div>
               )}
-              <h2 className={styles.bioHeader}>Bio</h2>
+              <h2 className={styles.bioHeader}>Biography</h2>
               {isBioEditable ? (
                 <textarea
                   className={`${styles.textAreaField} ${isBioEditable ? styles.bioEdit : ''}`}
@@ -414,85 +489,88 @@ const Profile = ({ setCurrentPage, currentPage }) => {
                 ></textarea>
 
               ) : (
-                <p>{userDetails.buddy_bio}</p>
+                <p className={styles.buddyBio}>{userDetails.buddy_bio}</p>
               )}
             </div>
-            <div className={styles.messagesBox}>
-  {!isBuddy && (
-    <div className={styles.requestToBecomeBuddySection}>
-      <RequestToBecomeBuddy setCurrentPage={setCurrentPage} currentPage={currentPage} />
-    </div>
-  )}
-  {isAdmin && (
-    <div className={styles.adminSection}>
-      <div className={styles.tabs}>
-        <button
-          onClick={() => setViewingDemoteBuddy(false)}
-          className={!viewingDemoteBuddy ? styles.activeTabMain : styles.tabButtonMain}
-        >
-          Requests
-        </button>
-        <button
-          onClick={() => setViewingDemoteBuddy(true)}
-          className={viewingDemoteBuddy ? styles.activeTabMain : styles.tabButtonMain}
-        >
-          Manage Buddies
-        </button>
-      </div>
-      
-      {!viewingDemoteBuddy ? (
-        <>
-          {viewingDeleted ? (
-            <DeletedMessages 
-              messages={deletedMessages} 
-              viewingDeleted={viewingDeleted} 
-              setViewingDeleted={setViewingDeleted} />
-          ) : (
-            <ReceivedMessages
-              messages={receivedMessages}
-              promoteToBuddy={promoteToBuddy}
-              handleSoftDelete={handleSoftDelete}
-              fetchReceivedMessages={fetchReceivedMessages}
-              viewingDeleted={viewingDeleted}
-              setViewingDeleted={setViewingDeleted}
-            />
-          )}
-        </>
-      ) : (
-        <DemoteBuddy 
-          buddies={buddies} 
-          demoteFromBuddy={demoteFromBuddy} />
-      )}
-    </div>
-  )}
-</div>
+
+          </div>
+          <div className={styles.centerColumn}>
+            <div className={styles.techSection}>
 
 
+              <p className={styles.techHeader}>Technologies</p>
+              <ul className={styles.techList}>
+                {userDetails.programmingLanguages.map((language, index) => (
+                  <li key={index} className={styles.techContent}>{language}</li>
+                ))}
+              </ul>
 
-            
-            <div className={styles.eventsBox}>
-              <h2 className={styles.eventsHeader}>Events</h2>
-              {/* Events content goes here */}
+              {isSidebarEditable && (
+                <div>
+                  <p className={styles.detailTitle}>Select Programming Languages and Technologies:</p>
+
+                  {codeLanguageArray.map((tech, index) => (
+                    <div key={index} className={styles.dataContent}>
+                      <input
+                        type="checkbox"
+                        id={`tech-${index}`}
+                        name="tech"
+                        value={tech}
+                        checked={selectedTech.includes(tech)}
+                        onChange={handleTechChange}
+                      />
+                      <label htmlFor={`tech-${index}`}>{tech}</label>
+                    </div>
+                  ))}
+                </div>
+              )}
+
             </div>
-            <div className={styles.placeholderBox}>
-              <h2 className={styles.placeholderHeader}>Placeholder</h2>
-              {/* Placeholder or additional content */}
+          </div>
+          <div className={styles.centerColumn}>
+            <div className={styles.eventsSection}>
+              <h3 className={styles.eventsHeader}>  Events Placeholder</h3>
             </div>
           </div>
         </div>
-        {/* {editable && (
-        <div className={styles.editButtonSection}>
-          <button onClick={toggleEditMode} className={styles.editButton}>
-            Cancel Edit
-          </button>
-          <button onClick={handleProfileUpdate} className={styles.saveChangesButton}>
-            Save Changes
-          </button>
+
+        <div className={`${styles.sidebar} ${styles.rightSidebar}`}>
+        <div className={`${styles.profileBio} ${styles.relativePosition}`}>
+              {!isBioEditable ? (
+                <div className={styles.editIcon} onClick={toggleBioEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
+                  <FontAwesomeIcon icon={faEdit} />
+                </div>
+              ) : (
+                <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+                  <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
+                    <FontAwesomeIcon icon={faSave} />
+                  </div>
+                  <div className={styles.cancelIcon} onClick={toggleBioEditMode} style={{ cursor: 'pointer' }}>
+                    <FontAwesomeIcon icon={faTimes} />
+                  </div>
+                </div>
+              )}
+              <h2 className={styles.bioHeader}>Biography</h2>
+              {isBioEditable ? (
+                <textarea
+                  className={`${styles.textAreaField} ${isBioEditable ? styles.bioEdit : ''}`}
+                  onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)}
+                  value={updatedBuddyBio}
+                ></textarea>
+
+              ) : (
+                <p className={styles.buddyBio}>{userDetails.buddy_bio}</p>
+              )}
+            </div>
+
         </div>
-      )} */}
       </div>
+
     </div>
   );
 }
 
 export default Profile;
+
+
+
