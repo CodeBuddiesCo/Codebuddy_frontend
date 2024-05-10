@@ -262,3 +262,47 @@ export async function fetchDeleteEvent(eventId) {
     throw error;
   }
 }
+
+export async function fetchOneBuddySearch(primaryCriteria) {
+  try {
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/search_by_buddy/${primaryCriteria}`;
+    const response = await fetch(url, {
+      method: "GET"
+    });
+    const data = await response.json();
+
+    if (data[0].event_id) {
+      console.log('data from fetchOneBuddySearch :>> ', data);
+      return [data]
+    } else {
+      console.log ("No Events from fetchOneBuddySearch")
+      return({error: "No Events"})
+    }
+
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchTwoBuddySearch(primaryCriteria, secondaryCriteria) {
+  try {
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/search_by_buddy/${primaryCriteria}/${secondaryCriteria}`;
+    const response = await fetch(url, {
+      method: "GET"
+    });
+    const data = await response.json();
+    console.log
+    if (data[0].event_id) {
+      console.log('data from fetchTwoBuddySearch :>> ', data);
+      return [data]
+    } else {
+      console.log ("No Events from fetchTwoBuddySearch")
+      return({error: "No Events"})
+    }
+
+  } catch (error) {
+    throw error;
+  }
+}
