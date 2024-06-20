@@ -6,9 +6,9 @@ import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormCheck } from "react-bootstrap";
 
-function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage}) {
+
+function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage}) {
   const router = useRouter()
   const [state, setState] = useState({chosenDate: new Date(),});
   const [selectedDayToDetail, setSelectedDayToDetail] = useState(1)
@@ -25,6 +25,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
   const todaysFullDate = new Date()
   const todaysYearMonDate = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), todaysFullDate.getDate());
   const todaysYearMon = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), 1)
+  const [displayEvents, setDisplayEvents] = useState([])
 
 
   /* This is constructing a date object with the year, the month following the current month, and then calling the day
@@ -61,6 +62,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
       results.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
       console.log("results from getAllEvents >>", results)
       setAllEvents(() => results);
+      setDisplayEvents(results)
       setLoading(false);
 
     } catch (error) {
@@ -74,8 +76,19 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
       if (searchType === "Host Buddies") {
         if (primaryCriteria && secondaryCriteria) {
           const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
+          console.log(results)
+          if(results[0]) {
+          setDisplayEvents(() => results)}
+          console.log(displayEvents)
         } else {
           const results = await fetchOneBuddySearch(primaryCriteria)
+          console.log(displayEvents)
+          console.log(results)
+          if(results[0]) {
+            setDisplayEvents(results)
+            console.log(displayEvents)
+          }
+          
         }
       }
 
@@ -88,12 +101,13 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
     setIsBuddy(JSON.parse(window.localStorage.getItem("isBuddy")));
     setIsAdmin(JSON.parse(window.localStorage.getItem("isAdmin")));
     getAllEvents();
+    setSelectedDate("")
     setCurrentPage("Event Calendar")
   }, []);
  
   useEffect(() => {
     const counts = days.map(day => {
-      const dayEventsCount = allEvents.filter(event => {
+      const dayEventsCount = displayEvents.filter(event => {
         const eventDate = parseISO(event.date_time);
         return format(eventDate, 'd') === day.key.toString() &&
                format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() &&
@@ -104,7 +118,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
   
     setEventCounts(counts);
     console.log(counts)
-  }, [chosenDate, allEvents]);
+  }, [chosenDate, displayEvents]);
   
 
   return (
@@ -145,7 +159,8 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                     {secondaryCriteria &&<label className="calendar-select-label" >Search Criteria</label>}
                     <input className="calendar-select input" placeholder="Search Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}></input>
                   </div>
-                  <button className="calendar-search-form-button" type="submit" >GO</button>
+                  <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
+                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => setToggleSearch(false)}>close</button>
                 </form>}
                 {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
                 {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
@@ -171,7 +186,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
                     </div>}
                     {day.key > 0 && <h4 className="calendar-date-num">{day.key} </h4>}
                   </div>
-                  {allEvents.map(event => {
+                  {displayEvents.map(event => {
                     const eventDate = parseISO(event.date_time);
                     if (format(eventDate, 'd') === day.key.toString() && format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() && format(eventDate, 'y') === chosenDate.getFullYear().toString()) {
                       return (
@@ -193,7 +208,7 @@ function CalendarOfEvents({allEvents, setAllEvents, loading, setLoading, isBuddy
           <div className={togglePopout}>
             <button onClick={()=> {if (selectedDayToDetail > 0) {setTogglePopout("calendar-popout-container")}}}></button>
             <p>{format(parseISO(selectedDateToDetail), 'iiii LLLL do')}</p>
-            {allEvents.map(event => {
+            {displayEvents.map(event => {
               const eventDate = parseISO(event.date_time);
               if (format(eventDate, 'd') === selectedDayToDetail.toString() && format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() && format(eventDate, 'y') === chosenDate.getFullYear().toString()) {
                 return (

@@ -1,0 +1,119 @@
+.profilePage {
+  display: flex;
+  background-color: #f2ebec20;
+  height: calc(100vh);
+  justify-content: center;
+  margin: -10px;
+}
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  margin-top: 150px;
+  width: 22%;
+  min-height: 600px;
+  height: calc(100vh - 200px);
+  margin-right: 30px;
+  justify-content: space-between;
+}
+.mainDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(55% - 15px);
+  width: 100%;
+  border-radius: 5px;
+  background-color: #ffffff;
+  border: .1px solid #D9D9D950;
+  box-shadow: 0px 4px 4px #D9D9D9;
+}
+.profilePictureWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 65%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.profilePicture {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border-radius: 50%;
+  border: .1px solid #D9D9D950;
+}
+.technologiesContainer {
+  display: flex;
+  height: calc(45% - 15px);
+  width: 100%;
+  border-radius: 5px;
+  background-color: #ffffff;
+  border: .1px solid #D9D9D950;
+  box-shadow: 0px 4px 4px #D9D9D9;
+}
+.middlePanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 150px;
+  width: 45%;
+  min-height: 600px;
+  height: calc(100vh - 200px);
+  margin-right: 30px;
+}
+.bioContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(30% - 15px);
+  width: 100%;
+  border-radius: 5px;
+  background-color: #ffffff;
+  border: .1px solid #D9D9D950;
+  box-shadow: 0px 4px 4px #D9D9D9;
+}
+.bioTextWrapper {
+  margin-top: 22px;
+  overflow-y: auto;
+  scrollbar-color:  #D9D9D9 #ffffff;
+}
+.bioText {
+  margin: 20px;
+  margin-top: 0px;
+  color: #6A7680;
+  font-size: 14px;
+  font-weight: 100;
+  line-height: 18px;
+}
+.eventsContainer {
+  display: flex;
+  height: calc(70% - 15px);
+  width: 100%;
+  border-radius: 5px;
+  background-color: #ffffff;
+  border: .1px solid #D9D9D950;
+  box-shadow: 0px 4px 4px #D9D9D9;
+}
+.rightPanel {
+  display: flex;
+  margin-top: 150px;
+  width: 15%;
+  min-height: 600px;
+  height: calc(100vh - 200px);
+}
+.followingContainer {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  background-color: #ffffff;
+  border: .1px solid #D9D9D950;
+  box-shadow: 0px 4px 4px #D9D9D9;
+}
+.containerHeader {
+  color: #8C4C35;
+  margin-left: 20px;
+  margin-top: 20px;
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: .25px;
+}
+

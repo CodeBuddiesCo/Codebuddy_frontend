@@ -274,7 +274,7 @@ export async function fetchOneBuddySearch(primaryCriteria) {
 
     if (data[0].event_id) {
       console.log('data from fetchOneBuddySearch :>> ', data);
-      return [data]
+      return data;
     } else {
       console.log ("No Events from fetchOneBuddySearch")
       return({error: "No Events"})
@@ -296,7 +296,7 @@ export async function fetchTwoBuddySearch(primaryCriteria, secondaryCriteria) {
     console.log
     if (data[0].event_id) {
       console.log('data from fetchTwoBuddySearch :>> ', data);
-      return [data]
+      return data;
     } else {
       console.log ("No Events from fetchTwoBuddySearch")
       return({error: "No Events"})
