@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import BuddyRequestForm from '../../components/BuddyRequestForm';
 import Header from '../../components/Header';
+import Modal from '../../components/Modal';
 
 const RequestToBecomeBuddy = ({ setCurrentPage, currentPage }) => {
   const [message, setMessage] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setCurrentPage("Buddy Request");
@@ -14,7 +16,7 @@ const RequestToBecomeBuddy = ({ setCurrentPage, currentPage }) => {
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
-    const sender_id = localStorage.getItem('userId') || session?.user?.id;
+    const sender_id = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
     const adminUsernames = ['Hollye', 'cmugnai'];
 
@@ -39,22 +41,23 @@ const RequestToBecomeBuddy = ({ setCurrentPage, currentPage }) => {
     setFormSubmitted(true);
   };
 
-  useEffect(() => {
-    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
-  }, []);
-
   return (
     <div>
       <Header currentPage={currentPage} />
       {isBuddy ? (
         <h3>You are a buddy!</h3>
       ) : (
-        <BuddyRequestForm
-          message={message}
-          setMessage={setMessage}
-          handleMessageSubmit={handleMessageSubmit}
-          formSubmitted={formSubmitted}
-        />
+        <div>
+          <button onClick={() => setIsModalOpen(true)}>Request to Become a Buddy</button>
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <BuddyRequestForm
+              message={message}
+              setMessage={setMessage}
+              handleMessageSubmit={handleMessageSubmit}
+              formSubmitted={formSubmitted}
+            />
+          </Modal>
+        </div>
       )}
     </div>
   );
