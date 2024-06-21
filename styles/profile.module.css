@@ -840,3 +840,9 @@
   font-weight: 600;
 
 }
+
+.successMessage {
+  color: green;
+  font-size: 1.2em;
+  margin-top: 20px;
+}
