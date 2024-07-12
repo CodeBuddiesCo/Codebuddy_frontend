@@ -19,6 +19,6 @@ const codeLanguageArray = [
   "SQL",
   "Swift",
   "TypeScript"
-]
+];
 
-exports.codeLanguageObjectArray = codeLanguageArray;
+export default codeLanguageArray;
