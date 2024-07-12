@@ -50,12 +50,31 @@
 .profileNameWrapper {
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  margin-top: 12px;
+  align-items: center;
 }
-.profileUserName {
-
+.profileUsername {
+  font-family: "Big Shoulders Stencil Display", sans-serif;
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  font-style: normal;
+  color: #6A7680;
+}
+.curly {
+  font-size: 38px;
 }
 .profileName {
-
+  display: flex;
+  align-items: center;
+  font-family: "Arima", system-ui;
+  font-size: 30px;
+  color: #8C4C35;
+  font-weight: 600;
+  margin-left: 2px;
+  margin-bottom: -10px;
+  font-style: normal;
 }
 .technologiesContainer {
   display: flex;
@@ -143,10 +162,4 @@
   font-weight: 200;
   border: 0;
   margin: 3px;
-}
-.title {
-  font-family: "Big Shoulders Stencil Display", sans-serif;
-  font-size: 30px;
-  font-weight: 400;
-  font-style: normal;
 }
