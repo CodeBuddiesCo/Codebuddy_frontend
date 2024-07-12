@@ -6,6 +6,7 @@ import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Link from "next/link";
 import { useRouter } from "next/router";
+const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
 
 function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage}) {
@@ -73,7 +74,7 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
   async function handleSearch(event) {
     event.preventDefault()
     try {
-      if (searchType === "Host Buddies") {
+      if (searchType === "Host") {
         if (primaryCriteria && secondaryCriteria) {
           const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
           console.log(results)
@@ -88,7 +89,6 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
             setDisplayEvents(results)
             console.log(displayEvents)
           }
-          
         }
       }
 
@@ -142,23 +142,28 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
               <div className="calendar-menu-right-container">
                 {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search">search</button>}
                 {toggleSearch && <form className="calendar-search-form-container" onSubmit={handleSearch}>
-                  
                   <div className="calendar-select-border">
-                    {searchType && <label className="calendar-select-label">Choose Search Type</label>}
+                    {searchType && <label className="calendar-select-label">Search Type</label>}
                     <select className="calendar-select" onChange={(event) => setSearchType(event.target.value)} required>
                       <option value="" disabled selected>Search Type</option>
-                      <option>Host Buddies</option>
-                      <option>Code Languages</option>
+                      <option value="Host">Host Buddies</option>
+                      <option value="Code">Code Languages</option>
                     </select>
                   </div>
-                  <div className="calendar-select-border">
-                    {primaryCriteria && <label className="calendar-select-label">Search Criteria</label>}           
-                    <input className="calendar-select input" placeholder="Search Criteria" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required></input>
-                  </div>  
-                  <div className="calendar-select-border">           
-                    {secondaryCriteria &&<label className="calendar-select-label" >Search Criteria</label>}
-                    <input className="calendar-select input" placeholder="Search Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}></input>
-                  </div>
+                  {searchType === "Code" && <div className="calendar-select-border">
+                    {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}           
+                    <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
+                      <option value="" disabled selected>Primary Language</option>
+                      {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
+                    </select>
+                  </div>}  
+                  {searchType === "Code" && <div className="calendar-select-border">
+                    {secondaryCriteria && <label className="calendar-select-label">Secondary Language</label>}           
+                    <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
+                      <option value="" disabled selected>Secondary Language</option>
+                      {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
+                    </select>
+                  </div>}  
                   <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
                   <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => setToggleSearch(false)}>close</button>
                 </form>}
@@ -184,7 +189,7 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
                         <Link href="/event/admin_add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(chosenDate.getFullYear(), chosenDate.getMonth(), day.key))}>calendar_add_on</button></Link>
                       </div>}
                     </div>}
-                    {day.key > 0 && <h4 className="calendar-date-num">{day.key} </h4>}
+                    {day.key > 0 && <div className="calendar-date-num">{day.key} </div>}
                   </div>
                   {displayEvents.map(event => {
                     const eventDate = parseISO(event.date_time);
