@@ -178,8 +178,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
           </div>
           <div className={styles.profileNameWrapper}>
-            <h3 className={styles.title}>{`{${userDetails.username}}`}</h3>
-            <h3>{userDetails.name}</h3>
+            <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
+            <div className={styles.profileName}>{userDetails.name}</div>
           </div>
         </div>
         <div className={styles.technologiesContainer}>
@@ -196,7 +196,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
           </div>
           <div className={styles.bioTextWrapper} >
-            <p className={styles.bioText}>I am a seasoned software engineer with over a decade of experience in developing cutting-edge applications and leading innovative projects in the tech industry. Currently, I serve as a Senior Software Engineer at XYZ Tech Solutions, where I specialize in cloud computing and artificial intelligence, focusing on creating forward-thinking solutions that enhance business efficiency and user experience.</p>
+            {!userDetails.buddy_bio && <p className={styles.bioText}>Don’t leave us guessing! Complete your bio and connect with fellow coders! Click the edit button to get started.</p>}
+            {userDetails.buddy_bio && <p className={styles.bioText}>{userDetails.buddy_bio}</p>}
           </div>
         </div>
         <div className={styles.eventsContainer}>

@@ -625,9 +625,9 @@ input:-webkit-autofill:active{
   border:none;
   height: auto;
   padding: 0px;
-  padding-top: 2px;
+
   text-align: left;
-  font-size: 24px;
+  font-size: 23px;
   margin: 0px;
   /* margin-right: auto; */
 }
@@ -635,8 +635,8 @@ input:-webkit-autofill:active{
   display: block;
 }
 .calendar-date-num {
-  margin: 5px;
   margin-left: auto;
+  margin-top: 2px;
   font-weight: 600;
 }
 .calendar-event-container {
