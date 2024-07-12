@@ -637,6 +637,7 @@ input:-webkit-autofill:active{
 .calendar-date-num {
   margin: 5px;
   margin-left: auto;
+  font-weight: 600;
 }
 .calendar-event-container {
   border-left: 2px solid #8C4C35;

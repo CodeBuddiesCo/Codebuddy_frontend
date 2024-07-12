@@ -21,4 +21,4 @@ const codeLanguageArray = [
   "TypeScript"
 ]
 
-exports.codeLanguageArray = codeLanguageArray
+exports.codeLanguageObjectArray = codeLanguageArray;

@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import { fetchAdminAddEvent } from "../../event_api_calls";
 import Link from "next/link";
 import Unauthorized from "../../components/Unauthorized";
-const {codeLanguageArray} = require('../../Arrays/CodeLanguageArray')
+const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
 function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
   const [defaultFormDate, setDefaultFormDate] = useState("")
@@ -16,9 +16,6 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
   const [primaryLanguage, setPrimaryLanguage] = useState("")
   const [secondaryLanguage, setSecondaryLanguage] = useState("")
   const [additionalInfo, setAdditionalInfo] = useState("")
-  const [secondaryLanguageLabel, setSecondaryLanguageLabel] = useState(false)
-  const [secondaryLanguageArray, setSecondaryLanguageArray] = useState(codeLanguageArray)
-  const [primaryLanguageArray, setPrimaryLanguageArray] = useState(codeLanguageArray)
   const [zoomLink, setZoomLink] = useState("")
   const [successMessage, setSuccessMessage] = useState(false)
 
@@ -32,30 +29,6 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
       setDefaultFormDate(d.getFullYear()+"-"+month+"-"+date)
       console.log(defaultFormDate)
     }
-  }
-
-  const filterPrimaryLanguageArray = (selectedSecondary) => {
-    if (primaryLanguage === "") {
-      let filteredArray = []
-      for (let i=0; i < codeLanguageArray.length; i++) {
-        if (codeLanguageArray[i] != selectedSecondary) {
-          filteredArray.push(codeLanguageArray[i])
-        } 
-        setPrimaryLanguageArray(filteredArray)
-      } 
-    } return 
-  }
-
-  const filterSecondLanguageArray = (selectedPrimary) => {
-    if (secondaryLanguage === "") {
-      let filteredArray = []
-      for (let i=0; i < codeLanguageArray.length; i++) {
-        if (codeLanguageArray[i] != selectedPrimary) {
-          filteredArray.push(codeLanguageArray[i])
-        } 
-        setSecondaryLanguageArray(filteredArray)
-      } 
-    } return 
   }
 
   async function handleAddEvent(event) {
@@ -132,7 +105,7 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
               <select className="add-event-select" id="Primary Event Buddy"  onChange={(event) => setPrimaryBuddy(event.target.value)} required>
                 <option value="" disabled selected>Primary Event Buddy</option>
                 <option value="Hollye">Hollye</option>
-                <option value="Catherine">Catherine</option>
+                <option value="cmugnai">cmugnai</option>
               </select>  
             </div>
             <div className="add-event-select-border">
@@ -147,17 +120,17 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
             </div>
             <div className="add-event-select-border">
               {primaryLanguage && <label className="add-event-select-label">Primary Code Language</label>}
-              <select className="add-event-select" id="Primary-Language" onChange={(event) => {setPrimaryLanguage(event.target.value); filterSecondLanguageArray(event.target.value)}} required>
+              <select className="add-event-select" value={primaryLanguage} id="Primary-Language" onChange={(event) => {setPrimaryLanguage(event.target.value)}} required>
                 <option value="" disabled selected>Primary Code Language</option>
-                {primaryLanguageArray.map((language) => <option value={language}>{language}</option>)}
-                </select>
+                {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryLanguage}>{language.label}</option>)}
+              </select>
             </div>
             <div className="add-event-select-border">
-              {secondaryLanguageLabel && <label className="add-event-select-label">Secondary Code Language</label>}
-              <select className="add-event-select" id="Secondary-Language" onChange={(event) => {setSecondaryLanguageLabel(true); setSecondaryLanguage(event.target.value); filterPrimaryLanguageArray(event.target.value)}} >
-              <option value="" disabled selected>Secondary Code Language</option>
-              <option value="">None</option>
-              {secondaryLanguageArray.map((language) => <option value={language}>{language}</option>)}
+              {secondaryLanguage && <label className="add-event-select-label">Secondary Code Language</label>}
+              <select className="add-event-select" id="Secondary-Language" onChange={(event) => { setSecondaryLanguage(event.target.value)}} >
+                <option value="" disabled selected>Secondary Code Language</option>
+                <option value="">None</option>
+                {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryLanguage}>{language.label}</option>)}
               </select>
             </div>
             <div className="add-event-date-time-select-container">

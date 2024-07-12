@@ -166,36 +166,54 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 
   return (
     <div className={styles.profilePage}>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       < Header />
       <div className={styles.leftPanel}>
         <div className={styles.mainDetailsContainer}>
+          <div className={styles.containerHeaderWrapper}>
+            <div className={styles.containerHeading}> </div>
+            <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
+          </div>
           <div className={styles.profilePictureWrapper}>
             {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
           </div>
+          <div className={styles.profileNameWrapper}>
+            <h3 className={styles.title}>{`{${userDetails.username}}`}</h3>
+            <h3>{userDetails.name}</h3>
+          </div>
         </div>
         <div className={styles.technologiesContainer}>
-          <p1 className={styles.containerHeader}>Technologies</p1>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>Technologies</p1>
+            <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
+          </div>
         </div>
       </div>
       <div className={styles.middlePanel}>
         <div className={styles.bioContainer}>
-        <p1 className={styles.containerHeader}>Bio</p1>
-          <div className={styles.bioTextWrapper}>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>Bio</p1>
+            <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
+          </div>
+          <div className={styles.bioTextWrapper} >
             <p className={styles.bioText}>I am a seasoned software engineer with over a decade of experience in developing cutting-edge applications and leading innovative projects in the tech industry. Currently, I serve as a Senior Software Engineer at XYZ Tech Solutions, where I specialize in cloud computing and artificial intelligence, focusing on creating forward-thinking solutions that enhance business efficiency and user experience.</p>
           </div>
         </div>
         <div className={styles.eventsContainer}>
-          <p1 className={styles.containerHeader}>Events</p1>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>My Events</p1>
+            <button title="View Monthly Calendar" id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>
+          </div>
         </div>
       </div>
-        
       <div className={styles.rightPanel}>
         <div className={styles.followingContainer}>
-        <p1 className={styles.containerHeader}>Following</p1>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>Following</p1>
+            <button title="Add person to follow" id={styles.iconButtons} className="material-symbols-outlined">person_add</button>
+          </div>
         </div>
-
       </div>
-
     </div>
   );
 }
