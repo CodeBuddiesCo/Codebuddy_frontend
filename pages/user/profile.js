@@ -5,8 +5,9 @@ import { useSession } from 'next-auth/react';
 import Header from '../../components/Header';
 import RequestToBecomeBuddy from './become-a-buddy';
 import styles from '../../styles/profile.module.css';
-import { codeLanguageArray } from '../../Arrays/CodeLanguageArray';
 import { useRouter } from 'next/router';
+import EditModal from '../../components/EditModal';
+import { codeLanguageArray } from '../../Arrays/CodeLanguageArray';
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
@@ -14,6 +15,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [userDetails, setUserDetails] = useState({
     username: '',
@@ -85,19 +87,9 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     if (isSidebarEditable) setIsSidebarEditable(false);
   };
 
-  const handleProfileUpdate = async () => {
+  const handleProfileUpdate = async (updatedData) => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
-    const updatedData = {
-      username: updatedUsername,
-      email: updatedEmail,
-      title: updatedTitle,
-      pfp_url: updatedPfpUrl,
-      primary_language: updatedPrimaryLanguage,
-      secondary_language: updatedSecondaryLanguage,
-      buddy_bio: updatedBuddyBio,
-      programmingLanguages: selectedTech,
-    };
 
     try {
       const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
@@ -150,33 +142,11 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       <div className={styles.mainContent}>
         <div className={styles.leftSidebar}>
           <aside className={`${styles.profileSidebar} ${styles.relativePosition}`}>
-            {!isSidebarEditable ? (
-              <div className={styles.editIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
-                <FontAwesomeIcon icon={faEdit} />
-              </div>
-            ) : (
-              <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
-                <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
-                  <FontAwesomeIcon icon={faSave} />
-                </div>
-                <div className={styles.cancelIcon} onClick={toggleSidebarEditMode} style={{ color: '#939393', cursor: 'pointer' }}>
-                  <FontAwesomeIcon icon={faTimes} />
-                </div>
-              </div>
-            )}
+            <button className={styles.editButton} onClick={() => setIsModalOpen(true)}>
+              <FontAwesomeIcon icon={faEdit} className={styles.largeIcon} /> Edit
+            </button>
             <div className={`${styles.profilePictureSection} ${styles.sidebarItem}`}>
-              {isSidebarEditable ? (
-                <div className={styles.profilePictureWrapper}>
-                  {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
-                  <input
-                    type="text"
-                    placeholder="Enter new profile URL"
-                    value={updatedPfpUrl}
-                    onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)}
-                    className={styles.profileUrlInput}
-                  />
-                </div>
-              ) : userDetails.pfp_url ? (
+              {userDetails.pfp_url ? (
                 <img src={userDetails.pfp_url} alt="Profile" className={styles.profilePicture} />
               ) : (
                 <p>No profile picture set.</p>
@@ -186,7 +156,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
               <p className={styles.nameHeader}>{userDetails.name}</p>
             </div>
             <div className={styles.profileUsername}>
-              <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} /> : userDetails.username}</p>
+              <p className={styles.dataContent}>{userDetails.username}</p>
             </div>
             <div className={styles.profileDetails}>
               <div className={styles.messagesBox}>
@@ -198,44 +168,19 @@ const Profile = ({ setCurrentPage, currentPage }) => {
               </div>
               <div className={styles.detailRow}>
                 <p className={styles.detailTitle}><strong>Title:</strong></p>
-                <p className={styles.dataContent}>{isSidebarEditable ? <input type="text" value={updatedTitle} onChange={(e) => handleInputChange(e, setUpdatedTitle)} /> : userDetails.title}</p>
+                <p className={styles.dataContent}>{userDetails.title}</p>
               </div>
               <div className={styles.detailRow}>
                 <p className={styles.detailTitle}><strong>Status:</strong></p>
                 <p className={`${styles.dataContent} ${styles.adminHeader}`}>{isAdmin ? 'Admin' : isBuddy ? 'Buddy' : 'User'}</p>
               </div>
               <p className={`${styles.dataContent} ${styles.languageBubble}`}>
-                {isSidebarEditable ? (
-                  <input
-                    type="text"
-                    value={updatedPrimaryLanguage}
-                    onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)}
-                  />
-                ) : (
-                  <>
-                    <span className={styles.goldStar}>★</span> {userDetails.primary_language}
-                  </>
-                )}
+                <span className={styles.goldStar}>★</span> {userDetails.primary_language}
               </p>
               <p className={`${styles.dataContent} ${styles.languageBubble}`}>
-                {isSidebarEditable ? (
-                  <input
-                    type="text"
-                    value={updatedSecondaryLanguage}
-                    onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)}
-                  />
-                ) : (
-                  <>
-                    <span className={styles.silverStar}>★</span> {userDetails.secondary_language}
-                  </>
-                )}
+                <span className={styles.silverStar}>★</span> {userDetails.secondary_language}
               </p>
-              {isSidebarEditable && (
-                <div>
-                  <p className={styles.detailTitle}>Email:</p>
-                  <p className={styles.dataContent}><input type="text" value={updatedEmail} onChange={(e) => handleInputChange(e, setUpdatedEmail)} /></p>
-                </div>
-              )}
+              <p className={styles.dataContent}>{userDetails.email}</p>
             </div>
             {isAdmin && (
               <div>
@@ -250,30 +195,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         <div className={styles.centerColumns}>
           <div className={styles.centerColumn}>
             <div className={`${styles.topCenterPlaceholder} ${styles.relativePosition}`}>
-              {!isBioEditable ? (
-                <div className={styles.editIcon} onClick={toggleBioEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
-                  <FontAwesomeIcon icon={faEdit} />
-                </div>
-              ) : (
-                <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
-                  <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
-                    <FontAwesomeIcon icon={faSave} />
-                  </div>
-                  <div className={styles.cancelIcon} onClick={toggleBioEditMode} style={{ cursor: 'pointer' }}>
-                    <FontAwesomeIcon icon={faTimes} />
-                  </div>
-                </div>
-              )}
-              <h2 className={styles.bioHeader}>Placeholder</h2>
-              {isBioEditable ? (
-                <textarea
-                  className={`${styles.textAreaField} ${isBioEditable ? styles.bioEdit : ''}`}
-                  onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)}
-                  value={updatedBuddyBio}
-                ></textarea>
-              ) : (
-                <p className={styles.buddyBio}>{userDetails.buddy_bio}</p>
-              )}
+              <h2 className={styles.bioHeader}>Biography</h2>
+              <p className={styles.buddyBio}>{userDetails.buddy_bio}</p>
             </div>
           </div>
           <div className={styles.centerColumn}>
@@ -284,24 +207,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
                   <li key={index} className={styles.techContent}>{language}</li>
                 ))}
               </ul>
-              {isSidebarEditable && (
-                <div>
-                  <p className={styles.detailTitle}>Select Programming Languages and Technologies:</p>
-                  {codeLanguageArray.map((tech, index) => (
-                    <div key={index} className={styles.dataContent}>
-                      <input
-                        type="checkbox"
-                        id={`tech-${index}`}
-                        name="tech"
-                        value={tech}
-                        checked={selectedTech.includes(tech)}
-                        onChange={handleTechChange}
-                      />
-                      <label htmlFor={`tech-${index}`}>{tech}</label>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
           <div className={styles.centerColumn}>
@@ -312,33 +217,17 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         </div>
         <div className={`${styles.sidebar} ${styles.rightSidebar}`}>
           <div className={`${styles.profileBio} ${styles.relativePosition}`}>
-            {!isBioEditable ? (
-              <div className={styles.editIcon} onClick={toggleBioEditMode} style={{ color: '#939393', cursor: 'pointer', position: 'absolute', top: '20px', right: '20px' }}>
-                <FontAwesomeIcon icon={faEdit} />
-              </div>
-            ) : (
-              <div className={styles.editOptions} style={{ color: '#939393', position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
-                <div className={styles.saveIcon} onClick={handleProfileUpdate} style={{ cursor: 'pointer' }}>
-                  <FontAwesomeIcon icon={faSave} />
-                </div>
-                <div className={styles.cancelIcon} onClick={toggleBioEditMode} style={{ cursor: 'pointer' }}>
-                  <FontAwesomeIcon icon={faTimes} />
-                </div>
-              </div>
-            )}
             <h2 className={styles.bioHeader}>Biography</h2>
-            {isBioEditable ? (
-              <textarea
-                className={`${styles.textAreaField} ${isBioEditable ? styles.bioEdit : ''}`}
-                onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)}
-                value={updatedBuddyBio}
-              ></textarea>
-            ) : (
-              <p className={styles.buddyBio}>{userDetails.buddy_bio}</p>
-            )}
+            <p className={styles.buddyBio}>{userDetails.buddy_bio}</p>
           </div>
         </div>
       </div>
+      <EditModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        userDetails={userDetails}
+        handleProfileUpdate={handleProfileUpdate}
+      />
     </div>
   );
 };
