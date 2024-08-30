@@ -1,12 +1,27 @@
-import ForgotPasswordForm from "../../components/ForgotPasswordForm";
+import React from 'react';
+import ForgotPasswordForm from '../../components/ForgotPasswordForm';
+import styles from '../../styles/authForms.module.css';
+import Header from '../../components/Header';
 
 const ForgotPasswordPage = () => {
-    return (
-      <div>
-        <h1>Forgot Password</h1>
-        <ForgotPasswordForm />
+  return (
+    <div className={styles.loginPage}>
+      <Header />
+      <div className={styles.loginMainContentContainer}>
+        <img
+          className={styles.loginFormImageContainer}
+          src="/logindog2.png"
+          alt="Login Image"
+        />
+        <div className={styles.loginFormContainer}>
+          <div className={styles.loginFormHeaderContainer}>
+            <h1 className={styles.loginFormHeader}>Forgot Password</h1>
+          </div>
+          <ForgotPasswordForm />
+        </div>
       </div>
-    );
-  };
-  
-  export default ForgotPasswordPage;
+    </div>
+  );
+};
+
+export default ForgotPasswordPage;

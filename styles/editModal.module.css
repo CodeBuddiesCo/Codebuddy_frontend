@@ -167,7 +167,7 @@
 
 .editModalFormGroup label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   color: #6A7680;
   font-family: 'Noto Sans', sans-serif;
   font-size: 14px;
@@ -184,12 +184,16 @@
   color: #6A7680;
 }
 
+.editModalTechOptionsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
 .editModalTechOption {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  width: auto;
+  gap: 5px;
 }
 
 .editModalTechOption input {

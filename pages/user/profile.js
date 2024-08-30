@@ -92,7 +92,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
+      const response = await fetch(`https://codebuddilsesserver.onrender.com/api/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import styles from '../styles/authForms.module.css';
 
 function ForgotPasswordForm() {
   const [username, setUsername] = useState('');
@@ -8,6 +9,7 @@ function ForgotPasswordForm() {
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [fetchClicked, setFetchClicked] = useState(false);
 
   const handleFetchQuestions = async () => {
     if (username) {
@@ -17,6 +19,7 @@ function ForgotPasswordForm() {
         if (data && typeof data === 'object' && !Array.isArray(data)) {
           setQuestions([data.security_question_1, data.security_question_2, data.security_question_3]);
           setAnswers(new Array(3).fill(''));
+          setFetchClicked(true);
         } else {
           setMessage('Unable to fetch security questions');
         }
@@ -37,7 +40,7 @@ function ForgotPasswordForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, answer1: answers[0], answer2: answers[1], answer3: answers[2] }),
       });
-  
+
       const verificationResult = await verificationResponse.json();
       if (verificationResult.verified) {
         const resetResponse = await fetch('https://codebuddiesserver.onrender.com/api/users/reset-password', {
@@ -45,9 +48,9 @@ function ForgotPasswordForm() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, newPassword, answer1: answers[0], answer2: answers[1], answer3: answers[2] }),
         });
-  
+
         if (resetResponse.ok) {
-          setMessage('Password reset successfully. ');
+          setMessage('Password reset successfully.');
           setResetSuccess(true);
         } else {
           setMessage('Error resetting password');
@@ -59,21 +62,38 @@ function ForgotPasswordForm() {
       console.error('Error:', error);
       setMessage('Error processing request');
     }
-  };  
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleFetchQuestions();
+    }
+  };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter your username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button type="button" onClick={handleFetchQuestions}>Fetch Security Questions</button>
-        {questions.map((question, index) => (
-          <div key={index}>
-            <label>{question}</label>
+    <div className={styles.loginPage}>
+      <form className={styles.loginFormInputContainer} onSubmit={handleSubmit}>
+        {!fetchClicked && (
+          <>
+            <div className={styles.loginSelectBorder}>
+              <input
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className={styles.loginSelect}
+              />
+            </div>
+            <button type="button" onClick={handleFetchQuestions} className={styles.loginSubmitButton}>
+              Fetch Security Questions
+            </button>
+          </>
+        )}
+        {questions.length > 0 && questions.map((question, index) => (
+          <div key={index} className={styles.securityQuestionContainer}>
+            <label className={styles.securityQuestionLabel}>{question}</label>
             <input
               type="text"
               value={answers[index]}
@@ -82,19 +102,27 @@ function ForgotPasswordForm() {
                 newAnswers[index] = e.target.value;
                 setAnswers(newAnswers);
               }}
+              className={styles.securityQuestionInput}
             />
           </div>
         ))}
-        <input
-          type="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-        <button type="submit">Reset Password</button>
+        {questions.length > 0 && (
+          <>
+            <div className={styles.loginSelectBorder}>
+              <input
+                type="password"
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className={styles.loginSelect}
+              />
+            </div>
+            <button type="submit" className={styles.loginSubmitButton}>Reset Password</button>
+          </>
+        )}
       </form>
       {message && (
-        <p>
+        <p className={styles.loginFormMessage}>
           {message}
           {resetSuccess && (
             <span>
