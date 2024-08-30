@@ -8,7 +8,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Register() {
   const securityQuestions = [
-    "Select a security question",
     "What was your first pet's name?",
     "What was the make of your first car?",
     "What was the name of your elementary school?",
@@ -25,37 +24,29 @@ function Register() {
   const [message, setMessage] = useState('');
   const router = useRouter();
   const [passwordError, setPasswordError] = useState('');
-  const [securityQuestion1, setSecurityQuestion1] = useState(securityQuestions[0]);
-  const [securityQuestion2, setSecurityQuestion2] = useState(securityQuestions[0]);
-  const [securityQuestion3, setSecurityQuestion3] = useState(securityQuestions[0]);
+  const [securityQuestion1, setSecurityQuestion1] = useState('');
+  const [securityQuestion2, setSecurityQuestion2] = useState('');
+  const [securityQuestion3, setSecurityQuestion3] = useState('');
   const [securityAnswer1, setSecurityAnswer1] = useState('');
   const [securityAnswer2, setSecurityAnswer2] = useState('');
   const [securityAnswer3, setSecurityAnswer3] = useState('');
-  const [filteredQuestions1, setFilteredQuestions1] = useState(securityQuestions);
-  const [filteredQuestions2, setFilteredQuestions2] = useState(securityQuestions);
-  const [filteredQuestions3, setFilteredQuestions3] = useState(securityQuestions);
+  const [filteredQuestions1, setFilteredQuestions1] = useState([]);
+  const [filteredQuestions2, setFilteredQuestions2] = useState([]);
+  const [filteredQuestions3, setFilteredQuestions3] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-useEffect(() => {
-    // Check if a question is selected and not the default
-    const isSelected = (question) => question !== securityQuestions[0];
+  useEffect(() => {
+    const filterQuestions = (selectedQuestions) => {
+      return securityQuestions.filter(q => !selectedQuestions.includes(q));
+    };
 
-    // Update filtered questions only if a question has been selected
-    if (isSelected(securityQuestion1)) {
-      setFilteredQuestions2(securityQuestions.filter(q => q !== securityQuestion1));
-      setFilteredQuestions3(securityQuestions.filter(q => q !== securityQuestion1));
-    }
-    if (isSelected(securityQuestion2)) {
-      setFilteredQuestions1(securityQuestions.filter(q => q !== securityQuestion2));
-      setFilteredQuestions3(securityQuestions.filter(q => q !== securityQuestion2));
-    }
-    if (isSelected(securityQuestion3)) {
-      setFilteredQuestions1(securityQuestions.filter(q => q !== securityQuestion3));
-      setFilteredQuestions2(securityQuestions.filter(q => q !== securityQuestion3));
-    }
-  }, [securityQuestion1, securityQuestion2, securityQuestion3, securityQuestions]);
+    const selectedQuestions = [securityQuestion1, securityQuestion2, securityQuestion3].filter(Boolean);
 
+    setFilteredQuestions1(filterQuestions([securityQuestion2, securityQuestion3]));
+    setFilteredQuestions2(filterQuestions([securityQuestion1, securityQuestion3]));
+    setFilteredQuestions3(filterQuestions([securityQuestion1, securityQuestion2]));
+  }, [securityQuestion1, securityQuestion2, securityQuestion3]);
 
-  
   const handlePasswordBlur = () => {
     if (password.length < 6) {
       setPasswordError('Password must be at least 6 characters');
@@ -64,21 +55,9 @@ useEffect(() => {
     }
   };
 
-  // const handleOAuthRegister = async (provider) => {
-  //   try {
-  //     const result = await signIn(provider, { callbackUrl: '/user/register' });
-  //     if (!result.error) {
-  //       console.log(result);
-  //     } else {
-  //       console.error(result.error);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('https://codebuddiesserver.onrender.com/api/users/register', {
@@ -122,18 +101,10 @@ useEffect(() => {
     } catch (error) {
       setMessage('Registration failed: unexpected error');
       console.error('Error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  const isQuestionSelected = (question) => {
-    return question !== securityQuestions[0];
-  };
-
-  const getFilteredQuestions = (currentQuestion, otherQuestion1, otherQuestion2) => {
-    return securityQuestions.filter(question => {
-      return question !== otherQuestion1 && question !== otherQuestion2;
-    });
-  };  
 
   return (
     <div className={styles.registerPage}>
@@ -198,6 +169,7 @@ useEffect(() => {
                   {passwordError}
                 </div>
               )}
+
               {/* Security Question 1 */}
               <div className={styles.registerFormInputContainer}>
                 <div className={styles.securityQuestionContainer}>
@@ -207,11 +179,12 @@ useEffect(() => {
                     onChange={(e) => setSecurityQuestion1(e.target.value)}
                     required
                   >
+                    <option value="" disabled>Select a security question</option>
                     {filteredQuestions1.map((question, index) => (
                       <option key={index} value={question}>{question}</option>
                     ))}
                   </select>
-                  {isQuestionSelected(securityQuestion1) && (
+                  {securityQuestion1 && (
                     <input
                       type="text"
                       placeholder="Security Answer 1"
@@ -233,11 +206,12 @@ useEffect(() => {
                     onChange={(e) => setSecurityQuestion2(e.target.value)}
                     required
                   >
+                    <option value="" disabled>Select a security question</option>
                     {filteredQuestions2.map((question, index) => (
                       <option key={index} value={question}>{question}</option>
                     ))}
                   </select>
-                  {isQuestionSelected(securityQuestion2) && (
+                  {securityQuestion2 && (
                     <input
                       type="text"
                       placeholder="Security Answer 2"
@@ -259,11 +233,12 @@ useEffect(() => {
                     onChange={(e) => setSecurityQuestion3(e.target.value)}
                     required
                   >
+                    <option value="" disabled>Select a security question</option>
                     {filteredQuestions3.map((question, index) => (
                       <option key={index} value={question}>{question}</option>
                     ))}
                   </select>
-                  {isQuestionSelected(securityQuestion3) && (
+                  {securityQuestion3 && (
                     <input
                       type="text"
                       placeholder="Security Answer 3"
@@ -276,11 +251,13 @@ useEffect(() => {
                 </div>
               </div>
               <div className={styles.registerSubmitButtonContainer}>
-                <button className={styles.registerSubmitButton} type="submit">Register</button>
+                <button className={styles.registerSubmitButton} type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Registering...' : 'Register'}
+                </button>
               </div>
 
               <p className={styles.alreadyHaveAccountText}>
-                Already have an account? <Link href="/user/login" className={styles.SignInLink}>Sign In</Link>
+                Already have an account? <Link href="/user/login">Login</Link>
               </p>
             </div>
           </form>

@@ -74,7 +74,7 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
 
   if (!isOpen) return null;
 
-  return (
+ return (
     <div className={styles.editModalOverlay}>
       <div className={styles.editModalContent}>
         <div className={styles.editModalHeader}>
@@ -114,19 +114,21 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
           </div>
           <div className={styles.editModalFormGroup}>
             <label>Technologies:</label>
-            {codeLanguageArray && codeLanguageArray.map((tech, index) => (
-              <div key={index} className={styles.editModalTechOption}>
-                <input
-                  type="checkbox"
-                  id={`tech-${index}`}
-                  name="tech"
-                  value={tech}
-                  checked={selectedTech.includes(tech)}
-                  onChange={handleTechChange}
-                />
-                <label htmlFor={`tech-${index}`}>{tech}</label>
-              </div>
-            ))}
+            <div className={styles.editModalTechOptionsContainer}>
+              {codeLanguageArray && codeLanguageArray.map((tech, index) => (
+                <div key={index} className={styles.editModalTechOption}>
+                  <input
+                    type="checkbox"
+                    id={`tech-${index}`}
+                    name="tech"
+                    value={tech}
+                    checked={selectedTech.includes(tech)}
+                    onChange={handleTechChange}
+                  />
+                  <label htmlFor={`tech-${index}`}>{tech}</label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className={styles.editModalFooter}>
@@ -136,5 +138,4 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
     </div>
   );
 };
-
 export default EditModal;
