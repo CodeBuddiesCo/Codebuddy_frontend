@@ -126,6 +126,8 @@ input:-webkit-autofill:active{
   display: flex;
 }
 .header-nav-buttons {
+  border: none;
+  outline: inherit;
   width: auto;
   height: auto;
   color: #8c4c35;

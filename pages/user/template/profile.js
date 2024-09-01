@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useSession } from 'next-auth/react';
 import ReceivedMessages from '../../../components/ReceivedMessages';
 import DeletedMessages from '../../../components/DeletedMessages';
@@ -10,6 +8,8 @@ import RequestToBecomeBuddy from '../become-a-buddy';
 import styles from './/profile.module.css';
 import { codeLanguageArray } from '../../../Arrays/CodeLanguageArray';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import EditModal from '../../../components/EditModal';
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
@@ -17,6 +17,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   // const [receivedMessages, setReceivedMessages] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // const [deletedMessages, setDeletedMessages] = useState([]);
   // const [viewingDeleted, setViewingDeleted] = useState(false);
   // const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
@@ -101,19 +102,9 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     if (isSidebarEditable) setIsSidebarEditable(false);
   };
 
-  const handleProfileUpdate = async () => {
+  const handleProfileUpdate = async (updatedData) => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
-    const updatedData = {
-      username: updatedUsername,
-      email: updatedEmail,
-      title: updatedTitle,
-      pfp_url: updatedPfpUrl,
-      primary_language: updatedPrimaryLanguage,
-      secondary_language: updatedSecondaryLanguage,
-      buddy_bio: updatedBuddyBio,
-      programmingLanguages: selectedTech,
-    };
 
     try {
       const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
@@ -134,8 +125,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     } catch (error) {
       console.error('Exception:', error);
       alert('Error while updating user details');
-
-
     }
     console.log("Updated Data:", updatedData);
   };
@@ -169,52 +158,72 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       < Header />
       <div className={styles.leftPanel}>
-        <div className={styles.mainDetailsContainer}>
+        <section className={styles.mainDetailsContainer}>
           <div className={styles.containerHeaderWrapper}>
             <div className={styles.containerHeading}> </div>
-            <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
+            <button title="Edit Profile" onClick={() => setIsModalOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
           </div>
           <div className={styles.profilePictureWrapper}>
+            {!updatedPfpUrl && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
             {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
           </div>
           <div className={styles.profileNameWrapper}>
             <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
             <div className={styles.profileName}>{userDetails.name}</div>
           </div>
-        </div>
-        <div className={styles.technologiesContainer}>
+          <div className={styles.profileTitlesWrapper}>
+            {userDetails.title && <div className={styles.profileTitle}>{userDetails.title}</div>}
+            {userDetails.is_buddy === true && <div className={styles.profileStatus}>Host Buddy</div>}
+          </div>
+          <div>
+            {userDetails.is_buddy &&<Link href="/event/add">
+              <button className={styles.profileGadgetButton}>Add Event</button>
+            </Link>}
+            <Link href="become-a-buddy">
+              {!userDetails.is_buddy &&<button className={styles.profileGadgetButton}>Become a Buddy</button>}
+            </Link>
+          </div>
+          
+        </section>
+        <section className={styles.technologiesContainer}>
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>Technologies</p1>
-            <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
+            <button title="Edit Profile" id={styles.iconButtons} onClick={() => setIsModalOpen(true)} className="material-symbols-outlined">edit_square</button>
           </div>
-        </div>
+        </section>
       </div>
       <div className={styles.middlePanel}>
-        <div className={styles.bioContainer}>
+        <section className={styles.bioContainer}>
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>Bio</p1>
-            <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
+            <button title="Edit Profile" id={styles.iconButtons} onClick={() => setIsModalOpen(true)} className="material-symbols-outlined">edit_square</button>
           </div>
           <div className={styles.bioTextWrapper} >
             {!userDetails.buddy_bio && <p className={styles.bioText}>Don’t leave us guessing! Complete your bio and connect with fellow coders! Click the edit button to get started.</p>}
             {userDetails.buddy_bio && <p className={styles.bioText}>{userDetails.buddy_bio}</p>}
           </div>
-        </div>
-        <div className={styles.eventsContainer}>
+        </section>
+        <section className={styles.eventsContainer}>
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>My Events</p1>
             <button title="View Monthly Calendar" id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>
           </div>
-        </div>
+        </section>
       </div>
       <div className={styles.rightPanel}>
-        <div className={styles.followingContainer}>
+        <section className={styles.followingContainer}>
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>Following</p1>
             <button title="Add person to follow" id={styles.iconButtons} className="material-symbols-outlined">person_add</button>
           </div>
-        </div>
+        </section>
       </div>
+      <EditModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        userDetails={userDetails}
+        handleProfileUpdate={handleProfileUpdate}
+      />
     </div>
   );
 }
