@@ -1,0 +1,9 @@
+# Query: https://codebuddilsesserver
+# ContextLines: 1
+
+1 result - 1 file
+
+pages/user/profile.js:
+  94      try {
+  95:       const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
+  96          method: 'PUT',
