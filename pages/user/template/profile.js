@@ -14,27 +14,16 @@ import EditModal from '../../../components/EditModal';
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
-  // const [receivedMessages, setReceivedMessages] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [deletedMessages, setDeletedMessages] = useState([]);
-  // const [viewingDeleted, setViewingDeleted] = useState(false);
-  // const [viewingDemoteBuddy, setViewingDemoteBuddy] = useState(false);
+
   const router = useRouter();
 
-  const [userDetails, setUserDetails] = useState({
-    username: '',
-    email: '',
-    title: '',
-    pfp_url: '',
-    primary_language: '',
-    secondary_language: '',
-    buddy_bio: '',
-    programmingLanguages: []
-  });
-
-  // const [buddies, setBuddies] = useState([]);
+  
+  const [userDetails, setUserDetails] = useState({});
+  const [primaryLanguages, setPrimaryLanguages] = useState([]);
+  const [secondaryLanguages, setSecondaryLanguages] = useState([]);
   const [updatedUsername, setUpdatedUsername] = useState('');
   const [updatedEmail, setUpdatedEmail] = useState('');
   const [updatedTitle, setUpdatedTitle] = useState('');
@@ -42,65 +31,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [updatedPrimaryLanguage, setUpdatedPrimaryLanguage] = useState('');
   const [updatedSecondaryLanguage, setUpdatedSecondaryLanguage] = useState('');
   const [updatedBuddyBio, setUpdatedBuddyBio] = useState('');
-  const [selectedTech, setSelectedTech] = useState([]);
 
-  const [isSidebarEditable, setIsSidebarEditable] = useState(false);
-  const [isBioEditable, setIsBioEditable] = useState(false);
-
-
-  useEffect(() => {
-    setCurrentPage("User Profile");
-    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
-    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
-    setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
-    // fetchReceivedMessages();
-    // fetchDeletedMessages();
-    fetchUserDetails();
-    // fetchBuddies();
-  }, [setCurrentPage, session?.user?.name]);
-
-  useEffect(() => {
-    if (userDetails) {
-      setUpdatedUsername(userDetails.username || '');
-      setUpdatedEmail(userDetails.email || '');
-      setUpdatedTitle(userDetails.title || '');
-      setUpdatedPfpUrl(userDetails.pfp_url || '');
-      setUpdatedPrimaryLanguage(userDetails.primary_language || '');
-      setUpdatedSecondaryLanguage(userDetails.secondary_language || '');
-      setUpdatedBuddyBio(userDetails.buddy_bio || '');
-
-    }
-  }, [userDetails]);
-
-  useEffect(() => {
-    console.log(userDetails.programmingLanguages);
-  }, [userDetails]);
-
-
-
-  const handleInputChange = (e, setter) => {
-    setter(e.target.value);
-  };
-
-  const handleTechChange = (event) => {
-    const { value, checked } = event.target;
-
-    if (checked) {
-      setSelectedTech(prev => [...prev, value]);
-    } else {
-      setSelectedTech(prev => prev.filter(tech => tech !== value));
-    }
-  };
-
-  const toggleSidebarEditMode = () => {
-    setIsSidebarEditable(!isSidebarEditable);
-    if (isBioEditable) setIsBioEditable(false);
-  };
-
-  const toggleBioEditMode = () => {
-    setIsBioEditable(!isBioEditable);
-    if (isSidebarEditable) setIsSidebarEditable(false);
-  };
 
   const handleProfileUpdate = async (updatedData) => {
     const userId = localStorage.getItem('userId');
@@ -144,6 +75,9 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         console.log('Fetched User Data:', userData);
 
         setUserDetails(userData);
+        setPrimaryLanguages([userData.primary_language, userData.secondary_language])
+        setSecondaryLanguages(userData.programmingLanguages)
+        console.log(primaryLanguages[1])
       } else {
         console.error(`Server responded with status: ${response.status}`);
       }
@@ -151,6 +85,26 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error('Exception:', error);
     }
   };
+
+  useEffect(() => {
+    if (userDetails) {
+      setUpdatedUsername(userDetails.username || '');
+      setUpdatedEmail(userDetails.email || '');
+      setUpdatedTitle(userDetails.title || '');
+      setUpdatedPfpUrl(userDetails.pfp_url || '');
+      setUpdatedPrimaryLanguage(userDetails.primary_language || '');
+      setUpdatedSecondaryLanguage(userDetails.secondary_language || '');
+      setUpdatedBuddyBio(userDetails.buddy_bio || '');
+    }
+  }, [userDetails]);  
+  
+  useEffect(() => {
+    setCurrentPage("User Profile");
+    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
+    setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
+    fetchUserDetails();
+  }, [setCurrentPage, session?.user?.name]);
 
 
   return (
@@ -164,8 +118,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <button title="Edit Profile" onClick={() => setIsModalOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
           </div>
           <div className={styles.profilePictureWrapper}>
-            {!updatedPfpUrl && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
-            {updatedPfpUrl && <img src={updatedPfpUrl} alt="Profile Preview" className={styles.profilePicture} />}
+            {!userDetails.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
+            {userDetails.pfp_url  && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
           </div>
           <div className={styles.profileNameWrapper}>
             <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
@@ -176,19 +130,29 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             {userDetails.is_buddy === true && <div className={styles.profileStatus}>Host Buddy</div>}
           </div>
           <div>
-            {userDetails.is_buddy &&<Link href="/event/add">
-              <button className={styles.profileGadgetButton}>Add Event</button>
-            </Link>}
-            <Link href="become-a-buddy">
-              {!userDetails.is_buddy &&<button className={styles.profileGadgetButton}>Become a Buddy</button>}
+            <Link href="/event/add">
+              {(userDetails.is_buddy == true) && (userDetails.isAdmin == false) && <button className={styles.profileGadgetButton}>Add Event</button>}
+            </Link>
+            <Link href="/user/become-a-buddy">
+              {!userDetails.is_buddy && <button className={styles.profileGadgetButton}>Become a Buddy</button>}
+            </Link>
+            <Link href="/">
+              {userDetails.isAdmin == true && <button className={styles.profileGadgetButton}>Manage Buddies</button>}
             </Link>
           </div>
-          
         </section>
         <section className={styles.technologiesContainer}>
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>Technologies</p1>
             <button title="Edit Profile" id={styles.iconButtons} onClick={() => setIsModalOpen(true)} className="material-symbols-outlined">edit_square</button>
+          </div>
+          <h6 className={styles.techSubHeaders}>Primary Technologies</h6>
+          <div className={styles.techItemWrappers}>
+          {primaryLanguages && primaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
+          </div>
+          <h6 className={styles.techSubHeaders}>Secondary Technologies</h6>
+          <div className={styles.techItemWrappers}>
+            {secondaryLanguages && secondaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
           </div>
         </section>
       </div>
@@ -214,7 +178,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         <section className={styles.followingContainer}>
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>Following</p1>
-            <button title="Add person to follow" id={styles.iconButtons} className="material-symbols-outlined">person_add</button>
+            <button title="Find others to follow" id={styles.iconButtons} className="material-symbols-outlined">person_add</button>
           </div>
         </section>
       </div>

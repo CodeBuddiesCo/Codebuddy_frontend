@@ -5,7 +5,7 @@ const codeLanguageArray = [
   "Go",
   "HTML", 
   "Java", 
-  "Javascript", 
+  "JavaScript", 
   "Kotlin",
   "Matlab",
   "NoSQL",
