@@ -6,7 +6,7 @@ const codeLanguageObjectArray = [
   {value: "Go", label: "Go"},
   {value: "HTML", label: "HTML"},
   {value: "Java", label: "Java"},
-  {value: "Javascript", label: "Javascript"},
+  {value: "JavaScript", label: "JavaScript"},
   {value: "Kotlin", label: "Kotlin"},
   {value: "Matlab", label: "Matlab"},
   {value: "NoSQL", label: "NoSQL"},
