@@ -50,7 +50,7 @@ function Login() {
         localStorage.setItem('isBuddy', result.user.is_buddy ? 'true' : 'false'); // Store the buddy status
         localStorage.setItem('userId', result.user.id);
 
-        router.push('/user/profile');
+        router.push('/user/my/profile');
       } else {
         console.log("No token received, showing error...");
         setMessage('Invalid username or password');

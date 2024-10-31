@@ -10,12 +10,14 @@ import { codeLanguageArray } from '../../../Arrays/CodeLanguageArray';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
+import { fetchAddFollow,  } from "../../../profile_api_calls";
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(session?.user?.name || 'Guest');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
+  const [followeeId, setFolloweeId] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const router = useRouter();
@@ -59,14 +61,12 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
     console.log("Updated Data:", updatedData);
   };
-
+  
   const fetchUserDetails = async () => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) return;
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/${userId}`, {
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -75,6 +75,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         console.log('Fetched User Data:', userData);
 
         setUserDetails(userData);
+        setFolloweeId(userData.id)
         setPrimaryLanguages([userData.primary_language, userData.secondary_language])
         setSecondaryLanguages(userData.programmingLanguages)
         console.log(primaryLanguages[1])
@@ -85,6 +86,48 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error('Exception:', error);
     }
   };
+
+  // const fetchProfileDetails = async () => {
+
+  //   try {
+
+
+  //     const url = `https://codebuddiesserver.onrender.com/api/users/profile/${2}`;
+  //     const response = await fetch(url, {
+  //       method: "GET"
+  //     });
+
+
+  //     if (response.status === 200) {
+  //       const userData = await response.json();
+  //       console.log('Fetched User Data:', userData);
+
+  //       setUserDetails(userData);
+  //       setFolloweeId(userData.id)
+  //       setPrimaryLanguages([userData.primary_language, userData.secondary_language])
+  //       setSecondaryLanguages(userData.programmingLanguages)
+  //       console.log(primaryLanguages[1])
+  //     } else {
+  //       console.error(`Server responded with status: ${response.status}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Exception:', error);
+  //   }
+  // };
+
+
+
+  async function handleAddFollow(followeeId) {
+
+    try {
+        
+        const results = await fetchAddFollow(followeeId);
+        console.log(results)
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   useEffect(() => {
     if (userDetails) {
@@ -104,6 +147,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
     fetchUserDetails();
+    // fetchProfileDetails();
   }, [setCurrentPage, session?.user?.name]);
 
 
@@ -139,6 +183,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <Link href="/">
               {userDetails.isAdmin == true && <button className={styles.profileGadgetButton}>Manage Buddies</button>}
             </Link>
+
+              {<button className={styles.profileGadgetButton} type="submit"  onClick={() => handleAddFollow(followeeId)}>Follow</button>}
           </div>
         </section>
         <section className={styles.technologiesContainer}>

@@ -38,7 +38,7 @@ function HomepageHeader() {
           <Link href="/user/become-a-buddy">
             {(username && !isBuddy) && <div className="HP-header-nav-buttons w-button">Become a buddy</div>}
           </Link>
-          <Link href="/user/profile">
+          <Link href="/user/my/profile">
             {username &&<div className="HP-header-nav-buttons w-button">My Profile</div>}
           </Link>
           <Link href="/event/calendar">
