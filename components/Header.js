@@ -35,7 +35,7 @@ function Header({currentPage}) {
           <Link href="become-a-buddy">
             {(username && !isBuddy) &&<button className="header-nav-buttons w-button">Become a buddy</button>}
           </Link>
-          <Link href="/user/profile">
+          <Link href="/user/my/profile">
             {(username && (currentPage !== "User Profile"))&&<button className="header-nav-buttons w-button">Profile</button>}
           </Link>
           <Link href="/event/calendar">
