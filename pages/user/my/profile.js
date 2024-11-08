@@ -180,7 +180,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <Link href="/user/become-a-buddy">
               {!userDetails.is_buddy && <button className={styles.profileGadgetButton}>Become a Buddy</button>}
             </Link>
-            <Link href="/">
+            <Link href="/user/manage-buddies">
               {userDetails.isAdmin == true && <button className={styles.profileGadgetButton}>Manage Buddies</button>}
             </Link>
 
