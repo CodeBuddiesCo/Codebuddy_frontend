@@ -10,7 +10,7 @@ import { codeLanguageArray } from '../../../Arrays/CodeLanguageArray';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
-import { fetchAddFollow,  } from "../../../profile_api_calls";
+import { fetchAddFollow, fetchRemoveFollow } from "../../../profile_api_calls";
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
@@ -63,12 +63,40 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     console.log("Updated Data:", updatedData);
   };
   
-  const fetchUserDetails = async () => {
+  // const fetchUserDetails = async () => {
+
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+
+  //     if (response.status === 200) {
+  //       const userData = await response.json();
+  //       console.log('Fetched User Data:', userData);
+
+  //       setUserDetails(userData);
+  //       setFolloweeId(userData.id)
+  //       setFollowsArray(userData.follows)
+  //       setPrimaryLanguages([userData.primary_language, userData.secondary_language])
+  //       setSecondaryLanguages(userData.programmingLanguages)
+  //       console.log(primaryLanguages[1])
+  //       console.log(userData.follows)
+  //     } else {
+  //       console.error(`Server responded with status: ${response.status}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Exception:', error);
+  //   }
+  // };
+
+  const fetchProfileDetails = async () => {
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+
+      const url = `https://codebuddiesserver.onrender.com/api/users/profile/${5}`;
+      const response = await fetch(url, {
+        method: "GET"
       });
 
       if (response.status === 200) {
@@ -81,7 +109,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         setPrimaryLanguages([userData.primary_language, userData.secondary_language])
         setSecondaryLanguages(userData.programmingLanguages)
         console.log(primaryLanguages[1])
-        console.log(userData.follows)
       } else {
         console.error(`Server responded with status: ${response.status}`);
       }
@@ -90,32 +117,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
   };
 
-  // const fetchProfileDetails = async () => {
-
-  //   try {
-
-  //     const url = `https://codebuddiesserver.onrender.com/api/users/profile/${5}`;
-  //     const response = await fetch(url, {
-  //       method: "GET"
-  //     });
-
-  //     if (response.status === 200) {
-  //       const userData = await response.json();
-  //       console.log('Fetched User Data:', userData);
-
-  //       setUserDetails(userData);
-  //       setFolloweeId(userData.id)
-  //       setPrimaryLanguages([userData.primary_language, userData.secondary_language])
-  //       setSecondaryLanguages(userData.programmingLanguages)
-  //       console.log(primaryLanguages[1])
-  //     } else {
-  //       console.error(`Server responded with status: ${response.status}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('Exception:', error);
-  //   }
-  // };
-
 
 
   async function handleAddFollow(followeeId) {
@@ -123,6 +124,21 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     try {
       const results = await fetchAddFollow(followeeId);
       console.log(results)
+      // fetchUserDetails()
+      fetchProfileDetails()
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+
+  async function handleRemoveFollow(followedId) {
+
+    try {
+      const results = await fetchRemoveFollow(followedId);
+      console.log(results)
+      fetchProfileDetails()
+      // fetchUserDetails()
     } catch (error) {
       console.error(error)
     }
@@ -146,18 +162,18 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
-    fetchUserDetails();
-    // fetchProfileDetails();
+    // fetchUserDetails();
+    fetchProfileDetails();
   }, [setCurrentPage, session?.user?.name]);
 
 
   return (
     <div className={styles.profilePage}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-      < Header />
+      < Header  {...currentPage={currentPage}}/>
       <div className={styles.leftPanel}>
         <section className={styles.mainDetailsContainer}>
-          <div className={styles.containerHeaderWrapper}>
+          <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
             <div className={styles.containerHeading}> </div>
             <button title="Edit Profile" onClick={() => setIsModalOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
           </div>
@@ -183,7 +199,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <Link href="/user/manage-buddies">
               {userDetails.isAdmin == true && <button className={styles.profileGadgetButton}>Manage Buddies</button>}
             </Link>
-
               {<button className={styles.profileGadgetButton} type="submit"  onClick={() => handleAddFollow(followeeId)}>Follow</button>}
           </div>
         </section>
@@ -227,19 +242,24 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <button title="Find others to follow" id={styles.iconButtons} className="material-symbols-outlined">person_add</button>
           </div>
           {followsArray && <div className={styles.followedUsersContainer}>
-          {followsArray.map ((followedUser) => (<div>
-          <div className={styles.followedUserPictureWrapper}>
-            {!followedUser.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.followedUserPicture} />}
-            {followedUser.pfp_url  && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
-          </div>
-          <div className={styles.followedUserNameWrapper}>
-            <div className={styles.followedUserUsername}><span className={styles.followsCurly}>{`{`}</span>{followedUser.username}<span className={styles.followsCurly}>{`}`}</span></div>
-            <div className={styles.followedUserName}>{followedUser.name}</div>
-          </div>
-          <div className={styles.followedUserTitlesWrapper}>
-            {userDetails.title && <div className={styles.followedUserTitle}>{followedUser.title}</div>}
-          </div>
-          </div>))}
+            {followsArray.map ((followedUser) => (<div>
+              <div className={styles.followButtonContainer}>
+                <button title="Unfollow User" id={styles.followButtons} className="material-symbols-outlined" type="submit"  onClick={() => handleRemoveFollow(followedUser.id)}>person_remove</button>
+              </div>
+              <Link key={followedUser.id} href={`/user/profile/${followedUser.id}`}>
+                <div className={styles.followedUserPictureWrapper}>
+                  {!followedUser.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.followedUserPicture} />}
+                  {followedUser.pfp_url  && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
+                </div>
+                <div className={styles.followedUserNameWrapper}>
+                  <div className={styles.followedUserUsername}><span className={styles.followsCurly}>{`{`}</span>{followedUser.username}<span className={styles.followsCurly}>{`}`}</span></div>
+                  <div className={styles.followedUserName}>{followedUser.name}</div>
+                </div>
+                <div className={styles.followedUserTitlesWrapper}>
+                  {userDetails.title && <div className={styles.followedUserTitle}>{followedUser.title}</div>}
+                </div>
+              </Link>
+            </div>))}
           </div>}
         </section>
       </div>
