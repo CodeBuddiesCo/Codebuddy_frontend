@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import ReceivedMessages from '../../../components/ReceivedMessages';
-import DeletedMessages from '../../../components/DeletedMessages';
-import DemoteBuddy from '../../../components/DemoteBuddy';
 import Header from '../../../components/Header';
 import RequestToBecomeBuddy from '../become-a-buddy';
 import styles from './/profile.module.css';
-import { codeLanguageArray } from '../../../Arrays/CodeLanguageArray';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
@@ -63,40 +59,12 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     console.log("Updated Data:", updatedData);
   };
   
-  // const fetchUserDetails = async () => {
-
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-
-  //     if (response.status === 200) {
-  //       const userData = await response.json();
-  //       console.log('Fetched User Data:', userData);
-
-  //       setUserDetails(userData);
-  //       setFolloweeId(userData.id)
-  //       setFollowsArray(userData.follows)
-  //       setPrimaryLanguages([userData.primary_language, userData.secondary_language])
-  //       setSecondaryLanguages(userData.programmingLanguages)
-  //       console.log(primaryLanguages[1])
-  //       console.log(userData.follows)
-  //     } else {
-  //       console.error(`Server responded with status: ${response.status}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('Exception:', error);
-  //   }
-  // };
-
-  const fetchProfileDetails = async () => {
+  const fetchUserDetails = async () => {
 
     try {
-
-      const url = `https://codebuddiesserver.onrender.com/api/users/profile/${5}`;
-      const response = await fetch(url, {
-        method: "GET"
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.status === 200) {
@@ -109,6 +77,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         setPrimaryLanguages([userData.primary_language, userData.secondary_language])
         setSecondaryLanguages(userData.programmingLanguages)
         console.log(primaryLanguages[1])
+        console.log(userData.follows)
       } else {
         console.error(`Server responded with status: ${response.status}`);
       }
@@ -117,6 +86,33 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
   };
 
+  // const fetchProfileDetails = async () => {
+
+  //   try {
+
+  //     const url = `https://codebuddiesserver.onrender.com/api/users/profile/${5}`;
+  //     const response = await fetch(url, {
+  //       method: "GET"
+  //     });
+
+  //     if (response.status === 200) {
+  //       const userData = await response.json();
+  //       console.log('Fetched User Data:', userData);
+
+  //       setUserDetails(userData);
+  //       setFolloweeId(userData.id)
+  //       setFollowsArray(userData.follows)
+  //       setPrimaryLanguages([userData.primary_language, userData.secondary_language])
+  //       setSecondaryLanguages(userData.programmingLanguages)
+  //       console.log(primaryLanguages[1])
+  //     } else {
+  //       console.error(`Server responded with status: ${response.status}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Exception:', error);
+  //   }
+  // };
+
 
 
   async function handleAddFollow(followeeId) {
@@ -124,8 +120,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     try {
       const results = await fetchAddFollow(followeeId);
       console.log(results)
-      // fetchUserDetails()
-      fetchProfileDetails()
+      fetchUserDetails()
+      // fetchProfileDetails()
     } catch (error) {
       console.error(error)
     }
@@ -137,8 +133,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     try {
       const results = await fetchRemoveFollow(followedId);
       console.log(results)
-      fetchProfileDetails()
-      // fetchUserDetails()
+      // fetchProfileDetails()
+      fetchUserDetails()
     } catch (error) {
       console.error(error)
     }
@@ -162,8 +158,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
-    // fetchUserDetails();
-    fetchProfileDetails();
+    fetchUserDetails();
+    // fetchProfileDetails();
   }, [setCurrentPage, session?.user?.name]);
 
 
@@ -187,7 +183,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
           </div>
           <div className={styles.profileTitlesWrapper}>
             {userDetails.title && <div className={styles.profileTitle}>{userDetails.title}</div>}
-            {userDetails.is_buddy === true && <div className={styles.profileStatus}>Host Buddy</div>}
+            {userDetails.is_buddy == true && <div className={styles.profileStatus}>Host Buddy</div>}
           </div>
           <div>
             <Link href="/event/add">

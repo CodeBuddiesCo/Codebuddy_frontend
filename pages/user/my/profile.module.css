@@ -341,6 +341,7 @@
   box-shadow: 0 0 0 .5px rgba(0, 0, 0, 0.5); /* Creates a thin outline effect */
 }
 #followButtons:focus {
+  outline: none;
   box-shadow: 0 0 0 .5px rgba(0, 0, 0, 0.5); /* Creates a thin outline effect */
 }
 
