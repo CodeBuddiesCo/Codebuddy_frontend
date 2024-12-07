@@ -5,6 +5,7 @@ import styles from './myProfile.module.css';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
+import MessageBox from '../../../components/MessageBox';
 import { fetchAddFollow, fetchRemoveFollow } from "../../../profile_api_calls";
 
 const Profile = ({ setCurrentPage, currentPage }) => {
@@ -29,7 +30,11 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [updatedPrimaryLanguage, setUpdatedPrimaryLanguage] = useState('');
   const [updatedSecondaryLanguage, setUpdatedSecondaryLanguage] = useState('');
   const [updatedBuddyBio, setUpdatedBuddyBio] = useState('');
+  const [isBoxOpen, setIsBoxOpen] = useState(false);
 
+  const toggleBox = () => {
+    setIsBoxOpen((prev) => !prev);
+  };
 
   const handleProfileUpdate = async (updatedData) => {
     const userId = localStorage.getItem('userId');
@@ -159,9 +164,22 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             {!userDetails.is_buddy && <Link href="/user/become-a-buddy">
              <button className={styles.profileGadgetButton}>Become a Buddy</button>
             </Link>}
-            {userDetails.isAdmin == true && <Link href="/user/manage-buddies">
-              <button className={styles.profileGadgetButton}>Manage Buddies</button>
-            </Link>}
+            {userDetails.isAdmin == true && (
+  <>
+    <button 
+      className={styles.profileGadgetButton} 
+      onClick={toggleBox}
+    >
+      {isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}
+    </button>
+    {isBoxOpen && (
+      <MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
+        <p>Your content goes here!</p>
+      </MessageBox>
+    )}
+  </>
+)}
+
           </div>
         </section>
         <section className={styles.technologiesContainer}>

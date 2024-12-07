@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import styles from '../../styles/profile.module.css';
 
 
-const MessagesPage = ({ setCurrentPage, currentPage }) => {
+const MessagesPage = () => {
   const { data: session } = useSession();
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [deletedMessages, setDeletedMessages] = useState([]);
@@ -32,14 +32,13 @@ const MessagesPage = ({ setCurrentPage, currentPage }) => {
 
   
   useEffect(() => {
-    setCurrentPage("User Profile");
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
     fetchReceivedMessages();
     fetchDeletedMessages();
     fetchUserDetails();
-  }, [setCurrentPage, session?.user?.name]);
+  }, [session?.user?.name]);
 
  
   useEffect(() => {
