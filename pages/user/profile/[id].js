@@ -1,57 +1,182 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
-const UserProfile = () => {
+import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import Header from '../../../components/Header';
+import RequestToBecomeBuddy from '../become-a-buddy';
+import styles from './profile_id.module.css';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import EditModal from '../../../components/EditModal';
+import { fetchAddFollow, fetchRemoveFollow } from "../../../profile_api_calls";
+
+const Profile = ({ setCurrentPage, currentPage }) => {
+  const { data: session } = useSession();
+  const [name, setName] = useState(session?.user?.name || 'Guest');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isBuddy, setIsBuddy] = useState(false);
+  const [followeeId, setFolloweeId] = useState("")
+  const [followsArray, setFollowsArray] = useState("")
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const { id } = router.query;
-  const [profile, setProfile] = useState(null);
-  const [error, setError] = useState(null);
+  const [userDetails, setUserDetails] = useState({});
+  const [primaryLanguages, setPrimaryLanguages] = useState([]);
+  const [secondaryLanguages, setSecondaryLanguages] = useState([]);
 
+  const fetchProfileDetails = async (id) => {
+
+    try {
+
+      const url = `https://codebuddiesserver.onrender.com/api/users/profile/${id}`;
+      const response = await fetch(url, {
+        method: "GET"
+      });
+
+      if (response.status === 200) {
+        const userData = await response.json();
+        console.log('Fetched User Data:', userData);
+
+        setUserDetails(userData);
+        setFolloweeId(userData.id)
+        setFollowsArray(userData.follows)
+        setPrimaryLanguages([userData.primary_language, userData.secondary_language])
+        setSecondaryLanguages(userData.programmingLanguages)
+        console.log(primaryLanguages[1])
+      } else {
+        console.error(`Server responded with status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Exception:', error);
+    }
+  };
+
+
+  async function handleAddFollow(followeeId) {
+
+    try {
+      const results = await fetchAddFollow(followeeId);
+      console.log(results)
+      fetchProfileDetails()
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+
+  async function handleRemoveFollow(followedId) {
+
+    try {
+      const results = await fetchRemoveFollow(followedId);
+      console.log(results)
+      fetchProfileDetails()
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+
+  
   useEffect(() => {
     if (id) {
-      const fetchProfile = async () => {
-        try {
-          const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/profile/${id}`);
-          if (!response.ok) {
-            throw new Error(`Error fetching profile: ${response.statusText}`);
-          }
-          const data = await response.json();
-          setProfile(data);
-        } catch (err) {
-          setError(err.message);
-        }
-      };
-
-      fetchProfile();
+    setCurrentPage("Other Profile");
+    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+    setIsBuddy(localStorage.getItem('isBuddy') === 'true');
+    setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
+    fetchProfileDetails(id);
     }
-  }, [id]);
+    
+  }, [setCurrentPage, session?.user?.name, id]);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!profile) {
-    return <div>Loading...</div>;
-  }
 
   return (
-    <div>
-      <h1>{profile.name}'s Profile</h1>
-      <p>Email: {profile.email}</p>
-      <p>Username: {profile.username}</p>
-      <img src={profile.pfp_url} alt={`${profile.name}'s profile picture`} />
-      <p>Title: {profile.title}</p>
-      <p>Primary Language: {profile.primary_language}</p>
-      <p>Secondary Language: {profile.secondary_language}</p>
-      <p>Bio: {profile.buddy_bio}</p>
-      <p>Programming Languages:</p>
-      <ul>
-        {profile.programmingLanguages.map((language, index) => (
-          <li key={index}>{language}</li>
-        ))}
-      </ul>
+    <div className={styles.profilePage}>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+      < Header  {...currentPage={currentPage}}/>
+      <div className={styles.leftPanel}>
+        <section className={styles.mainDetailsContainer}>
+          <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
+            <div className={styles.containerHeading}> </div>
+            <button title="Edit Profile" onClick={() => setIsModalOpen(true)} id={styles.iconButtons} className="material-symbols-outlined"></button>
+            
+          </div>
+          <div className={styles.profilePictureWrapper}>
+            {!userDetails.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
+            {userDetails.pfp_url  && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
+          </div>
+          <div className={styles.profileNameWrapper}>
+            <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
+            <div className={styles.profileName}>{userDetails.name}</div>
+          </div>
+          <div className={styles.profileTitlesWrapper}>
+            {userDetails.title && <div className={styles.profileTitle}>{userDetails.title}</div>}
+            {userDetails.is_buddy == true && <div className={styles.profileStatus}>Host Buddy</div>}
+          </div>
+          <div>
+              {<button className={styles.profileGadgetButton} type="submit"  onClick={() => handleAddFollow(followeeId)}>Follow</button>}
+          </div>
+        </section>
+        <section className={styles.technologiesContainer}>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>Technologies</p1>
+          </div>
+          <div className={styles.technologiesWrapper}>
+            <h6 className={styles.techSubHeaders}>Primary Technologies</h6>
+            <div className={styles.techItemWrappers}>
+              {primaryLanguages && primaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
+            </div>
+            <h6 className={styles.techSubHeaders}>Secondary Technologies</h6>
+            <div className={styles.techItemWrappers}>
+              {secondaryLanguages && secondaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
+            </div>
+          </div>
+        </section>
+      </div>
+      <div className={styles.middlePanel}>
+        <section className={styles.bioContainer}>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>Bio</p1>
+          </div>
+          <div className={styles.bioTextWrapper} >
+            {!userDetails.buddy_bio && <p className={styles.bioText}>Don’t leave us guessing! Complete your bio and connect with fellow coders! Click the edit button to get started.</p>}
+            {userDetails.buddy_bio && <p className={styles.bioText}>{userDetails.buddy_bio}</p>}
+          </div>
+        </section>
+        <section className={styles.eventsContainer}>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>My Events</p1>
+            <button title="View Monthly Calendar" id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>
+          </div>
+        </section>
+      </div>
+      <div className={styles.rightPanel}>
+        <section className={styles.followingContainer}>
+          <div className={styles.containerHeaderWrapper}>
+            <p1 className={styles.containerHeading}>Following</p1>
+          </div>
+          {followsArray && <div className={styles.followedUsersContainer}>
+            {followsArray.map ((followedUser) => (<div>
+              <div className={styles.followButtonContainer}>
+              </div>
+              <Link key={followedUser.id} href={`/user/profile/${followedUser.id}`}>
+                <div className={styles.followedUserPictureWrapper}>
+                  {!followedUser.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.followedUserPicture} />}
+                  {followedUser.pfp_url  && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
+                </div>
+                <div className={styles.followedUserNameWrapper}>
+                  <div className={styles.followedUserUsername}><span className={styles.followsCurly}>{`{`}</span>{followedUser.username}<span className={styles.followsCurly}>{`}`}</span></div>
+                  <div className={styles.followedUserName}>{followedUser.name}</div>
+                </div>
+                <div className={styles.followedUserTitlesWrapper}>
+                  {userDetails.title && <div className={styles.followedUserTitle}>{followedUser.title}</div>}
+                </div>
+              </Link>
+            </div>))}
+          </div>}
+        </section>
+      </div>
     </div>
   );
-};
+}
 
-export default UserProfile;
+export default Profile;
+

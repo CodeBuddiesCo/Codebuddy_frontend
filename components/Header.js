@@ -29,18 +29,18 @@ function Header({currentPage}) {
         <Link href="/">
             <button className="header-nav-buttons w-button">Home</button>
           </Link>
-          <Link href="#">
-            {!username &&<button className="header-nav-buttons w-button">What is codebuddy?</button>}
-          </Link>
-          <Link href="become-a-buddy">
-            {(username && !isBuddy) &&<button className="header-nav-buttons w-button">Become a buddy</button>}
-          </Link>
-          <Link href="/user/my/profile">
-            {(username && (currentPage !== "User Profile"))&&<button className="header-nav-buttons w-button">Profile</button>}
-          </Link>
-          <Link href="/event/calendar">
-            {(currentPage !== "Event Calendar") && <button className="header-nav-buttons w-button">Calendar of Events</button>}
-          </Link>
+          {!username &&<Link href="#">
+            <button className="header-nav-buttons w-button">What is codebuddy?</button>
+          </Link>}
+          {(username && !isBuddy) &&<Link href="become-a-buddy">
+            <button className="header-nav-buttons w-button">Become a buddy</button>
+          </Link>}
+          {(username && (currentPage !== "User Profile"))&&<Link href="/user/my/profile">
+            <button className="header-nav-buttons w-button">Profile</button>
+          </Link>}
+          {(currentPage !== "Event Calendar") && <Link href="/event/calendar">
+            <button className="header-nav-buttons w-button">Calendar of Events</button>
+          </Link>}
           {!username &&<Link href="/user/login">
             <button className="header-nav-buttons button-right w-button">Signup / Login</button>
           </Link>}
