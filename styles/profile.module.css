@@ -691,14 +691,14 @@
   padding: 0px 25px 25px 25px;
 }
 
-.receivedMessagesContainer {
+/* .receivedMessagesContainer {
   font-family: 'Noto Sans', sans-serif;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 200px;
   margin-top: 100px;
-}
+} */
 
 .tabContainer {
   display: flex;
@@ -788,13 +788,13 @@
 }
 
 
-.demoteBuddiesContainer {
+/* .demoteBuddiesContainer {
   font-weight: 200;
   padding: 0px 25px 25px 25px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-top: 200px;
-}
+} */
 
 .buddiesList {
   list-style: none;

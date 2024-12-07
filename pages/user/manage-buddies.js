@@ -55,7 +55,6 @@ const ManageBuddiesPage = () => {
 
   return (
     <div>
-      <Header />
       <DemoteBuddy 
         buddies={buddies}
         demoteFromBuddy={demoteFromBuddy}
