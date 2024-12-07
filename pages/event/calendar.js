@@ -153,7 +153,7 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
                   {searchType === "Code" && <div className="calendar-select-border">
                     {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}           
                     <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
-                      <option value="" disabled selected>Primary Language</option>
+                <option value="" disabled selected>Primary Language</option>
                       {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
                     </select>
                   </div>}  

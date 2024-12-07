@@ -32,15 +32,15 @@ function HomepageHeader() {
       <section className="HP-header-section wf-section">
         <img className='HP-logo-div' src="/CB_Logo.png" alt='code buddy logo'/>
         <div className="HP-nav-btn-div">
-          <Link href="#">
-            {!username &&<div className="HP-header-nav-buttons w-button">What is codebuddy?</div>}
-          </Link>
-          <Link href="/user/become-a-buddy">
-            {(username && !isBuddy) && <div className="HP-header-nav-buttons w-button">Become a buddy</div>}
-          </Link>
-          <Link href="/user/my/profile">
-            {username &&<div className="HP-header-nav-buttons w-button">My Profile</div>}
-          </Link>
+          {!username &&<Link href="#">
+            <div className="HP-header-nav-buttons w-button">What is codebuddy?</div>
+          </Link>}
+          {(username && !isBuddy) && <Link href="/user/become-a-buddy">
+            <div className="HP-header-nav-buttons w-button">Become a buddy</div>
+          </Link>}
+          {username &&<Link href="/user/my/profile">
+            <div className="HP-header-nav-buttons w-button">My Profile</div>
+          </Link>}
           <Link href="/event/calendar">
             <div className="HP-header-nav-buttons w-button">Calendar of Events</div>
           </Link>
@@ -52,7 +52,7 @@ function HomepageHeader() {
           </Link>}
         </div>
       </section>
-    </div>
+    </div>          
   )
   }
   

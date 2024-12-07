@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Header from '../../../components/Header';
-import RequestToBecomeBuddy from '../become-a-buddy';
-import styles from './/profile.module.css';
+import styles from './myProfile.module.css';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
@@ -86,42 +85,12 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     }
   };
 
-  // const fetchProfileDetails = async () => {
-
-  //   try {
-
-  //     const url = `https://codebuddiesserver.onrender.com/api/users/profile/${5}`;
-  //     const response = await fetch(url, {
-  //       method: "GET"
-  //     });
-
-  //     if (response.status === 200) {
-  //       const userData = await response.json();
-  //       console.log('Fetched User Data:', userData);
-
-  //       setUserDetails(userData);
-  //       setFolloweeId(userData.id)
-  //       setFollowsArray(userData.follows)
-  //       setPrimaryLanguages([userData.primary_language, userData.secondary_language])
-  //       setSecondaryLanguages(userData.programmingLanguages)
-  //       console.log(primaryLanguages[1])
-  //     } else {
-  //       console.error(`Server responded with status: ${response.status}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('Exception:', error);
-  //   }
-  // };
-
-
-
   async function handleAddFollow(followeeId) {
 
     try {
       const results = await fetchAddFollow(followeeId);
       console.log(results)
       fetchUserDetails()
-      // fetchProfileDetails()
     } catch (error) {
       console.error(error)
     }
@@ -133,7 +102,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     try {
       const results = await fetchRemoveFollow(followedId);
       console.log(results)
-      // fetchProfileDetails()
       fetchUserDetails()
     } catch (error) {
       console.error(error)
@@ -159,7 +127,6 @@ const Profile = ({ setCurrentPage, currentPage }) => {
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
     setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
     fetchUserDetails();
-    // fetchProfileDetails();
   }, [setCurrentPage, session?.user?.name]);
 
 
@@ -186,16 +153,15 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             {userDetails.is_buddy == true && <div className={styles.profileStatus}>Host Buddy</div>}
           </div>
           <div>
-            <Link href="/event/add">
-              {(userDetails.is_buddy == true) && (userDetails.isAdmin == false) && <button className={styles.profileGadgetButton}>Add Event</button>}
-            </Link>
-            <Link href="/user/become-a-buddy">
-              {!userDetails.is_buddy && <button className={styles.profileGadgetButton}>Become a Buddy</button>}
-            </Link>
-            <Link href="/user/manage-buddies">
-              {userDetails.isAdmin == true && <button className={styles.profileGadgetButton}>Manage Buddies</button>}
-            </Link>
-              {<button className={styles.profileGadgetButton} type="submit"  onClick={() => handleAddFollow(followeeId)}>Follow</button>}
+            {(userDetails.is_buddy == true) && (userDetails.isAdmin == false) && <Link href="/event/add">
+              <button className={styles.profileGadgetButton}>Add Event</button>
+            </Link>}
+            {!userDetails.is_buddy && <Link href="/user/become-a-buddy">
+             <button className={styles.profileGadgetButton}>Become a Buddy</button>
+            </Link>}
+            {userDetails.isAdmin == true && <Link href="/user/manage-buddies">
+              <button className={styles.profileGadgetButton}>Manage Buddies</button>
+            </Link>}
           </div>
         </section>
         <section className={styles.technologiesContainer}>
@@ -203,14 +169,16 @@ const Profile = ({ setCurrentPage, currentPage }) => {
             <p1 className={styles.containerHeading}>Technologies</p1>
             <button title="Edit Profile" id={styles.iconButtons} onClick={() => setIsModalOpen(true)} className="material-symbols-outlined">edit_square</button>
           </div>
-          <h6 className={styles.techSubHeaders}>Primary Technologies</h6>
-          <div className={styles.techItemWrappers}>
-          {primaryLanguages && primaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
-          </div>
-          <h6 className={styles.techSubHeaders}>Secondary Technologies</h6>
-          <div className={styles.techItemWrappers}>
-            {secondaryLanguages && secondaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
-          </div>
+          <div className={styles.technologiesWrapper}>
+            <h6 className={styles.techSubHeaders}>Primary Technologies</h6>
+            <div className={styles.techItemWrappers}>
+              {primaryLanguages && primaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
+            </div>
+            <h6 className={styles.techSubHeaders}>Secondary Technologies</h6>
+            <div className={styles.techItemWrappers}>
+              {secondaryLanguages && secondaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
+            </div>
+          </div> 
         </section>
       </div>
       <div className={styles.middlePanel}>
@@ -270,6 +238,4 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 }
 
 export default Profile;
-
-
 
