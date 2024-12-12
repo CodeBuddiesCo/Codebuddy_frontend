@@ -6,7 +6,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
 import MessageBox from '../../../components/MessageBox';
-import { fetchAddFollow, fetchRemoveFollow } from "../../../profile_api_calls";
+import { parseISO, format } from 'date-fns';
+import { fetchAddFollow, fetchRemoveFollow, } from "../../../profile_api_calls";
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
@@ -14,7 +15,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
   const [followeeId, setFolloweeId] = useState("")
-  const [followsArray, setFollowsArray] = useState("")
+  const [followsArray, setFollowsArray] = useState([]);
+  const [userEvents, setUserEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const router = useRouter();
@@ -80,8 +82,11 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         setFollowsArray(userData.follows)
         setPrimaryLanguages([userData.primary_language, userData.secondary_language])
         setSecondaryLanguages(userData.programmingLanguages)
+        const userSchedule = userData.schedule
+        setUserEvents(userSchedule.events)
         console.log(primaryLanguages[1])
         console.log(userData.follows)
+        console.log(userSchedule.events)
       } else {
         console.error(`Server responded with status: ${response.status}`);
       }
@@ -89,6 +94,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error('Exception:', error);
     }
   };
+
 
   async function handleAddFollow(followeeId) {
 
@@ -165,21 +171,20 @@ const Profile = ({ setCurrentPage, currentPage }) => {
              <button className={styles.profileGadgetButton}>Become a Buddy</button>
             </Link>}
             {userDetails.isAdmin == true && (
-  <>
-    <button 
-      className={styles.profileGadgetButton} 
-      onClick={toggleBox}
-    >
-      {isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}
-    </button>
-    {isBoxOpen && (
-      <MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
-        <p>Your content goes here!</p>
-      </MessageBox>
-    )}
-  </>
-)}
-
+            <>
+              <button 
+                className={styles.profileGadgetButton} 
+                onClick={toggleBox}
+              >
+              {isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}
+              </button>
+              {isBoxOpen && (
+                <MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
+                  <p>Your content goes here!</p>
+                </MessageBox>
+              )}
+            </>
+            )}
           </div>
         </section>
         <section className={styles.technologiesContainer}>
@@ -214,6 +219,20 @@ const Profile = ({ setCurrentPage, currentPage }) => {
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>My Events</p1>
             <button title="View Monthly Calendar" id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>
+          </div>
+          <div>
+            {userEvents.map(event => {
+              const eventDate = parseISO(event.date_time);
+              return (
+                <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
+                  <div className={styles.calendarEventContainer}>
+                    <div className={styles.calendarEventText}>
+                      <span className={styles.bold}>{format(eventDate, 'iiii LLLL do p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </section>
       </div>

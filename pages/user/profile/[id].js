@@ -7,6 +7,7 @@ import styles from './profile_id.module.css';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
+import { parseISO, format } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow } from "../../../profile_api_calls";
 
 const Profile = ({ setCurrentPage, currentPage }) => {
@@ -15,7 +16,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
   const [followeeId, setFolloweeId] = useState("")
-  const [followsArray, setFollowsArray] = useState("")
+  const [followsArray, setFollowsArray] = useState([]);
+  const [userEvents, setUserEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const { id } = router.query;
@@ -41,6 +43,8 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         setFollowsArray(userData.follows)
         setPrimaryLanguages([userData.primary_language, userData.secondary_language])
         setSecondaryLanguages(userData.programmingLanguages)
+        const userSchedule = userData.schedule
+        setUserEvents(userSchedule.events)
         console.log(primaryLanguages[1])
       } else {
         console.error(`Server responded with status: ${response.status}`);
@@ -145,6 +149,20 @@ const Profile = ({ setCurrentPage, currentPage }) => {
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>My Events</p1>
             <button title="View Monthly Calendar" id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>
+          </div>
+          <div>
+            {userEvents.map(event => {
+              const eventDate = parseISO(event.date_time);
+              return (
+                <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
+                  <div className={styles.calendarEventContainer}>
+                    <div className={styles.calendarEventText}>
+                      <span className={styles.bold}>{format(eventDate, 'iiii LLLL do p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </section>
       </div>
