@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect, use} from "react";
-import { fetchEventById, fetchSignup, fetchCancelSignup, fetchCancelEvent, fetchDeleteEvent, fetchBuddySignup, fetchCancelBuddySignup } from "../../../event_api_calls";
+import { fetchEventById, fetchSignup, fetchCancelSignup, fetchCancelEvent, fetchDeleteEvent, fetchBuddySignup, fetchCancelBuddySignup } from "../../../api_calls_event";
 import { parseISO, format } from 'date-fns';
 import Link from "next/link";
 import Header from "../../../components/Header";

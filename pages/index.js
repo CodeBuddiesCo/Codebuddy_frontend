@@ -3,7 +3,7 @@ import { parseISO, format} from 'date-fns';
 import Link from "next/link";
 import HomepageHeader from '../components/HomepageHeader';
 
-import { fetchUpcomingEvents } from '../event_api_calls';
+import { fetchUpcomingEvents } from '../api_calls_event';
 
 function HomePage({upcomingEvents, setUpcomingEvents}) {
   const [upcomingEventMonths, setUpcomingEventMonths] = useState([]);

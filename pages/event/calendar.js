@@ -1,5 +1,5 @@
 import { useState, useEffect} from "react";
-import { fetchAllEvents, fetchOneBuddySearch, fetchTwoBuddySearch } from "../../event_api_calls";
+import { fetchAllEvents, fetchOneBuddySearch, fetchTwoBuddySearch } from "../../api_calls_event";
 import { parseISO, format } from 'date-fns';
 import React from 'react'
 import Loading from "../../components/Loading";

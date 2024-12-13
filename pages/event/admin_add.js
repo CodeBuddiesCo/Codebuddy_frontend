@@ -1,7 +1,7 @@
 import { useState, useEffect} from "react";
 import { parseISO, format, set } from 'date-fns';
 import Header from "../../components/Header";
-import { fetchAdminAddEvent } from "../../event_api_calls";
+import { fetchAdminAddEvent, fetchAllBuddies } from "../../api_calls_event";
 import Link from "next/link";
 import Unauthorized from "../../components/Unauthorized";
 const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
@@ -16,8 +16,11 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
   const [primaryLanguage, setPrimaryLanguage] = useState("")
   const [secondaryLanguage, setSecondaryLanguage] = useState("")
   const [additionalInfo, setAdditionalInfo] = useState("")
+  const [buddyArray, setBuddyArray] = useState([])
+  const [buddyUsernameArray, setBuddyUsernameArray] = useState([])
   const [zoomLink, setZoomLink] = useState("")
   const [successMessage, setSuccessMessage] = useState(false)
+  
 
   const formDateFunction = () => {
     if (selectedDate) {
@@ -60,7 +63,6 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
         setSecondaryBuddy("");
         setPrimaryLanguage("");
         setSecondaryLanguage("");
-        setSecondaryLanguageLabel("");
         setZoomLink("");
         setSuccessMessage(true);
         setAdditionalInfo("")
@@ -71,9 +73,25 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
     }
   }
 
+  async function getAllBuddies() {
+    try {
+      const buddyUsernames = [] 
+      const results = await fetchAllBuddies()
+      console.log("results from getAllBuddies >>", results)
+      setBuddyArray(() => results);
+      results.map((buddy) => {buddyUsernames.push({value: buddy.username, label: buddy.username})})
+      setBuddyUsernameArray(buddyUsernames)
+      console.log(buddyUsernameArray)
+
+    } catch (error) {
+      console.error   
+    }
+  }
+
   useEffect(() => {
     setIsAdmin(JSON.parse(window.localStorage.getItem("isAdmin")));
     formDateFunction()
+    getAllBuddies()
   }, [])
 
   return (
@@ -102,20 +120,18 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
             </div>
             <div className="add-event-select-border">
               {primaryBuddy && <label className="add-event-select-label">Primary Event Buddy</label>}
-              <select className="add-event-select" id="Primary Event Buddy"  onChange={(event) => setPrimaryBuddy(event.target.value)} required>
+              <select className="add-event-select" value={primaryBuddy} id="Primary Event Buddy"  onChange={(event) => {setPrimaryBuddy(event.target.value)}} required>
                 <option value="" disabled selected>Primary Event Buddy</option>
-                <option value="Hollye">Hollye</option>
-                <option value="cmugnai">cmugnai</option>
+                {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === secondaryBuddy}>{buddy.label}</option>)}
               </select>  
             </div>
             <div className="add-event-select-border">
               {secondaryBuddy && <label className="add-event-select-label">Secondary Event Buddy</label>}
-              <select className="add-event-select" id="Secondary Event Buddy"  onChange={(event) => setSecondaryBuddy(event.target.value)} required>
+              <select className="add-event-select" value={secondaryBuddy} id="Secondary Event Buddy"  onChange={(event) => {setSecondaryBuddy(event.target.value)}} required>
                 <option value="" disabled selected>Secondary Event Buddy</option>
                 <option value="open">open</option>
                 <option value="closed">closed</option>
-                <option value="Hollye">Hollye</option>
-                <option value="cmugnai">cmugnai</option>
+                {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === primaryBuddy}>{buddy.label}</option>)}
               </select>  
             </div>
             <div className="add-event-select-border">

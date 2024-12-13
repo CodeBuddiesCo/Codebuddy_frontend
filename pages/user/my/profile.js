@@ -7,7 +7,7 @@ import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
 import MessageBox from '../../../components/MessageBox';
 import { parseISO, format } from 'date-fns';
-import { fetchAddFollow, fetchRemoveFollow, } from "../../../profile_api_calls";
+import { fetchAddFollow, fetchRemoveFollow, } from "../../../api_calls_profile";
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
