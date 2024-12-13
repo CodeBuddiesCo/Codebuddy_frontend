@@ -168,7 +168,7 @@ export async function fetchBuddySignup(eventId, buddyUserName) {
 
     const url = `https://codebuddiesserver.onrender.com/api/events/buddy_signup/${eventId}`;
     const response = await fetch(url, {
-      method: "PUT",
+      method: "PATCH",
       headers: header,
       body: JSON.stringify(
         {
