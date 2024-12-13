@@ -1,7 +1,7 @@
 import { useState, useEffect} from "react";
 import { parseISO, format, set } from 'date-fns';
 import Header from "../../components/Header";
-import { fetchAddEvent } from "../../event_api_calls";
+import { fetchAddEvent } from "../../api_calls_event";
 import Link from "next/link";
 import Unauthorized from "../../components/Unauthorized";
 import Loading from "../../components/Loading";

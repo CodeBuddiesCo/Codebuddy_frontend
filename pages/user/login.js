@@ -45,7 +45,7 @@ function Login() {
         console.log("Token received, redirecting to profile...");
         localStorage.setItem('token', result.token);
         localStorage.setItem('loginMethod', 'username');
-        localStorage.setItem('username', result.user.name);
+        localStorage.setItem('username', result.user.username);
         localStorage.setItem('isAdmin', result.user.isAdmin ? 'true' : 'false'); // Store the admin status
         localStorage.setItem('isBuddy', result.user.is_buddy ? 'true' : 'false'); // Store the buddy status
         localStorage.setItem('userId', result.user.id);

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
 import { parseISO, format } from 'date-fns';
-import { fetchAddFollow, fetchRemoveFollow } from "../../../profile_api_calls";
+import { fetchAddFollow, fetchRemoveFollow } from "../../../api_calls_profile";
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
@@ -101,8 +101,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
           <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
             <div className={styles.containerHeading}> </div>
             <button title="Edit Profile" onClick={() => setIsModalOpen(true)} id={styles.iconButtons} className="material-symbols-outlined"></button>
-            
-          </div>
+                      </div>
           <div className={styles.profilePictureWrapper}>
             {!userDetails.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
             {userDetails.pfp_url  && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}

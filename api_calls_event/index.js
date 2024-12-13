@@ -168,7 +168,7 @@ export async function fetchBuddySignup(eventId, buddyUserName) {
 
     const url = `https://codebuddiesserver.onrender.com/api/events/buddy_signup/${eventId}`;
     const response = await fetch(url, {
-      method: "PATCH",
+      method: "PUT",
       headers: header,
       body: JSON.stringify(
         {
@@ -300,6 +300,29 @@ export async function fetchTwoBuddySearch(primaryCriteria, secondaryCriteria) {
     } else {
       console.log ("No Events from fetchTwoBuddySearch")
       return({error: "No Events"})
+    }
+
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchAllBuddies() {
+  
+  try {
+
+    const url = `https://codebuddiesserver.onrender.com/api/users/buddies`;
+    const response = await fetch(url, {
+      method: "GET"
+    });
+    const data = await response.json();
+
+    if (data[0]) {
+      console.log('Data from fetchAllBuddies :>> ', data);
+      return data
+    } else {
+      console.log ("No Buddies from fetchAllBuddies")
+      return({error: "No Buddies"})
     }
 
   } catch (error) {
