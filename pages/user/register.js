@@ -127,7 +127,7 @@ function Register() {
                 <input
                   className={styles.registerSelect}
                   type="text"
-                  placeholder="Name"
+                  placeholder="What should others call you?"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required

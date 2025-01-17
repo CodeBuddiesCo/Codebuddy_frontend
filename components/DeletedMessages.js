@@ -1,18 +1,18 @@
 import React from 'react';
-import styles from '../styles/profile.module.css';
+import styles from '../styles/modal.module.css';
 
 const DeletedMessages = ({ messages, viewingDeleted, setViewingDeleted }) => {
     return (
         <div className={styles.receivedMessagesContainer}>
-            <div className={styles.tabContainer}>
+            <div className={styles.adminTabContainer}>
                 <button
-                    className={`${styles.tabButton} ${!viewingDeleted ? styles.activeTab : ''}`}
+                    className={`${styles.adminTabButton} ${!viewingDeleted ? styles.adminActiveTab : ''}`}
                     onClick={() => setViewingDeleted(false)}
                 >
                     Buddy Requests
                 </button>
                 <button
-                    className={`${styles.tabButton} ${viewingDeleted ? styles.activeTab : ''}`}
+                    className={`${styles.adminTabButton} ${viewingDeleted ? styles.adminActiveTab : ''}`}
                     onClick={() => setViewingDeleted(true)}
                 >
                     Deleted Requests

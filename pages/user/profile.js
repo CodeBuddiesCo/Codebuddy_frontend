@@ -4,7 +4,7 @@ import { faEdit, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useSession } from 'next-auth/react';
 import Header from '../../components/Header';
 import RequestToBecomeBuddy from './become-a-buddy';
-import styles from '../../styles/profile.module.css';
+import styles from '../../styles/modal.module.css';
 import { useRouter } from 'next/router';
 import EditModal from '../../components/EditModal';
 import { codeLanguageArray } from '../../Arrays/CodeLanguageArray';
