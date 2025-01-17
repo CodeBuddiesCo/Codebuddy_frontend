@@ -5,7 +5,7 @@ import DeletedMessages from '../../components/DeletedMessages';
 import DemoteBuddy from '../../components/DemoteBuddy';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import styles from '../../styles/profile.module.css';
+import styles from '../../styles/modal.module.css';
 
 
 const MessagesPage = () => {
@@ -179,7 +179,7 @@ const MessagesPage = () => {
   
     {isAdmin && (
       <div className={styles.adminSection}>
-        <div className={styles.tabs}>
+        <div className={styles.Admintabs}>
         
           
         </div>

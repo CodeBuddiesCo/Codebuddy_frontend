@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import styles from '../styles/profile.module.css';
+import styles from '../styles/modal.module.css';
 
 const ReceivedMessages = ({ messages, promoteToBuddy, handleSoftDelete, viewingDeleted, setViewingDeleted, fetchReceivedMessages }) => {
     const [promotedMessages, setPromotedMessages] = useState({});
@@ -13,15 +13,15 @@ const ReceivedMessages = ({ messages, promoteToBuddy, handleSoftDelete, viewingD
 
     return (
         <div className={styles.receivedMessagesContainer}>
-            <div className={styles.tabContainer}>
+            <div className={styles.adminTabContainer}>
                 <button
-                    className={`${styles.tabButton} ${!viewingDeleted ? styles.activeTab : ''}`}
+                    className={`${styles.adminTabButton} ${!viewingDeleted ? styles.adminActiveTab : ''}`}
                     onClick={() => setViewingDeleted(false)}
                 >
                     Buddy Requests
                 </button>
                 <button
-                    className={`${styles.tabButton} ${viewingDeleted ? styles.activeTab : ''}`}
+                    className={`${styles.adminTabButton} ${viewingDeleted ? styles.adminActiveTab : ''}`}
                     onClick={() => setViewingDeleted(true)}
                 >
                     Deleted Requests

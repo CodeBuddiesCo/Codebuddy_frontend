@@ -5,6 +5,7 @@ import styles from '../styles/editModal.module.css';
 import codeLanguageArray from '../Arrays/CodeLanguageArray';
 
 const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
+  const [updatedName, setUpdatedName] = useState('');
   const [updatedUsername, setUpdatedUsername] = useState('');
   const [updatedEmail, setUpdatedEmail] = useState('');
   const [updatedTitle, setUpdatedTitle] = useState('');
@@ -16,6 +17,7 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
 
   useEffect(() => {
     if (userDetails) {
+      setUpdatedName(userDetails.name || '');
       setUpdatedUsername(userDetails.username || '');
       setUpdatedEmail(userDetails.email || '');
       setUpdatedTitle(userDetails.title || '');
@@ -59,6 +61,7 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
 
   const handleSubmit = () => {
     const updatedData = {
+      name: updatedName,
       username: updatedUsername,
       email: updatedEmail,
       title: updatedTitle,
@@ -84,6 +87,10 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
           </button>
         </div>
         <div className={styles.editModalBody}>
+        <div className={styles.editModalFormGroup}>
+            <label>Name:</label>
+            <input className={styles.editModalInput} type="text" value={updatedName} onChange={(e) => handleInputChange(e, setUpdatedName)} />
+          </div>
           <div className={styles.editModalFormGroup}>
             <label>Username:</label>
             <input className={styles.editModalInput} type="text" value={updatedUsername} onChange={(e) => handleInputChange(e, setUpdatedUsername)} />
