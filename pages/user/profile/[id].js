@@ -9,6 +9,7 @@ import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
 import { parseISO, format } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow } from "../../../api_calls_profile";
+import UserCalendar from '../../../components/UserCalendar';
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
@@ -24,6 +25,11 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [userDetails, setUserDetails] = useState({});
   const [primaryLanguages, setPrimaryLanguages] = useState([]);
   const [secondaryLanguages, setSecondaryLanguages] = useState([]);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [toggleSearch, setToggleSearch] = useState(false)
+  const [primaryCriteria, setPrimaryCriteria] = useState("");
+  const [secondaryCriteria, setSecondaryCriteria] = useState("");
+  const [searchType, setSearchType] = useState("");
 
   const fetchProfileDetails = async (id) => {
 
@@ -77,6 +83,32 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error(error)
     }
 
+  }
+
+  async function handleSearch(event) {
+    event.preventDefault()
+    try {
+      if (searchType === "Host") {
+        if (primaryCriteria && secondaryCriteria) {
+          const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
+          console.log(results)
+          if(results[0]) {
+          setDisplayEvents(() => results)}
+          console.log(displayEvents)
+        } else {
+          const results = await fetchOneBuddySearch(primaryCriteria)
+          console.log(displayEvents)
+          console.log(results)
+          if(results[0]) {
+            setDisplayEvents(results)
+            console.log(displayEvents)
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error
+    }
   }
 
   
@@ -147,9 +179,11 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         <section className={styles.eventsContainer}>
           <div className={styles.containerHeaderWrapper}>
             <p1 className={styles.containerHeading}>My Events</p1>
-            <button title="View Monthly Calendar" id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>
+            {!isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
+            {isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
           </div>
-          <div>
+          <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} userEvents={userEvents}/>
+          {!isCalendarOpen && <div>
             {userEvents.map(event => {
               const eventDate = parseISO(event.date_time);
               return (
@@ -162,7 +196,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
                 </Link>
               )
             })}
-          </div>
+          </div>}
         </section>
       </div>
       <div className={styles.rightPanel}>
