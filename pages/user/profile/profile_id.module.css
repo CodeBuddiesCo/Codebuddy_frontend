@@ -222,6 +222,7 @@
 }
 .eventsContainer {
   display: flex;
+  flex-direction: column;
   height: calc(70% - 15px);
   width: 100%;
   border-radius: 5px;
@@ -367,6 +368,95 @@
 #followButtons:focus {
   outline: none;
   box-shadow: 0 0 0 .5px rgba(0, 0, 0, 0.5); /* Creates a thin outline effect */
+}
+.calendarSelectBorder{
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+  height: 34px;
+  border-radius: 5px;
+  border: none;
+  border-bottom: 1px solid #D9D9D9;
+  justify-content: center;
+  padding-left: 5px;
+  margin-right: 10px;
+}
+.calendarSelectLabel{
+  position: relative;
+  font-family: Noto Sans Display, sans-serif;
+  color: #8c4c35;
+  font-weight: 200;
+  width: fit-content;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 9px;
+  margin-left: 5px;
+  margin-top:  -10px;
+  background-color: white;
+}
+.calendarSelect{
+  height: 20px;
+  width: 142px;
+  border: none;
+  color: #6A7680;
+  margin: 0px;
+  margin-top: 2px;
+  padding-left: 6px;
+  font-size: 11px;
+  font-family: Noto Sans Display, sans-serif;
+  font-weight:300;
+}
+.calendarSelect.input{
+  width: 135px;
+  padding-left: 10px;
+}
+.calendarSelectBorder:focus-within{
+  border: 1px solid #D9D9D9;
+  /* background-color: #ededed; */
+}
+.calendarSelect:focus{
+  outline: none;
+  /* background-color: #ededed; */
+}
+.calendarSearchFormButton{
+  height: 30px;
+  background: none;
+  background-color: #BF6A4B;
+  color: #FFF;
+  font-family: 'Noto Sans', sans-serif ;
+  font-size: 14px;
+  font-weight: 300;
+  border: none;
+  outline: inherit;
+  border-radius: 5px;
+  letter-spacing: .5px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px;
+  margin-top: 3px;
+  margin-right: 5px;
+}
+.calendarCloseSearchButton{
+  height: 30px;
+  background: none;
+  background-color: #6A7680;
+  color: #FFF;
+  font-family: 'Noto Sans', sans-serif ;
+  font-size: 14px;
+  font-weight: 300;
+  border: none;
+  outline: inherit;
+  border-radius: 5px;
+  letter-spacing: .5px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px;
+  margin-top: 3px;
+  margin-right: 10px;
 }
 
 

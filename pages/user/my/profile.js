@@ -8,9 +8,11 @@ import EditModal from '../../../components/EditModal';
 import MessageBox from '../../../components/MessageBox';
 import { parseISO, format } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow, } from "../../../api_calls_profile";
+import UserCalendar from '../../../components/UserCalendar';
 
 const Profile = ({ setCurrentPage, currentPage }) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [name, setName] = useState(session?.user?.name || 'Guest');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
@@ -18,8 +20,10 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [followsArray, setFollowsArray] = useState([]);
   const [userEvents, setUserEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const router = useRouter();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [primaryCriteria, setPrimaryCriteria] = useState("");
+  const [secondaryCriteria, setSecondaryCriteria] = useState("");
+  const [searchType, setSearchType] = useState("");
 
   
   const [userDetails, setUserDetails] = useState({});
@@ -33,6 +37,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
   const [updatedSecondaryLanguage, setUpdatedSecondaryLanguage] = useState('');
   const [updatedBuddyBio, setUpdatedBuddyBio] = useState('');
   const [isBoxOpen, setIsBoxOpen] = useState(false);
+  const [toggleSearch, setToggleSearch] = useState(false)
 
   const toggleBox = () => {
     setIsBoxOpen((prev) => !prev);
@@ -118,6 +123,32 @@ const Profile = ({ setCurrentPage, currentPage }) => {
       console.error(error)
     }
 
+  }
+
+  async function handleSearch(event) {
+    event.preventDefault()
+    try {
+      if (searchType === "Host") {
+        if (primaryCriteria && secondaryCriteria) {
+          const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
+          console.log(results)
+          if(results[0]) {
+          setDisplayEvents(() => results)}
+          console.log(displayEvents)
+        } else {
+          const results = await fetchOneBuddySearch(primaryCriteria)
+          console.log(displayEvents)
+          console.log(results)
+          if(results[0]) {
+            setDisplayEvents(results)
+            console.log(displayEvents)
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error
+    }
   }
 
   useEffect(() => {
@@ -217,10 +248,39 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         </section>
         <section className={styles.eventsContainer}>
           <div className={styles.containerHeaderWrapper}>
-            <p1 className={styles.containerHeading}>My Events</p1>
-            <button title="View Monthly Calendar" id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>
+            <p1 className={styles.containerHeading}>My Events</p1>                
+            {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Search" className="material-symbols-outlined search">search</button>}
+            {toggleSearch && <form className={styles.calendarSearchFormContainer} onSubmit={handleSearch}>
+              <div className={styles.calendarSelectBorder}>
+                {searchType && <label className={styles.calendarSelectLabel}>Search Type</label>}
+                <select className={styles.calendarSelect} onChange={(event) => setSearchType(event.target.value)} required>
+                  <option value="" disabled selected>Search Type</option>
+                  <option value="Host">Host Buddies</option>
+                  <option value="Code">Code Languages</option>
+                </select>
+              </div>
+              {searchType === "Code" && <div className={styles.calendarSelectBorder}>
+                {primaryCriteria && <label className={styles.calendarSelectLabel}>Primary Language</label>}           
+                <select className={styles.calendarSelect} value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
+                  <option value="" disabled selected>Primary Language</option>
+                  {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
+                </select>
+              </div>}  
+              {searchType === "Code" && <div className={styles.calendarSelectBorder}>
+                {secondaryCriteria && <label className={styles.calendarSelectLabel}>Secondary Language</label>}           
+                <select className={styles.calendarSelect} value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
+                  <option value="" disabled selected>Secondary Language</option>
+                  {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
+                </select>
+              </div>}  
+                <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
+                <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => setToggleSearch(false)}>close</button>
+            </form>}
+            {!isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
+            {isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
           </div>
-          <div>
+          <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} userEvents={userEvents}/>
+          {!isCalendarOpen && <div>
             {userEvents.map(event => {
               const eventDate = parseISO(event.date_time);
               return (
@@ -233,7 +293,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
                 </Link>
               )
             })}
-          </div>
+          </div>}
         </section>
       </div>
       <div className={styles.rightPanel}>
