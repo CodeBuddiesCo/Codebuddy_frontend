@@ -125,6 +125,7 @@ const Profile = ({ setCurrentPage, currentPage }) => {
 
   }
 
+  // ! you need to fix this with the styling and also then add it on to id.js
   async function handleSearch(event) {
     event.preventDefault()
     try {
@@ -132,19 +133,58 @@ const Profile = ({ setCurrentPage, currentPage }) => {
         if (primaryCriteria && secondaryCriteria) {
           const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
           console.log(results)
-          if(results[0]) {
-          setDisplayEvents(() => results)}
-          console.log(displayEvents)
+
+          if (!results[0]) {
+            setDisplayEvents([])
+            alert("No Results")
+          }
+          if(results[0].event_id) {
+            setDisplayEvents(() => results)
+          }
+          
         } else {
           const results = await fetchOneBuddySearch(primaryCriteria)
-          console.log(displayEvents)
           console.log(results)
-          if(results[0]) {
-            setDisplayEvents(results)
-            console.log(displayEvents)
+
+          if (!results[0]) {
+            setDisplayEvents([])
+            alert("No Results")
           }
+          if(results[0].event_id) {
+            setDisplayEvents(results)
+          }
+
         }
       }
+
+      // ! you need to change this code search function
+      // if (searchType === "Host") {
+      //   if (primaryCriteria && secondaryCriteria) {
+      //     const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
+      //     console.log(results)
+
+      //     if (!results[0]) {
+      //       setDisplayEvents([])
+      //       alert("No Results")
+      //     }
+      //     if(results[0].event_id) {
+      //       setDisplayEvents(() => results)
+      //     }
+          
+      //   } else {
+      //     const results = await fetchOneBuddySearch(primaryCriteria)
+      //     console.log(results)
+
+      //     if (!results[0]) {
+      //       setDisplayEvents([])
+      //       alert("No Results")
+      //     }
+      //     if(results[0].event_id) {
+      //       setDisplayEvents(results)
+      //     }
+
+      //   }
+      // }
 
     } catch (error) {
       console.error

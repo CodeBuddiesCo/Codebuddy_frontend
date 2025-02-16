@@ -50,6 +50,12 @@ const UserCalendar = ({ isOpen, onClose, children, userEvents, setAllEvents, loa
     setState({ chosenDate: newDate });
   };
 
+  const backToCurrent = () => {
+    const { chosenDate } = state;
+    const newDate = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), 1);
+    setState({ chosenDate: newDate });
+  }
+
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -75,29 +81,28 @@ const UserCalendar = ({ isOpen, onClose, children, userEvents, setAllEvents, loa
     <div>
       <div >
         {children}
-        <div  className={styles.calendarPage} onClick={()=> setTogglePopout("calendar-popout-container")}>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" />
-      {loading && <Loading/>}
-      {!loading &&<div  className={styles.calendarAllContent}>
-        <div className={styles.calendarMainContent}>
-          <div className={styles.calendarHeader}>
-            <div className={styles.calendarMonthControls}>
-              <button title="Previous Month" className="material-symbols-outlined" onClick={prevMonth}>arrow_back</button>
-              <p className={styles.calendarMonth}>{monthNames[chosenDate.getMonth()]} {chosenDate.getFullYear()}</p>
-              <button title="Next Month" className="material-symbols-outlined" onClick={nextMonth}>arrow_forward</button>
-            </div>
-            <div className={styles.calendarMenuContainer}>
-              <div>
-                {chosenDate > todaysFullDate && <button onClick={() => router.reload()} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
-                {chosenDate < todaysYearMon && <button onClick={() => router.reload()} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" />
+          {loading && <Loading/>}
+          {!loading &&<div  className={styles.calendarAllContent}>
+            <div className={styles.calendarMainContent}>
+              <div className={styles.calendarHeader}>
+                <div className={styles.calendarMonthControls}>
+                  <button title="Previous Month" id={styles.previousNextIconButtons} className="material-symbols-outlined" onClick={prevMonth}>arrow_back</button>
+                  <p className={styles.calendarMonth}>{monthNames[chosenDate.getMonth()]} {chosenDate.getFullYear()}</p>
+                  <button title="Next Month" id={styles.previousNextIconButtons} className="material-symbols-outlined" onClick={nextMonth}>arrow_forward</button>
+                </div>
+                <div className={styles.calendarMenuContainer}>
+                  <div>
+                    {chosenDate > todaysFullDate && <button onClick={backToCurrent} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
+                    {chosenDate < todaysYearMon && <button onClick={backToCurrent} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
+                  </div>
+                  <div className={styles.calendarMenuRightContainer}>
+                    {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
+                    {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
+                  </div>
+                </div>     
               </div>
-              <div className={styles.calendarMenuRightContainer}>
-                {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
-                {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
-              </div>
-            </div>     
-          </div>
-            <div className={styles.calendarGrid}>
+              <div className={styles.calendarGrid}>
               <div className={styles.calendarDaysOfTheWeekContainer}> 
                 {daysOfWeek.map((day)=>(<div key={day} className={styles.calendarDaysOfTheWeek}>{day}</div>))}
               </div>
@@ -138,7 +143,6 @@ const UserCalendar = ({ isOpen, onClose, children, userEvents, setAllEvents, loa
       </div>}
     </div>
       </div>
-    </div>
   );
 };
 
