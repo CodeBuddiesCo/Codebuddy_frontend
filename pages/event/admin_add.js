@@ -6,7 +6,7 @@ import Link from "next/link";
 import Unauthorized from "../../components/Unauthorized";
 const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
-function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
+function AdminAddEvent({selectedDate, isAdmin, setIsAdmin, buddyUsernameArray}) {
   const [defaultFormDate, setDefaultFormDate] = useState("")
   const [defaultFormTime, setDefaultFormTime] = useState((new Date().toTimeString()).slice(0,5))
   const [selectedFormTime, setSelectedFormTime] = useState("")
@@ -16,8 +16,6 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
   const [primaryLanguage, setPrimaryLanguage] = useState("")
   const [secondaryLanguage, setSecondaryLanguage] = useState("")
   const [additionalInfo, setAdditionalInfo] = useState("")
-  const [buddyArray, setBuddyArray] = useState([])
-  const [buddyUsernameArray, setBuddyUsernameArray] = useState([])
   const [zoomLink, setZoomLink] = useState("")
   const [successMessage, setSuccessMessage] = useState(false)
   
@@ -73,25 +71,9 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin}) {
     }
   }
 
-  async function getAllBuddies() {
-    try {
-      const buddyUsernames = [] 
-      const results = await fetchAllBuddies()
-      console.log("results from getAllBuddies >>", results)
-      setBuddyArray(() => results);
-      results.map((buddy) => {buddyUsernames.push({value: buddy.username, label: buddy.username})})
-      setBuddyUsernameArray(buddyUsernames)
-      console.log(buddyUsernameArray)
-
-    } catch (error) {
-      console.error   
-    }
-  }
-
   useEffect(() => {
     setIsAdmin(JSON.parse(window.localStorage.getItem("isAdmin")));
     formDateFunction()
-    getAllBuddies()
   }, [])
 
   return (

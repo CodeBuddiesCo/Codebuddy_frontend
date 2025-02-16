@@ -272,15 +272,18 @@ export async function fetchOneBuddySearch(primaryCriteria) {
     });
     const data = await response.json();
 
-    if (data[0].event_id) {
-      console.log('data from fetchOneBuddySearch :>> ', data);
-      return data;
-    } else {
+    if (!data[0]) {
       console.log ("No Events from fetchOneBuddySearch")
       return({error: "No Events"})
     }
 
+    if (data[0].event_id) {
+      console.log('data from fetchOneBuddySearch :>> ', data);
+      return data;
+    } 
+
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }
@@ -293,16 +296,20 @@ export async function fetchTwoBuddySearch(primaryCriteria, secondaryCriteria) {
       method: "GET"
     });
     const data = await response.json();
-    console.log
-    if (data[0].event_id) {
-      console.log('data from fetchTwoBuddySearch :>> ', data);
-      return data;
-    } else {
+    console.log(data)
+
+    if (!data[0]) {
       console.log ("No Events from fetchTwoBuddySearch")
       return({error: "No Events"})
     }
 
+    if (data[0].event_id) {
+      console.log('data from fetchTwoBuddySearch :>> ', data);
+      return data;
+    } 
+
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }

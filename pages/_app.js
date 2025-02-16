@@ -1,9 +1,10 @@
 require('dotenv').config()
 import Head from 'next/head'
-import { useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import '/styles/globals.css'
 import '/styles/authForms.module.css'
 import {SessionProvider} from 'next-auth/react'
+import {fetchAllBuddies} from "../api_calls_event";
 
 
 export default function App({ Component, pageProps, session }) {
@@ -15,7 +16,27 @@ export default function App({ Component, pageProps, session }) {
   const [selectedDate, setSelectedDate] = useState("")
   const [currentPage, setCurrentPage] = useState("")
   const [today, setToday] = useState(new Date())
+  const [buddyArray, setBuddyArray] = useState([])
+  const [buddyUsernameArray, setBuddyUsernameArray] = useState([])
 
+
+  async function getAllBuddies() {
+    try {
+      const buddyUsernames = [] 
+      const results = await fetchAllBuddies()
+      console.log("results from getAllBuddies >>", results)
+      setBuddyArray(() => results);
+      results.map((buddy) => {buddyUsernames.push({value: buddy.username, label: buddy.username})})
+      setBuddyUsernameArray(buddyUsernames)
+
+    } catch (error) {
+      console.error   
+    }
+  }
+
+  useEffect(() => {
+    getAllBuddies()
+  }, [])
 
   return (
     <SessionProvider session={session}>
@@ -34,6 +55,7 @@ export default function App({ Component, pageProps, session }) {
           setIsAdmin={setIsAdmin}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          buddyUsernameArray={buddyUsernameArray}
         /** Event State **/
           allEvents={allEvents}
           setAllEvents={setAllEvents}

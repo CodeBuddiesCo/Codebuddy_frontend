@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
 
-function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage}) {
+function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage, buddyUsernameArray}) {
   const router = useRouter()
   const [state, setState] = useState({chosenDate: new Date(),});
   const [selectedDayToDetail, setSelectedDayToDetail] = useState(1)
@@ -56,6 +56,12 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
     setState({ chosenDate: newDate });
   };
 
+  const backToCurrent = () => {
+    const { chosenDate } = state;
+    const newDate = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), 1);
+    setState({ chosenDate: newDate });
+  }
+
   async function getAllEvents() {
     try {
       setLoading(true);
@@ -78,19 +84,58 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
         if (primaryCriteria && secondaryCriteria) {
           const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
           console.log(results)
-          if(results[0]) {
-          setDisplayEvents(() => results)}
-          console.log(displayEvents)
+
+          if (!results[0]) {
+            setDisplayEvents([])
+            alert("No Results")
+          }
+          if(results[0].event_id) {
+            setDisplayEvents(() => results)
+          }
+          
         } else {
           const results = await fetchOneBuddySearch(primaryCriteria)
-          console.log(displayEvents)
           console.log(results)
-          if(results[0]) {
-            setDisplayEvents(results)
-            console.log(displayEvents)
+
+          if (!results[0]) {
+            setDisplayEvents([])
+            alert("No Results")
           }
+          if(results[0].event_id) {
+            setDisplayEvents(results)
+          }
+
         }
       }
+
+      // ! you need to change this code search function
+      // if (searchType === "Host") {
+      //   if (primaryCriteria && secondaryCriteria) {
+      //     const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
+      //     console.log(results)
+
+      //     if (!results[0]) {
+      //       setDisplayEvents([])
+      //       alert("No Results")
+      //     }
+      //     if(results[0].event_id) {
+      //       setDisplayEvents(() => results)
+      //     }
+          
+      //   } else {
+      //     const results = await fetchOneBuddySearch(primaryCriteria)
+      //     console.log(results)
+
+      //     if (!results[0]) {
+      //       setDisplayEvents([])
+      //       alert("No Results")
+      //     }
+      //     if(results[0].event_id) {
+      //       setDisplayEvents(results)
+      //     }
+
+      //   }
+      // }
 
     } catch (error) {
       console.error
@@ -116,8 +161,7 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
       return { day: day.key, count: dayEventsCount };
     });
   
-    setEventCounts(counts);
-    console.log(counts)
+    setEventCounts(counts)
   }, [chosenDate, displayEvents]);
   
 
@@ -136,15 +180,15 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
             </div>
             <div className="calendar-menu-container">
               <div>
-                {chosenDate > todaysFullDate && <button onClick={() => router.reload()} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
-                {chosenDate < todaysYearMon && <button onClick={() => router.reload()} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
+                {chosenDate > todaysFullDate && <button onClick={backToCurrent} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
+                {chosenDate < todaysYearMon && <button onClick={backToCurrent} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
               </div>
               <div className="calendar-menu-right-container">
                 {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search">search</button>}
                 {toggleSearch && <form className="calendar-search-form-container" onSubmit={handleSearch}>
                   <div className="calendar-select-border">
                     {searchType && <label className="calendar-select-label">Search Type</label>}
-                    <select className="calendar-select" onChange={(event) => setSearchType(event.target.value)} required>
+                    <select className="calendar-select" onChange={(event) => {setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("")}} required>
                       <option value="" disabled selected>Search Type</option>
                       <option value="Host">Host Buddies</option>
                       <option value="Code">Code Languages</option>
@@ -153,7 +197,7 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
                   {searchType === "Code" && <div className="calendar-select-border">
                     {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}           
                     <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
-                <option value="" disabled selected>Primary Language</option>
+                      <option value="" disabled selected>Primary Language</option>
                       {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
                     </select>
                   </div>}  
@@ -164,8 +208,23 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
                       {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
                     </select>
                   </div>}  
+                  {searchType === "Host" && <div className="calendar-select-border">
+                    {primaryCriteria && <label className="calendar-select-label">Primary Buddy</label>}           
+                    <select className="calendar-select" value={primaryCriteria} id="Primary-Buddy" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
+                      <option value="" disabled selected>Primary Buddy</option>
+                      {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === secondaryCriteria}>{buddy.label}</option>)}
+                    </select>
+                  </div>}  
+                  {searchType === "Host" && <div className="calendar-select-border">
+                    {secondaryCriteria && <label className="calendar-select-label">Secondary Buddy</label>}           
+                    <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
+                      <option value="" disabled selected>Secondary Buddy</option>
+                      <option value="">None</option>
+                      {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === primaryCriteria}>{buddy.label}</option>)}
+                    </select>
+                  </div>}  
                   <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
-                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => setToggleSearch(false)}>close</button>
+                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType("")}}>close</button>
                 </form>}
                 {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
                 {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
