@@ -2,6 +2,8 @@ import { useEffect, useState} from "react";
 import { parseISO, format} from 'date-fns';
 import Link from "next/link";
 import HomepageHeader from '../components/HomepageHeader';
+import MeetOurBuddies from "../components/MeetOurBuddies";
+import Footer from "../components/Footer";
 
 import { fetchUpcomingEvents } from '../api_calls_event';
 
@@ -128,7 +130,17 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
             </div>
           </div>
         </div>
+        
       </div>
+      
+      <div>
+
+      < MeetOurBuddies />
+
+    </div>
+
+< Footer />
+
     </div>
   );
 }
