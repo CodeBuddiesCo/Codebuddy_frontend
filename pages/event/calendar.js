@@ -1,5 +1,5 @@
 import { useState, useEffect} from "react";
-import { fetchAllEvents, fetchOneBuddySearch, fetchTwoBuddySearch } from "../../api_calls_event";
+import { fetchAllEvents, fetchOneBuddySearch, fetchTwoBuddySearch, fetchOneLanguageSearch, fetchTwoLanguageSearch } from "../../api_calls_event";
 import { parseISO, format } from 'date-fns';
 import React from 'react'
 import Loading from "../../components/Loading";
@@ -108,34 +108,33 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
         }
       }
 
-      // ! you need to change this code search function
-      // if (searchType === "Host") {
-      //   if (primaryCriteria && secondaryCriteria) {
-      //     const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
-      //     console.log(results)
+      if (searchType === "Language") {
+        if (primaryCriteria && secondaryCriteria) {
+          const results = await fetchTwoLanguageSearch(primaryCriteria, secondaryCriteria)
+          console.log(results)
 
-      //     if (!results[0]) {
-      //       setDisplayEvents([])
-      //       alert("No Results")
-      //     }
-      //     if(results[0].event_id) {
-      //       setDisplayEvents(() => results)
-      //     }
+          if (!results[0]) {
+            setDisplayEvents([])
+            alert("No Results")
+          }
+          if(results[0].event_id) {
+            setDisplayEvents(() => results)
+          }
           
-      //   } else {
-      //     const results = await fetchOneBuddySearch(primaryCriteria)
-      //     console.log(results)
+        } else {
+          const results = await fetchOneLanguageSearch(primaryCriteria)
+          console.log(results)
 
-      //     if (!results[0]) {
-      //       setDisplayEvents([])
-      //       alert("No Results")
-      //     }
-      //     if(results[0].event_id) {
-      //       setDisplayEvents(results)
-      //     }
+          if (!results[0]) {
+            setDisplayEvents([])
+            alert("No Results")
+          }
+          if(results[0].event_id) {
+            setDisplayEvents(results)
+          }
 
-      //   }
-      // }
+        }
+      }
 
     } catch (error) {
       console.error
@@ -191,20 +190,21 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
                     <select className="calendar-select" onChange={(event) => {setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("")}} required>
                       <option value="" disabled selected>Search Type</option>
                       <option value="Host">Host Buddies</option>
-                      <option value="Code">Code Languages</option>
+                      <option value="Language">Code Languages</option>
                     </select>
                   </div>
-                  {searchType === "Code" && <div className="calendar-select-border">
+                  {searchType === "Language" && <div className="calendar-select-border">
                     {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}           
                     <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
                       <option value="" disabled selected>Primary Language</option>
                       {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
                     </select>
                   </div>}  
-                  {searchType === "Code" && <div className="calendar-select-border">
+                  {searchType === "Language" && <div className="calendar-select-border">
                     {secondaryCriteria && <label className="calendar-select-label">Secondary Language</label>}           
                     <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
                       <option value="" disabled selected>Secondary Language</option>
+                      <option value="">None</option>
                       {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
                     </select>
                   </div>}  
