@@ -314,6 +314,58 @@ export async function fetchTwoBuddySearch(primaryCriteria, secondaryCriteria) {
   }
 }
 
+export async function fetchOneLanguageSearch(primaryCriteria) {
+  try {
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/search_by_code_language/${primaryCriteria}`;
+    const response = await fetch(url, {
+      method: "GET"
+    });
+    const data = await response.json();
+
+    if (!data[0]) {
+      console.log ("No Events from fetchOneLanguageSearch")
+      return({error: "No Events"})
+    }
+
+    if (data[0].event_id) {
+      console.log('data from fetchOneLanguageSearch :>> ', data);
+      return data;
+    } 
+
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+}
+
+export async function fetchTwoLanguageSearch(primaryCriteria, secondaryCriteria) {
+  try {
+
+    const url = `https://codebuddiesserver.onrender.com/api/events/search_by_code_language/${primaryCriteria}/${secondaryCriteria}`;
+    const response = await fetch(url, {
+      method: "GET"
+    });
+    const data = await response.json();
+    console.log(data)
+
+    if (!data[0]) {
+      console.log ("No Events from fetchTwoLanguageSearch")
+      return({error: "No Events"})
+    }
+
+    if (data[0].event_id) {
+      console.log('data from fetchTwoLanguageSearch :>> ', data);
+      return data;
+    } 
+
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+}
+
+
 export async function fetchAllBuddies() {
   
   try {
