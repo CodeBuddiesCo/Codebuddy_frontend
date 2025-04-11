@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from '../styles/userCalendar.module.css';
 
-const UserCalendar = ({ isOpen, onClose, children, userEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, }) => {
+const UserCalendar = ({ isOpen, onClose, children, displayEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, }) => {
   const router = useRouter()
   const [state, setState] = useState({chosenDate: new Date(),});
   const [selectedDayToDetail, setSelectedDayToDetail] = useState(1)
@@ -87,20 +87,21 @@ const UserCalendar = ({ isOpen, onClose, children, userEvents, setAllEvents, loa
             <div className={styles.calendarMainContent}>
               <div className={styles.calendarHeader}>
                 <div className={styles.calendarMonthControls}>
-                  <button title="Previous Month" id={styles.previousNextIconButtons} className="material-symbols-outlined" onClick={prevMonth}>arrow_back</button>
-                  <p className={styles.calendarMonth}>{monthNames[chosenDate.getMonth()]} {chosenDate.getFullYear()}</p>
-                  <button title="Next Month" id={styles.previousNextIconButtons} className="material-symbols-outlined" onClick={nextMonth}>arrow_forward</button>
-                </div>
-                <div className={styles.calendarMenuContainer}>
                   <div>
-                    {chosenDate > todaysFullDate && <button onClick={backToCurrent} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
-                    {chosenDate < todaysYearMon && <button onClick={backToCurrent} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
+                    {chosenDate > todaysFullDate && <button onClick={backToCurrent} id={styles.returnToCurrentMonthIconButtons} title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_left</button>}
+                    {chosenDate < todaysFullDate && <div className={styles.emptyControl}></div>}                 
                   </div>
-                  <div className={styles.calendarMenuRightContainer}>
-                    {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
-                    {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
+                  <div className={styles.innerMiddleCalendarControlsContainer}>
+                    <button title="Previous Month" id={styles.previousNextIconButtons} className="material-symbols-outlined" onClick={prevMonth}>arrow_back</button>
+                    <p className={styles.calendarMonth}>{monthNames[chosenDate.getMonth()]} {chosenDate.getFullYear()}</p>
+                    <button title="Next Month" id={styles.previousNextIconButtons} className="material-symbols-outlined" onClick={nextMonth}>arrow_forward</button>
                   </div>
-                </div>     
+                  <div>
+                    {chosenDate > todaysYearMon && <div className={styles.emptyControl}></div>}      
+                    {chosenDate < todaysYearMon && <button onClick={backToCurrent} id={styles.returnToCurrentMonthIconButtons}  title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
+                  </div>
+                </div>
+
               </div>
               <div className={styles.calendarGrid}>
               <div className={styles.calendarDaysOfTheWeekContainer}> 
@@ -109,27 +110,17 @@ const UserCalendar = ({ isOpen, onClose, children, userEvents, setAllEvents, loa
               <div className={styles.calendarDatesContainer}>
                 {days.map((day) =>(<div key={day.key} className={styles.calendarDates}>
                   <div className={styles.calendarNumAddContainer}>
-                    {isBuddy && !isAdmin &&<div className={styles.emptyControl}>
-                      {(new Date(chosenDate.getFullYear(), chosenDate.getMonth(), day.key) >= todaysYearMonDate) && <div>
-                        <Link href="/event/add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(chosenDate.getFullYear(), chosenDate.getMonth(), day.key))}>calendar_add_on</button></Link>
-                      </div>}
-                    </div>}
-                    {isAdmin &&<div className={styles.emptyControl}>
-                      {(new Date(chosenDate.getFullYear(), chosenDate.getMonth(), day.key) >= todaysYearMonDate) && <div>
-                        <Link href="/event/admin_add"><button className="material-symbols-outlined add-buttons" onClick={() => setSelectedDate(new Date(chosenDate.getFullYear(), chosenDate.getMonth(), day.key))}>calendar_add_on</button></Link>
-                      </div>}
-                    </div>}
                     {day.key > 0 && <div className={styles.calendarDateNum}>{day.key} </div>}
                   </div>
-                  {userEvents.map(event => {
+                  {displayEvents.map(event => {
                     const eventDate = parseISO(event.date_time);
                     if (format(eventDate, 'd') === day.key.toString() && format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() && format(eventDate, 'y') === chosenDate.getFullYear().toString()) {
                       return (
                         <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
                           <div className={styles.calendarEventContainer}>
-                            <div className={styles.calendarEventText}>
-                              <span className={styles.calendarEventText}>{format(eventDate, 'p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
-                            </div>
+                            <ul className={styles.calendarEventText}>
+                              <li className={styles.calendarEventText}>{format(eventDate, 'p')}</li>
+                            </ul>
                           </div>
                       </Link>
                       );
