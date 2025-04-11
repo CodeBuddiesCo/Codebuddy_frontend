@@ -10,6 +10,7 @@ import { parseISO, format } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow, } from "../../../api_calls_profile";
 import UserCalendar from '../../../components/UserCalendar';
 import { fetchOneBuddySearch, fetchTwoBuddySearch, fetchOneLanguageSearch, fetchTwoLanguageSearch } from "../../../api_calls_event";
+import Footer from '../../../components/Footer';
 const {codeLanguageObjectArray} = require('../../../Arrays/CodeLanguageObjectArray')
 
 const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
@@ -21,6 +22,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
   const [followeeId, setFolloweeId] = useState("")
   const [followsArray, setFollowsArray] = useState([]);
   const [userEvents, setUserEvents] = useState([]);
+  const [displayEvents, setDisplayEvents] =useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [primaryCriteria, setPrimaryCriteria] = useState("");
@@ -91,6 +93,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
         setSecondaryLanguages(userData.programmingLanguages)
         const userSchedule = userData.schedule
         setUserEvents(userSchedule.events)
+        setDisplayEvents(userSchedule.events)
         console.log(primaryLanguages[1])
         console.log(userData.follows)
         console.log(userSchedule.events)
@@ -134,31 +137,48 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
       if (searchType === "Host") {
         if (primaryCriteria && secondaryCriteria) {
 
-          const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
-          console.log(results)
-
-          if (!results[0]) {
-            setDisplayEvents([])
-            alert("No Results")
-          }
-          if(results[0].event_id) {
-            setUserEvents(() => results)
-          }
-          
-        } else {
-          const results = await fetchOneBuddySearch(primaryCriteria)
-          console.log(results)
-
-          if (!results[0]) {
-            setUserEvents([])
-            alert("No Results")
-          }
-          if(results[0].event_id) {
-            setDisplayEvents(results)
-          }
-
+          const matchingEvents = userEvents.filter(event => 
+            (event.buddy_one === primaryCriteria || event.buddy_one === secondaryCriteria) && 
+            (event.buddy_two === primaryCriteria || event.buddy_two === secondaryCriteria)
+          );
+        
+          setDisplayEvents(matchingEvents)
+          console.log("Search Results", matchingEvents)
         }
+
+        if (primaryCriteria && !secondaryCriteria) {
+
+          const matchingEvents = userEvents.filter(event => 
+            (event.buddy_one === primaryCriteria || event.buddy_one === secondaryCriteria)
+          );
+           
+          setDisplayEvents(matchingEvents)
+          console.log("Search Results", matchingEvents)
+        }
+
+        //   if (!results[0]) {
+        //     setDisplayEvents([])
+        //     alert("No Results")
+        //   }
+        //   if(results[0].event_id) {
+        //     setUserEvents(() => results)
+        //   }
+          
+        // } else {
+        //   const results = await fetchOneBuddySearch(primaryCriteria)
+        //   console.log(results)
+
+        //   if (!results[0]) {
+        //     setUserEvents([])
+        //     alert("No Results")
+        //   }
+        //   if(results[0].event_id) {
+        //     setDisplayEvents(results)
+        //   }
+
+        
       }
+
 
       if (searchType === "Language") {
         if (primaryCriteria && secondaryCriteria) {
@@ -215,6 +235,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
 
 
   return (
+  <div>
     <div className={styles.profilePage}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       < Header  {...currentPage={currentPage}}/>
@@ -290,59 +311,61 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
         </section>
         <section className={styles.eventsContainer}>
           <div className={styles.containerHeaderWrapper}>
-            <p1 className={styles.containerHeading}>My Events</p1>    
-            //!! you need to change the styling on this to styles.          
+            <p1 className={styles.containerHeading}>My Events</p1>   
+            <div className={styles.eventsHeaderRightWrapper}>
             <div className="calendar-menu-right-container">
-                {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search">search</button>}
-                {toggleSearch && <form className="calendar-search-form-container" onSubmit={handleSearch}>
-                  <div className="calendar-select-border">
-                    {searchType && <label className="calendar-select-label">Search Type</label>}
-                    <select className="calendar-select" onChange={(event) => {setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("")}} required>
+                {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search" id={styles.searchButton}>search</button>}
+                {toggleSearch && <form className={styles.calendarSearchFormContainer} onSubmit={handleSearch}>
+                  <div className={styles.calendarSelectBorder}>
+                    {searchType && <label className={styles.calendarSelectLabel}>Search Type</label>}
+                    <select className={styles.calendarSelect} onChange={(event) => {setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("")}} required>
                       <option value="" disabled selected>Search Type</option>
                       <option value="Host">Host Buddies</option>
                       <option value="Language">Code Languages</option>
                     </select>
                   </div>
-                  {searchType === "Language" && <div className="calendar-select-border">
-                    {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}           
-                    <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
-                      <option value="" disabled selected>Primary Language</option>
+                  {searchType === "Language" && <div className={styles.calendarSelectBorder}>
+                    {primaryCriteria && <label className={styles.calendarSelectLabel}>Primary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
+                      <option value="" disabled selected>Primary Search Criteria</option>
                       {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
                     </select>
                   </div>}  
-                  {searchType === "Language" && <div className="calendar-select-border">
-                    {secondaryCriteria && <label className="calendar-select-label">Secondary Language</label>}           
-                    <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
-                      <option value="" disabled selected>Secondary Language</option>
+                  {searchType === "Language" && <div className={styles.calendarSelectBorder}>
+                    {secondaryCriteria && <label className={styles.calendarSelectLabel}>Secondary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
+                      <option value="" disabled selected>Secondary Search Criteria</option>
                       <option value="">None</option>
                       {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
                     </select>
                   </div>}  
-                  {searchType === "Host" && <div className="calendar-select-border">
-                    {primaryCriteria && <label className="calendar-select-label">Primary Buddy</label>}           
-                    <select className="calendar-select" value={primaryCriteria} id="Primary-Buddy" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
-                      <option value="" disabled selected>Primary Buddy</option>
+                  {searchType === "Host" && <div className={styles.calendarSelectBorder}>
+                    {primaryCriteria && <label className={styles.calendarSelectLabel}>Primary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={primaryCriteria} id="Primary-Buddy" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
+                      <option value="" disabled selected>Primary Search Criteria</option>
                       {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === secondaryCriteria}>{buddy.label}</option>)}
                     </select>
                   </div>}  
-                  {searchType === "Host" && <div className="calendar-select-border">
-                    {secondaryCriteria && <label className="calendar-select-label">Secondary Buddy</label>}           
-                    <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
-                      <option value="" disabled selected>Secondary Buddy</option>
+                  {searchType === "Host" && <div className={styles.calendarSelectBorder}>
+                    {secondaryCriteria && <label className={styles.calendarSelectLabel}>Secondary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
+                      <option value="" disabled selected>Secondary Search Criteria</option>
                       <option value="">None</option>
                       {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === primaryCriteria}>{buddy.label}</option>)}
                     </select>
                   </div>}  
                   <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
-                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType("")}}>close</button>
+                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType(""), setDisplayEvents(userEvents)}}>close</button>
                 </form>}
               </div>
             {!isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
             {isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
+            </div>
           </div>
-          <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} userEvents={userEvents}/>
+          <div className={styles.eventsWrapper}>
+          <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} displayEvents={displayEvents}/>
           {!isCalendarOpen && <div>
-            {userEvents.map(event => {
+            {displayEvents.map(event => {
               const eventDate = parseISO(event.date_time);
               return (
                 <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
@@ -355,6 +378,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
               )
             })}
           </div>}
+          </div>
         </section>
       </div>
       <div className={styles.rightPanel}>
@@ -391,6 +415,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
         userDetails={userDetails}
         handleProfileUpdate={handleProfileUpdate}
       />
+      </div>
     </div>
   );
 }
