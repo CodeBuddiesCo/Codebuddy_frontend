@@ -6,11 +6,14 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
 import MessageBox from '../../../components/MessageBox';
+import Modal from '../../../components/Modal';
+import BuddyRequestForm from '../../../components/BuddyRequestForm';
+
 import { parseISO, format } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow, } from "../../../api_calls_profile";
 import UserCalendar from '../../../components/UserCalendar';
 import { fetchOneBuddySearch, fetchTwoBuddySearch, fetchOneLanguageSearch, fetchTwoLanguageSearch } from "../../../api_calls_event";
-const {codeLanguageObjectArray} = require('../../../Arrays/CodeLanguageObjectArray')
+const { codeLanguageObjectArray } = require('../../../Arrays/CodeLanguageObjectArray')
 
 const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
   const { data: session } = useSession();
@@ -26,8 +29,11 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
   const [primaryCriteria, setPrimaryCriteria] = useState("");
   const [secondaryCriteria, setSecondaryCriteria] = useState("");
   const [searchType, setSearchType] = useState("");
+  const [isBecomeBuddyModalOpen, setIsBecomeBuddyModalOpen] = useState(false);
+  const [buddyRequestMessage, setBuddyRequestMessage] = useState('');
+  const [buddyRequestSubmitted, setBuddyRequestSubmitted] = useState(false);
 
-  
+
   const [userDetails, setUserDetails] = useState({});
   const [primaryLanguages, setPrimaryLanguages] = useState([]);
   const [secondaryLanguages, setSecondaryLanguages] = useState([]);
@@ -71,7 +77,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
     }
     console.log("Updated Data:", updatedData);
   };
-  
+
   const fetchUserDetails = async () => {
 
     try {
@@ -102,6 +108,37 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
     }
   };
 
+  const handleMessageSubmit = async (e) => {
+    e.preventDefault();
+    const sender_id = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    const adminUsernames = ['Hollye', 'cmugnai'];
+
+    for (const receiver_username of adminUsernames) {
+      try {
+        const response = await fetch('https://codebuddiesserver.onrender.com/api/users/message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            sender_id,
+            receiver_username,
+            message_content: buddyRequestMessage,
+          }),
+        });
+
+        if (response.ok) {
+          console.log(`Message sent to ${receiver_username}`);
+        }
+      } catch (error) {
+        console.error('Error sending request:', error);
+      }
+    }
+
+    setBuddyRequestSubmitted(true);
+  };
 
   async function handleAddFollow(followeeId) {
 
@@ -126,7 +163,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
     }
 
   }
- 
+
   //!!s you need to change this function to work to just sort the user events like you did in fetch farm for searching the orders
   async function handleSearch(event) {
     event.preventDefault()
@@ -141,10 +178,10 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
             setDisplayEvents([])
             alert("No Results")
           }
-          if(results[0].event_id) {
+          if (results[0].event_id) {
             setUserEvents(() => results)
           }
-          
+
         } else {
           const results = await fetchOneBuddySearch(primaryCriteria)
           console.log(results)
@@ -153,7 +190,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
             setUserEvents([])
             alert("No Results")
           }
-          if(results[0].event_id) {
+          if (results[0].event_id) {
             setDisplayEvents(results)
           }
 
@@ -169,10 +206,10 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
             setDisplayEvents([])
             alert("No Results")
           }
-          if(results[0].event_id) {
+          if (results[0].event_id) {
             setDisplayEvents(() => results)
           }
-          
+
         } else {
           const results = await fetchOneLanguageSearch(primaryCriteria)
           console.log(results)
@@ -181,7 +218,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
             setDisplayEvents([])
             alert("No Results")
           }
-          if(results[0].event_id) {
+          if (results[0].event_id) {
             setDisplayEvents(results)
           }
 
@@ -203,8 +240,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
       setUpdatedSecondaryLanguage(userDetails.secondary_language || '');
       setUpdatedBuddyBio(userDetails.buddy_bio || '');
     }
-  }, [userDetails]);  
-  
+  }, [userDetails]);
+
   useEffect(() => {
     setCurrentPage("User Profile");
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
@@ -217,7 +254,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
   return (
     <div className={styles.profilePage}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-      < Header  {...currentPage={currentPage}}/>
+      < Header  {...currentPage = { currentPage }} />
       <div className={styles.leftPanel}>
         <section className={styles.mainDetailsContainer}>
           <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
@@ -226,7 +263,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
           </div>
           <div className={styles.profilePictureWrapper}>
             {!userDetails.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
-            {userDetails.pfp_url  && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
+            {userDetails.pfp_url && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
           </div>
           <div className={styles.profileNameWrapper}>
             <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
@@ -240,23 +277,38 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
             {(userDetails.is_buddy == true) && (userDetails.isAdmin == false) && <Link href="/event/add">
               <button className={styles.profileGadgetButton}>Add Event</button>
             </Link>}
-            {!userDetails.is_buddy && <Link href="/user/become-a-buddy">
-             <button className={styles.profileGadgetButton}>Become a Buddy</button>
-            </Link>}
-            {userDetails.isAdmin == true && (
-            <>
-              <button 
-                className={styles.profileGadgetButton} 
-                onClick={toggleBox}
+            <div>
+              <button
+                className={styles.profileGadgetButton}
+                onClick={() => setIsBecomeBuddyModalOpen(true)}
               >
-              {isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}
+                Become a Buddy
               </button>
-              {isBoxOpen && (
-                <MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
-                  <p>Your content goes here!</p>
-                </MessageBox>
-              )}
-            </>
+              <Modal isOpen={isBecomeBuddyModalOpen} onClose={() => setIsBecomeBuddyModalOpen(false)}>
+                <BuddyRequestForm
+                  message={buddyRequestMessage}
+                  setMessage={setBuddyRequestMessage}
+                  handleMessageSubmit={handleMessageSubmit}
+                  formSubmitted={buddyRequestSubmitted}
+                />
+              </Modal>
+            </div>
+
+
+            {userDetails.isAdmin == true && (
+              <>
+                <button
+                  className={styles.profileGadgetButton}
+                  onClick={toggleBox}
+                >
+                  {isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}
+                </button>
+                {isBoxOpen && (
+                  <MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
+                    <p>Your content goes here!</p>
+                  </MessageBox>
+                )}
+              </>
             )}
           </div>
         </section>
@@ -274,7 +326,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
             <div className={styles.techItemWrappers}>
               {secondaryLanguages && secondaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
             </div>
-          </div> 
+          </div>
         </section>
       </div>
       <div className={styles.middlePanel}>
@@ -290,57 +342,57 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
         </section>
         <section className={styles.eventsContainer}>
           <div className={styles.containerHeaderWrapper}>
-            <p1 className={styles.containerHeading}>My Events</p1>    
-            //!! you need to change the styling on this to styles.          
+            <p1 className={styles.containerHeading}>My Events</p1>
+            //!! you need to change the styling on this to styles.
             <div className="calendar-menu-right-container">
-                {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search">search</button>}
-                {toggleSearch && <form className="calendar-search-form-container" onSubmit={handleSearch}>
-                  <div className="calendar-select-border">
-                    {searchType && <label className="calendar-select-label">Search Type</label>}
-                    <select className="calendar-select" onChange={(event) => {setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("")}} required>
-                      <option value="" disabled selected>Search Type</option>
-                      <option value="Host">Host Buddies</option>
-                      <option value="Language">Code Languages</option>
-                    </select>
-                  </div>
-                  {searchType === "Language" && <div className="calendar-select-border">
-                    {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}           
-                    <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
-                      <option value="" disabled selected>Primary Language</option>
-                      {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
-                    </select>
-                  </div>}  
-                  {searchType === "Language" && <div className="calendar-select-border">
-                    {secondaryCriteria && <label className="calendar-select-label">Secondary Language</label>}           
-                    <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
-                      <option value="" disabled selected>Secondary Language</option>
-                      <option value="">None</option>
-                      {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
-                    </select>
-                  </div>}  
-                  {searchType === "Host" && <div className="calendar-select-border">
-                    {primaryCriteria && <label className="calendar-select-label">Primary Buddy</label>}           
-                    <select className="calendar-select" value={primaryCriteria} id="Primary-Buddy" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
-                      <option value="" disabled selected>Primary Buddy</option>
-                      {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === secondaryCriteria}>{buddy.label}</option>)}
-                    </select>
-                  </div>}  
-                  {searchType === "Host" && <div className="calendar-select-border">
-                    {secondaryCriteria && <label className="calendar-select-label">Secondary Buddy</label>}           
-                    <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
-                      <option value="" disabled selected>Secondary Buddy</option>
-                      <option value="">None</option>
-                      {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === primaryCriteria}>{buddy.label}</option>)}
-                    </select>
-                  </div>}  
-                  <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
-                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType("")}}>close</button>
-                </form>}
-              </div>
-            {!isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
-            {isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
+              {!toggleSearch && <button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search">search</button>}
+              {toggleSearch && <form className="calendar-search-form-container" onSubmit={handleSearch}>
+                <div className="calendar-select-border">
+                  {searchType && <label className="calendar-select-label">Search Type</label>}
+                  <select className="calendar-select" onChange={(event) => { setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("") }} required>
+                    <option value="" disabled selected>Search Type</option>
+                    <option value="Host">Host Buddies</option>
+                    <option value="Language">Code Languages</option>
+                  </select>
+                </div>
+                {searchType === "Language" && <div className="calendar-select-border">
+                  {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}
+                  <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => { setPrimaryCriteria(event.target.value) }} required>
+                    <option value="" disabled selected>Primary Language</option>
+                    {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
+                  </select>
+                </div>}
+                {searchType === "Language" && <div className="calendar-select-border">
+                  {secondaryCriteria && <label className="calendar-select-label">Secondary Language</label>}
+                  <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => { setSecondaryCriteria(event.target.value) }}>
+                    <option value="" disabled selected>Secondary Language</option>
+                    <option value="">None</option>
+                    {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
+                  </select>
+                </div>}
+                {searchType === "Host" && <div className="calendar-select-border">
+                  {primaryCriteria && <label className="calendar-select-label">Primary Buddy</label>}
+                  <select className="calendar-select" value={primaryCriteria} id="Primary-Buddy" onChange={(event) => { setPrimaryCriteria(event.target.value) }} required>
+                    <option value="" disabled selected>Primary Buddy</option>
+                    {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === secondaryCriteria}>{buddy.label}</option>)}
+                  </select>
+                </div>}
+                {searchType === "Host" && <div className="calendar-select-border">
+                  {secondaryCriteria && <label className="calendar-select-label">Secondary Buddy</label>}
+                  <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => { setSecondaryCriteria(event.target.value) }}>
+                    <option value="" disabled selected>Secondary Buddy</option>
+                    <option value="">None</option>
+                    {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === primaryCriteria}>{buddy.label}</option>)}
+                  </select>
+                </div>}
+                <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
+                <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => { setToggleSearch(false), setSearchType("") }}>close</button>
+              </form>}
+            </div>
+            {!isCalendarOpen && <button title="View Monthly Calendar" onClick={() => setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
+            {isCalendarOpen && <button title="View Monthly Calendar" onClick={() => setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
           </div>
-          <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} userEvents={userEvents}/>
+          <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} userEvents={userEvents} />
           {!isCalendarOpen && <div>
             {userEvents.map(event => {
               const eventDate = parseISO(event.date_time);
@@ -364,14 +416,14 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
             <button title="Find others to follow" id={styles.iconButtons} className="material-symbols-outlined">person_add</button>
           </div>
           {followsArray && <div className={styles.followedUsersContainer}>
-            {followsArray.map ((followedUser) => (<div>
+            {followsArray.map((followedUser) => (<div>
               <div className={styles.followButtonContainer}>
-                <button title="Unfollow User" id={styles.followButtons} className="material-symbols-outlined" type="submit"  onClick={() => handleRemoveFollow(followedUser.id)}>person_remove</button>
+                <button title="Unfollow User" id={styles.followButtons} className="material-symbols-outlined" type="submit" onClick={() => handleRemoveFollow(followedUser.id)}>person_remove</button>
               </div>
               <Link key={followedUser.id} href={`/user/profile/${followedUser.id}`}>
                 <div className={styles.followedUserPictureWrapper}>
                   {!followedUser.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.followedUserPicture} />}
-                  {followedUser.pfp_url  && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
+                  {followedUser.pfp_url && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
                 </div>
                 <div className={styles.followedUserNameWrapper}>
                   <div className={styles.followedUserUsername}><span className={styles.followsCurly}>{`{`}</span>{followedUser.username}<span className={styles.followsCurly}>{`}`}</span></div>
@@ -391,7 +443,11 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
         userDetails={userDetails}
         handleProfileUpdate={handleProfileUpdate}
       />
+
+
     </div>
+
+
   );
 }
 
