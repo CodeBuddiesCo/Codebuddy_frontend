@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Header from '../../../components/Header';
-import styles from './myProfile.module.css';
+import styles from '../../../styles/profile.module.css';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import EditModal from '../../../components/EditModal';
 import MessageBox from '../../../components/MessageBox';
-import Modal from '../../../components/Modal';
-import BuddyRequestForm from '../../../components/BuddyRequestForm';
-
-import { parseISO, format } from 'date-fns';
+import { parseISO, format, isBefore, isAfter } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow, } from "../../../api_calls_profile";
 import UserCalendar from '../../../components/UserCalendar';
 import { fetchOneBuddySearch, fetchTwoBuddySearch, fetchOneLanguageSearch, fetchTwoLanguageSearch } from "../../../api_calls_event";
-const { codeLanguageObjectArray } = require('../../../Arrays/CodeLanguageObjectArray')
+import Footer from '../../../components/Footer';
+const {codeLanguageObjectArray} = require('../../../Arrays/CodeLanguageObjectArray')
+import Modal from '../../../components/Modal';
+import BuddyRequestForm from '../../../components/BuddyRequestForm';
 
-const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
+const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [name, setName] = useState(session?.user?.name || 'Guest');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBuddy, setIsBuddy] = useState(false);
   const [followeeId, setFolloweeId] = useState("")
   const [followsArray, setFollowsArray] = useState([]);
   const [userEvents, setUserEvents] = useState([]);
+  const [displayEvents, setDisplayEvents] =useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [primaryCriteria, setPrimaryCriteria] = useState("");
@@ -32,20 +32,25 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
   const [isBecomeBuddyModalOpen, setIsBecomeBuddyModalOpen] = useState(false);
   const [buddyRequestMessage, setBuddyRequestMessage] = useState('');
   const [buddyRequestSubmitted, setBuddyRequestSubmitted] = useState(false);
-
-
   const [userDetails, setUserDetails] = useState({});
   const [primaryLanguages, setPrimaryLanguages] = useState([]);
   const [secondaryLanguages, setSecondaryLanguages] = useState([]);
-  const [updatedUsername, setUpdatedUsername] = useState('');
-  const [updatedEmail, setUpdatedEmail] = useState('');
-  const [updatedTitle, setUpdatedTitle] = useState('');
-  const [updatedPfpUrl, setUpdatedPfpUrl] = useState('');
-  const [updatedPrimaryLanguage, setUpdatedPrimaryLanguage] = useState('');
-  const [updatedSecondaryLanguage, setUpdatedSecondaryLanguage] = useState('');
-  const [updatedBuddyBio, setUpdatedBuddyBio] = useState('');
   const [isBoxOpen, setIsBoxOpen] = useState(false);
   const [toggleSearch, setToggleSearch] = useState(false)
+  const [moYrList, setMoYrList] = useState([])
+  const [previousMoYrList, setPreviousMoYrList] = useState([])
+  const [upcomingMoYrList, setUpcomingMoYrList] = useState([])
+  const [displayPreviousMoYrList, setDisplayPreviousMoYrList] = useState([])
+  const [displayUpcomingMoYrList, setDisplayUpcomingMoYrList] = useState([])
+  const [upcomingResultsBoolean, setUpcomingResultsBoolean] = useState(true)
+  const [previousResultsBoolean, setPreviousResultsBoolean] = useState(true)
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [previousEvents, setPreviousEvents] = useState([]);
+  const [displayUpcomingEvents, setDisplayUpcomingEvents] = useState([]);
+  const [displayPreviousEvents, setDisplayPreviousEvents] = useState([]);
+  const [upcomingEventsToggle, setUpcomingEventsToggle] = useState(true);
+  const todayFormatted = format(today, 'iiii LLLL do yyyy p')
+
 
   const toggleBox = () => {
     setIsBoxOpen((prev) => !prev);
@@ -81,6 +86,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
   const fetchUserDetails = async () => {
 
     try {
+      setPreviousResultsBoolean(true)
+      setUpcomingResultsBoolean(true)
       const token = localStorage.getItem('token');
       const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -89,17 +96,58 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
       if (response.status === 200) {
         const userData = await response.json();
         console.log('Fetched User Data:', userData);
-
+        
+        const monthYearArray =[]
+        const pastMonthYearArray = []
+        const futureMonthYearArray = []
+        const userSchedule = userData.schedule
+        const localUserEvents = userSchedule.events
+        
         setUserDetails(userData);
         setFolloweeId(userData.id)
         setFollowsArray(userData.follows)
         setPrimaryLanguages([userData.primary_language, userData.secondary_language])
         setSecondaryLanguages(userData.programmingLanguages)
-        const userSchedule = userData.schedule
-        setUserEvents(userSchedule.events)
-        console.log(primaryLanguages[1])
-        console.log(userData.follows)
-        console.log(userSchedule.events)
+
+        if (!localUserEvents[0]) {
+          setUpcomingResultsBoolean(false)
+          setPreviousResultsBoolean(false)
+        }
+        
+        localUserEvents.forEach(event => {
+          monthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+        });
+        setMoYrList([...new Set(monthYearArray)])
+
+        const pastEvents = localUserEvents.filter(event => isBefore(parseISO(event.date_time), today));
+        const sortPast = pastEvents.sort((a, b) => {return new Date (b.date_time) - new Date (a.date_time)}); 
+        setPreviousEvents(sortPast)
+        setDisplayPreviousEvents(sortPast)
+        pastEvents.forEach(event => {
+          pastMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+        });
+        setPreviousMoYrList([...new Set (pastMonthYearArray)])
+        setDisplayPreviousMoYrList([...new Set (pastMonthYearArray)])
+        if (!pastEvents[0]) {
+          setPreviousResultsBoolean(false)
+        }
+      
+        const futureEvents = localUserEvents.filter(event => isAfter(parseISO(event.date_time), today));
+        const sort = futureEvents.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
+        setUpcomingEvents(sort)
+        setDisplayUpcomingEvents(sort)
+        futureEvents.forEach(event => {
+          futureMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+        });
+        setUpcomingMoYrList([...new Set (futureMonthYearArray)])
+        setDisplayUpcomingMoYrList([...new Set (futureMonthYearArray)])
+        if (!futureEvents[0]) {
+          setUpcomingResultsBoolean(false)
+        }
+        
+        setUserEvents(localUserEvents)
+        setDisplayEvents(localUserEvents)
+
       } else {
         console.error(`Server responded with status: ${response.status}`);
       }
@@ -164,64 +212,142 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
 
   }
 
-  //!!s you need to change this function to work to just sort the user events like you did in fetch farm for searching the orders
   async function handleSearch(event) {
     event.preventDefault()
     try {
+      setPreviousResultsBoolean(true)
+      setUpcomingResultsBoolean(true)
+      const monthYearArray =[]
+      const pastMonthYearArray = []
+      const futureMonthYearArray = []
+
       if (searchType === "Host") {
         if (primaryCriteria && secondaryCriteria) {
 
-          const results = await fetchTwoBuddySearch(primaryCriteria, secondaryCriteria)
-          console.log(results)
+          const matchingEvents = userEvents.filter(event => 
+            (event.buddy_one === primaryCriteria || event.buddy_one === secondaryCriteria) && 
+            (event.buddy_two === primaryCriteria || event.buddy_two === secondaryCriteria)
+          );
+          setDisplayEvents(matchingEvents)
 
-          if (!results[0]) {
-            setDisplayEvents([])
-            alert("No Results")
+          const pastEvents = matchingEvents.filter(event => isBefore(parseISO(event.date_time), today));
+          const sortPastTwoB = pastEvents.sort((a, b) => {return new Date (b.date_time) - new Date (a.date_time)}); 
+          setDisplayPreviousEvents(sortPastTwoB)
+          pastEvents.forEach(event => {
+            pastMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setDisplayPreviousMoYrList([...new Set (pastMonthYearArray)])
+          if (!pastEvents[0]) {
+            setPreviousResultsBoolean(false)
           }
-          if (results[0].event_id) {
-            setUserEvents(() => results)
+          
+          const futureEvents = matchingEvents.filter(event => isAfter(parseISO(event.date_time), today));
+          const sortFutureEventsTwoB = futureEvents.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
+          setDisplayUpcomingEvents(sortFutureEventsTwoB)
+          futureEvents.forEach(event => {
+            futureMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setUpcomingMoYrList(futureMonthYearArray)
+          setDisplayUpcomingMoYrList([...new Set (futureMonthYearArray)])
+          if (!futureEvents[0]) {
+            setUpcomingResultsBoolean(false)
           }
+        }
 
-        } else {
-          const results = await fetchOneBuddySearch(primaryCriteria)
-          console.log(results)
+        if (primaryCriteria && !secondaryCriteria) {
 
-          if (!results[0]) {
-            setUserEvents([])
-            alert("No Results")
-          }
-          if (results[0].event_id) {
-            setDisplayEvents(results)
-          }
+          const matchingEvents = userEvents.filter(event => 
+            (event.buddy_one === primaryCriteria || event.buddy_two === primaryCriteria)
+          );
+          setDisplayEvents(matchingEvents)
 
+          const pastEvents = matchingEvents.filter(event => isBefore(parseISO(event.date_time), today));
+          const sortPastOneB = pastEvents.sort((a, b) => {return new Date (b.date_time) - new Date (a.date_time)}); 
+          setDisplayPreviousEvents(sortPastOneB)
+          pastEvents.forEach(event => {
+            pastMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setDisplayPreviousMoYrList([...new Set (pastMonthYearArray)])
+          if (!pastEvents[0]) {
+            setPreviousResultsBoolean(false)
+          }
+          
+          const futureEvents = matchingEvents.filter(event => isAfter(parseISO(event.date_time), today));
+          const sortFutureEventsOneB = futureEvents.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
+          setDisplayUpcomingEvents(sortFutureEventsOneB)
+          futureEvents.forEach(event => {
+            futureMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setUpcomingMoYrList(futureMonthYearArray)
+          setDisplayUpcomingMoYrList([...new Set (futureMonthYearArray)])
+          if (!futureEvents[0]) {
+            setUpcomingResultsBoolean(false)
+
+          }
         }
       }
 
       if (searchType === "Language") {
         if (primaryCriteria && secondaryCriteria) {
-          const results = await fetchTwoLanguageSearch(primaryCriteria, secondaryCriteria)
-          console.log(results)
+          const matchingEvents = userEvents.filter(event => 
+            (event.primary_language === primaryCriteria || event.primary_language === secondaryCriteria) && 
+            (event.secondary_language === primaryCriteria || event.secondary_language === secondaryCriteria)
+          );
+          setDisplayEvents(matchingEvents)
 
-          if (!results[0]) {
-            setDisplayEvents([])
-            alert("No Results")
+          const pastEvents = matchingEvents.filter(event => isBefore(parseISO(event.date_time), today));
+          const sortPastEventsTwoL = pastEvents.sort((a, b) => {return new Date (b.date_time) - new Date (a.date_time)}); 
+          setDisplayPreviousEvents(sortPastEventsTwoL)
+          pastEvents.forEach(event => {
+            pastMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setDisplayPreviousMoYrList([...new Set (pastMonthYearArray)])
+          if (!pastEvents[0]) {
+            setPreviousResultsBoolean(false)
           }
-          if (results[0].event_id) {
-            setDisplayEvents(() => results)
+          
+          const futureEvents = matchingEvents.filter(event => isAfter(parseISO(event.date_time), today));
+          const sortFutureEventsTwoL = futureEvents.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
+          setDisplayUpcomingEvents(sortFutureEventsTwoL)
+          futureEvents.forEach(event => {
+            futureMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setUpcomingMoYrList(futureMonthYearArray)
+          setDisplayUpcomingMoYrList([...new Set (futureMonthYearArray)])
+          if (!futureEvents[0]) {
+            setUpcomingResultsBoolean(false)
+          }
+        } 
+
+        if (primaryCriteria && !secondaryCriteria) {
+          const matchingEvents = userEvents.filter(event => 
+            (event.primary_language === primaryCriteria || event.secondary_language === primaryCriteria)
+          );
+          setDisplayEvents(matchingEvents)
+
+          const pastEvents = matchingEvents.filter(event => isBefore(parseISO(event.date_time), today));
+          const sortPastEventsOneL = pastEvents.sort((a, b) => {return new Date (b.date_time) - new Date (a.date_time)}); 
+          setDisplayPreviousEvents(sortPastEventsOneL)
+          pastEvents.forEach(event => {
+            pastMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setDisplayPreviousMoYrList([...new Set (pastMonthYearArray)])
+          if (!pastEvents[0]) {
+            setPreviousResultsBoolean(false)
           }
 
-        } else {
-          const results = await fetchOneLanguageSearch(primaryCriteria)
-          console.log(results)
-
-          if (!results[0]) {
-            setDisplayEvents([])
-            alert("No Results")
+          
+          const futureEvents = matchingEvents.filter(event => isAfter(parseISO(event.date_time), today));
+          const sortFutureEventsOneL = futureEvents.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
+          setDisplayUpcomingEvents(sortFutureEventsOneB)
+          futureEvents.forEach(event => {
+            futureMonthYearArray.push(format(parseISO(event.date_time), 'LLLL yyyy'))
+          });
+          setUpcomingMoYrList(futureMonthYearArray)
+          setDisplayUpcomingMoYrList([...new Set (futureMonthYearArray)])
+          if (!futureEvents[0]) {
+            setUpcomingResultsBoolean(false)
           }
-          if (results[0].event_id) {
-            setDisplayEvents(results)
-          }
-
         }
       }
 
@@ -231,27 +357,15 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
   }
 
   useEffect(() => {
-    if (userDetails) {
-      setUpdatedUsername(userDetails.username || '');
-      setUpdatedEmail(userDetails.email || '');
-      setUpdatedTitle(userDetails.title || '');
-      setUpdatedPfpUrl(userDetails.pfp_url || '');
-      setUpdatedPrimaryLanguage(userDetails.primary_language || '');
-      setUpdatedSecondaryLanguage(userDetails.secondary_language || '');
-      setUpdatedBuddyBio(userDetails.buddy_bio || '');
-    }
-  }, [userDetails]);
-
-  useEffect(() => {
     setCurrentPage("User Profile");
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     setIsBuddy(localStorage.getItem('isBuddy') === 'true');
-    setName(session?.user?.name || localStorage.getItem('username') || 'Guest');
     fetchUserDetails();
-  }, [setCurrentPage, session?.user?.name]);
+  }, [setCurrentPage]);
 
 
   return (
+  <div>
     <div className={styles.profilePage}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       < Header  {...currentPage = { currentPage }} />
@@ -271,10 +385,10 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
           </div>
           <div className={styles.profileTitlesWrapper}>
             {userDetails.title && <div className={styles.profileTitle}>{userDetails.title}</div>}
-            {userDetails.is_buddy == true && <div className={styles.profileStatus}>Host Buddy</div>}
+            {isBuddy && <div className={styles.profileStatus}>Host Buddy</div>}
           </div>
           <div>
-            {(userDetails.is_buddy == true) && (userDetails.isAdmin == false) && <Link href="/event/add">
+            {(isBuddy) && (!isAdmin) && <Link href="/event/add">
               <button className={styles.profileGadgetButton}>Add Event</button>
             </Link>}
             <div>
@@ -293,8 +407,6 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
                 />
               </Modal>
             </div>
-
-
             {userDetails.isAdmin == true && (
               <>
                 <button
@@ -342,71 +454,96 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
         </section>
         <section className={styles.eventsContainer}>
           <div className={styles.containerHeaderWrapper}>
-            <p1 className={styles.containerHeading}>My Events</p1>
-            //!! you need to change the styling on this to styles.
+            <p1 className={styles.containerHeading}>My Events</p1>   
+            <div className={styles.eventsHeaderRightWrapper}>
             <div className="calendar-menu-right-container">
-              {!toggleSearch && <button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search">search</button>}
-              {toggleSearch && <form className="calendar-search-form-container" onSubmit={handleSearch}>
-                <div className="calendar-select-border">
-                  {searchType && <label className="calendar-select-label">Search Type</label>}
-                  <select className="calendar-select" onChange={(event) => { setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("") }} required>
-                    <option value="" disabled selected>Search Type</option>
-                    <option value="Host">Host Buddies</option>
-                    <option value="Language">Code Languages</option>
-                  </select>
-                </div>
-                {searchType === "Language" && <div className="calendar-select-border">
-                  {primaryCriteria && <label className="calendar-select-label">Primary Language</label>}
-                  <select className="calendar-select" value={primaryCriteria} id="Primary-Language" onChange={(event) => { setPrimaryCriteria(event.target.value) }} required>
-                    <option value="" disabled selected>Primary Language</option>
-                    {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
-                  </select>
-                </div>}
-                {searchType === "Language" && <div className="calendar-select-border">
-                  {secondaryCriteria && <label className="calendar-select-label">Secondary Language</label>}
-                  <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => { setSecondaryCriteria(event.target.value) }}>
-                    <option value="" disabled selected>Secondary Language</option>
-                    <option value="">None</option>
-                    {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
-                  </select>
-                </div>}
-                {searchType === "Host" && <div className="calendar-select-border">
-                  {primaryCriteria && <label className="calendar-select-label">Primary Buddy</label>}
-                  <select className="calendar-select" value={primaryCriteria} id="Primary-Buddy" onChange={(event) => { setPrimaryCriteria(event.target.value) }} required>
-                    <option value="" disabled selected>Primary Buddy</option>
-                    {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === secondaryCriteria}>{buddy.label}</option>)}
-                  </select>
-                </div>}
-                {searchType === "Host" && <div className="calendar-select-border">
-                  {secondaryCriteria && <label className="calendar-select-label">Secondary Buddy</label>}
-                  <select className="calendar-select" value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => { setSecondaryCriteria(event.target.value) }}>
-                    <option value="" disabled selected>Secondary Buddy</option>
-                    <option value="">None</option>
-                    {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === primaryCriteria}>{buddy.label}</option>)}
-                  </select>
-                </div>}
-                <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
-                <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => { setToggleSearch(false), setSearchType("") }}>close</button>
-              </form>}
-            </div>
-            {!isCalendarOpen && <button title="View Monthly Calendar" onClick={() => setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
-            {isCalendarOpen && <button title="View Monthly Calendar" onClick={() => setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
-          </div>
-          <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} userEvents={userEvents} />
-          {!isCalendarOpen && <div>
-            {userEvents.map(event => {
-              const eventDate = parseISO(event.date_time);
-              return (
-                <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
-                  <div className={styles.calendarEventContainer}>
-                    <div className={styles.calendarEventText}>
-                      <span className={styles.bold}>{format(eventDate, 'iiii LLLL do p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
-                    </div>
+                {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search" id={styles.searchButton}>search</button>}
+                {toggleSearch && <form className={styles.calendarSearchFormContainer} onSubmit={handleSearch}>
+                  <div className={styles.calendarSelectBorder}>
+                    {searchType && <label className={styles.calendarSelectLabel}>Search Type</label>}
+                    <select className={styles.calendarSelect} onChange={(event) => {setSearchType(event.target.value), setPrimaryCriteria(""), setSecondaryCriteria("")}} required>
+                      <option value="" disabled selected>Search Type</option>
+                      <option value="Host">Host Buddies</option>
+                      <option value="Language">Code Languages</option>
+                    </select>
                   </div>
-                </Link>
-              )
-            })}
-          </div>}
+                  {searchType === "Language" && <div className={styles.calendarSelectBorder}>
+                    {primaryCriteria && <label className={styles.calendarSelectLabel}>Primary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={primaryCriteria} id="Primary-Language" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
+                      <option value="" disabled selected>Primary Search Criteria</option>
+                      {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === secondaryCriteria}>{language.label}</option>)}
+                    </select>
+                  </div>}  
+                  {searchType === "Language" && <div className={styles.calendarSelectBorder}>
+                    {secondaryCriteria && <label className={styles.calendarSelectLabel}>Secondary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
+                      <option value="" disabled selected>Secondary Search Criteria</option>
+                      <option value="">None</option>
+                      {codeLanguageObjectArray.map((language) => <option key={language.value} value={language.value} disabled={language.value === primaryCriteria}>{language.label}</option>)}
+                    </select>
+                  </div>}  
+                  {searchType === "Host" && <div className={styles.calendarSelectBorder}>
+                    {primaryCriteria && <label className={styles.calendarSelectLabel}>Primary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={primaryCriteria} id="Primary-Buddy" onChange={(event) => {setPrimaryCriteria(event.target.value)}} required>
+                      <option value="" disabled selected>Primary Search Criteria</option>
+                      {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === secondaryCriteria}>{buddy.label}</option>)}
+                    </select>
+                  </div>}  
+                  {searchType === "Host" && <div className={styles.calendarSelectBorder}>
+                    {secondaryCriteria && <label className={styles.calendarSelectLabel}>Secondary Search Criteria</label>}           
+                    <select className={styles.calendarSelect} value={secondaryCriteria} id="Secondary-Criteria" onChange={(event) => {setSecondaryCriteria(event.target.value)}}>
+                      <option value="" disabled selected>Secondary Search Criteria</option>
+                      <option value="">None</option>
+                      {buddyUsernameArray.map((buddy) => <option key={buddy.value} value={buddy.value} disabled={buddy.value === primaryCriteria}>{buddy.label}</option>)}
+                    </select>
+                  </div>}  
+                  <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
+                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType(""), fetchUserDetails()}}>close</button>
+                </form>}
+              </div>
+            {!toggleSearch && !isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
+            {!toggleSearch && isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
+            </div>
+          </div>
+          <div className={styles.eventsWrapper}>
+            <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} displayEvents={displayEvents}/>
+            {!isCalendarOpen && <div id="UserCalList">
+              <button onClick={()=> setUpcomingEventsToggle(true)}>Upcoming Events {displayUpcomingEvents.length}</button>
+              <button onClick={()=> setUpcomingEventsToggle(false)}>Previous Events {displayPreviousEvents.length}</button>
+              {upcomingEventsToggle && <div id='upcoming events'>
+                {!upcomingResultsBoolean &&<div>No upcoming events</div>}
+                {displayUpcomingMoYrList.map(monthYear => <div>{monthYear}
+                  {displayUpcomingEvents.map(event =>  {const eventDate = parseISO(event.date_time);
+                    return (
+                      (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
+                        <div className={styles.calendarEventContainer}>
+                          <div className={styles.calendarEventText}>
+                            <span className={styles.bold}>{format(eventDate, 'iiii LLLL do yyyy p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
+                          </div>
+                        </div>
+                      </Link>)
+                    )
+                  })}
+                </div>)}
+              </div>}
+              {!upcomingEventsToggle && <div id='previous events'>
+                {!previousResultsBoolean &&<div>No previous events</div>}
+                {displayPreviousMoYrList.map(monthYear => <div>{monthYear}
+                  {displayPreviousEvents.map(event =>  {const eventDate = parseISO(event.date_time);
+                    return (
+                      (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
+                        <div className={styles.calendarEventContainer}>
+                          <div className={styles.calendarEventText}>
+                            <span className={styles.bold}>{format(eventDate, 'iiii LLLL do yyyy p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
+                          </div>
+                        </div>
+                      </Link>)
+                    )
+                  })}
+                </div>)}
+              </div>}
+            </div>}
+          </div>
         </section>
       </div>
       <div className={styles.rightPanel}>
@@ -443,7 +580,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray }) => {
         userDetails={userDetails}
         handleProfileUpdate={handleProfileUpdate}
       />
-
+      </div>
+      <Footer/>
 
     </div>
 

@@ -13,63 +13,43 @@
   flex-direction: column;
   width: 89%;
   margin: auto;
-  margin-top: 15px;
+  margin-top: 5px;
   margin-bottom: 0px;
 }
 .calendarMonthControls{
   display: flex;
+  align-items: center;
+}
+.innerMiddleCalendarControlsContainer{
+  display: flex;
+  margin:auto;
   justify-content: center;
+  align-items: center;
 }
 #previousNextIconButtons{
   font-size: 20px;
-  margin-top: 0px;
+  margin-top: 10px;
   height: 30px;
-  margin-bottom: 0px;
+  margin-bottom: 5px;
 }
-
+.emptyControl:empty{
+  font-size: 22px;
+  margin-top: 10px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+#returnToCurrentMonthIconButtons{
+  font-size: 22px;
+  margin-top: 10px;
+  height: 30px;
+  margin-bottom: 5px;
+}
 .calendarMonth{
   font-size: 20px;
   font-weight: 600;
   color:#6A7680;
   padding: 0px;
   margin: 0px;
-}
-.calendarMenuContainer{
-  display: flex;
-  justify-content: space-between;
-  /* margin-top: 10px; */
-  margin-bottom: 0px;
-  min-height: 20px;
-  width: 100%;
-}
-.material-symbols-outlined.return{
-  border:none;
-  height:auto;
-  font-size: 40px;
-  margin: 0px;
-  margin-left: -5px;
-  padding: 0px;
-  margin-right: auto;
-}
-.calendarMenuRightContainer{
-  display: flex;
-}
-.calendarSearchFormContainer{
-  display: flex;
-}
-.material-symbols-outlined.add-button{
-  border:none;
-  height:auto;
-  font-size: 40px;
-  margin: 0px;
-  margin-left: auto;
-}
-.material-symbols-outlined.search{
-  border:none;
-  height:auto;
-  font-size: 38px;
-  margin: 0px;
-  margin-left: auto;
 }
 .calendarDaysOfTheWeekContainer {
   display: flex;
@@ -111,17 +91,16 @@
 .calendarNumAddContainer{
   display: flex;
   justify-content: flex-end;
-  margin: 5px;
+  margin: 2px;
+  margin-right: 4px;
 }
 .calendarDateNum {
   margin-left: auto;
   margin-top: 1px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 800;
 }
 .calendarEventContainer {
-  border-left: 2px solid #8C4C35;
-  border-radius: 5px;
   margin: 5px;
   margin-left: 9px;
   color: #939393;
@@ -130,8 +109,8 @@
   font-weight: 600px;
   font-family: Noto Sans, sans-serif;
   font-size: 11px;
-  margin: 3px;
-  padding: 3px;
+  /* margin: 3px; */
+  padding: 2px;
 }
 .calendarEventText.bold{
   font-weight: 900;
@@ -139,47 +118,3 @@
   padding: 0;
   margin: 0;
 }
-.calendarPopoutContainer {
-  width: 320px;
-  height: auto;
-  padding: 20px;
-  min-height: 500px;
-  position: fixed;
-  top: 175px;
-  right: -500%;
-  z-index: 0;
-  box-shadow: -6px 6px 2px 0px rgba(0, 0, 0, 0.10);
-  border-radius: 10px;
-  background-color: white;
-  border: .1px solid rgba(0, 0, 0, 0.10);
-  transition: right .3s ease;
-}
-.calendarPopoutContainer.open {
-  right: -3%;
-}
-.calendarPopoutEventContainer{
-  font-weight: 400px;
-  font-family: Noto Sans, sans-serif;
-  font-size: 11px;
-  margin: 3px;
-  padding: 3px;
-}
-.calendarPopoutTime{
-  font-weight: 900;
-  color:#8C4C35;
-  padding: 0;
-  margin-left: 10px;
-  margin-bottom: 5px;
-}
-.calendarPopoutEventDetails{
-  /* border-left: 2px solid #8C4C35; */
-  border-top: 2px solid #8C4C35;
-  border-radius: 5px;
-  padding: 10px;
-  margin-left: 10px;
-  color: #939393;
-  width: 200px;
-  margin-bottom: 10px;
-}
-.emptyControl:empty{
-  display: none;}

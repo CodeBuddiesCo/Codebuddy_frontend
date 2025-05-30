@@ -48,99 +48,39 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
       <div className="home-events-section">
         <div className="home-events-title">Upcoming Buddy Events</div>
         <div className="home-events-holder-div">
-          <div>
-            <div className="home-events-holder-title-month_year">{upcomingEventMonths[0]}</div>
-            <div className="home-event-holder-flex-div">
-              {upcomingEvents.map ((upcomingEvent) => ( format(parseISO(upcomingEvent.date_time), 'LLLL') === upcomingEventMonths[0] && 
-              <Link href={`/event/details/${upcomingEvent.event_id}`}><div className="home-event-details-main-div">
-                <div className="home-event-details-top-div">
-                  <div className="home-event-top-text">{format(parseISO(upcomingEvent.date_time), 'cccc') + "," + format(parseISO(upcomingEvent.date_time), ' LLLL') +format(parseISO(upcomingEvent.date_time), ' do') }</div>
-                  <div className="home-event-top-text right">{format(parseISO(upcomingEvent.date_time), 'p')}</div>
-                </div>
-                <div className="home-event-details-bottom-div">
-                  <div className="home-event-bottom-details-main-flex-div">
-                    <div className="home-event-bottom-details-top-flex-div">
-                      {(upcomingEvent.buddy_two === 'open') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
-                      {(upcomingEvent.buddy_two === 'closed') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
-                      {(upcomingEvent.buddy_two !== 'open' ) && (upcomingEvent.buddy_two !== 'closed') &&<div className="home-event-bottom-text">Host Buddies: {upcomingEvent.buddy_one} & {upcomingEvent.buddy_two}</div>}
-                      {/* <a href="#" className="home-event-button w-button">Signup</a> */}
-                    </div>
-                    <div className="home-event-bottom-details-bottom-flex-div">
-                      {!upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Language: {upcomingEvent.primary_language}</div>}
-                      {upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Languages: {upcomingEvent.primary_language} & {upcomingEvent.secondary_language}</div>}
-                      <div className="home-event-bottom-text">Available spots: {upcomingEvent.spots_available}</div>
-                    </div>
-                  </div>
-                </div>
-              </div></Link>))}
-            </div>
-          </div>
-        <div>
-            <div className="home-events-holder-title-month_year">{upcomingEventMonths[1]}</div>
-            <div className="home-event-holder-flex-div">
-              {upcomingEvents.map ((upcomingEvent) => ( format(parseISO(upcomingEvent.date_time), 'LLLL') === upcomingEventMonths[1] &&
-              <Link href={`/event/details/${upcomingEvent.event_id}`}><div className="home-event-details-main-div">
-                <div className="home-event-details-top-div">
-                  <div className="home-event-top-text">{format(parseISO(upcomingEvent.date_time), 'cccc') + "," + format(parseISO(upcomingEvent.date_time), ' LLLL') +format(parseISO(upcomingEvent.date_time), ' do') }</div>
-                  <div className="home-event-top-text right">{format(parseISO(upcomingEvent.date_time), 'p')}</div>
-                </div>
-              <div className="home-event-details-bottom-div">
-                <div className="home-event-bottom-details-main-flex-div">
-                  <div className="home-event-bottom-details-top-flex-div">
-                    {(upcomingEvent.buddy_two === 'open') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
-                    {(upcomingEvent.buddy_two === 'closed') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
-                    {(upcomingEvent.buddy_two !== 'open' ) && (upcomingEvent.buddy_two !== 'closed') &&<div className="home-event-bottom-text">Host Buddies: {upcomingEvent.buddy_one} & {upcomingEvent.buddy_two}</div>}
-                    {/* <a href="#" className="home-event-button w-button">Signup</a> */}
-                  </div>
-                  <div className="home-event-bottom-details-bottom-flex-div">
-                    {!upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Language: {upcomingEvent.primary_language}</div>}
-                    {upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Languages: {upcomingEvent.primary_language} & {upcomingEvent.secondary_language}</div>}
-                    <div className="home-event-bottom-text">Available spots: {upcomingEvent.spots_available}</div>
-                  </div>
-                </div>
-              </div>
-            </div></Link>))}
-          </div>
-        </div>
-        <div>
-            <div className="home-events-holder-title-month_year">{upcomingEventMonths[2]}</div>
+          <div className="home-event-holder-flex-div">
+            {upcomingEventMonths.map ((eventMonth)=> <div className="home-events-holder-title-month_year">{eventMonth}
               <div className="home-event-holder-flex-div">
-                {upcomingEvents.map ((upcomingEvent) => ( format(parseISO(upcomingEvent.date_time), 'LLLL') === upcomingEventMonths[2] &&
-                <Link href={`/event/details/${upcomingEvent.event_id}`}><div className="home-event-details-main-div">
-                  <div className="home-event-details-top-div">
-                    <div className="home-event-top-text">{format(parseISO(upcomingEvent.date_time), 'cccc') + "," + format(parseISO(upcomingEvent.date_time), ' LLLL') +format(parseISO(upcomingEvent.date_time), ' do') }</div>
-                    <div className="home-event-top-text right">{format(parseISO(upcomingEvent.date_time), 'p')}</div>
-                  </div>
-                <div className="home-event-details-bottom-div">
-                  <div className="home-event-bottom-details-main-flex-div">
-                    <div className="home-event-bottom-details-top-flex-div">
-                      {(upcomingEvent.buddy_two === 'open') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
-                      {(upcomingEvent.buddy_two === 'closed') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
-                      {(upcomingEvent.buddy_two !== 'open' ) && (upcomingEvent.buddy_two !== 'closed') &&<div className="home-event-bottom-text">Host Buddies: {upcomingEvent.buddy_one} & {upcomingEvent.buddy_two}</div>}
-                      {/* <a href="#" className="home-event-button w-button">Signup</a> */}
+                {upcomingEvents.map ((upcomingEvent) => ( format(parseISO(upcomingEvent.date_time), 'LLLL') === eventMonth &&
+                  <Link className="home-event-details-main-div" href={`/event/details/${upcomingEvent.event_id}`}>
+                    <div className="home-event-details-top-div">
+                      <div className="home-event-top-text">{format(parseISO(upcomingEvent.date_time), 'cccc') + "," + format(parseISO(upcomingEvent.date_time), ' LLLL') +format(parseISO(upcomingEvent.date_time), ' do') }</div>
+                      <div className="home-event-top-text right">{format(parseISO(upcomingEvent.date_time), 'p')}</div>
                     </div>
-                    <div className="home-event-bottom-details-bottom-flex-div">
-                      {!upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Language: {upcomingEvent.primary_language}</div>}
-                      {upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Languages: {upcomingEvent.primary_language} & {upcomingEvent.secondary_language}</div>}
-                      <div className="home-event-bottom-text">Available spots: {upcomingEvent.spots_available}</div>
+                    <div className="home-event-details-bottom-div">
+                      <div className="home-event-bottom-details-main-flex-div">
+                        <div className="home-event-bottom-details-top-flex-div">
+                          {(upcomingEvent.buddy_two === 'open') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
+                          {(upcomingEvent.buddy_two === 'closed') &&<div className="home-event-bottom-text">Host Buddy: {upcomingEvent.buddy_one}</div>}
+                          {(upcomingEvent.buddy_two !== 'open' ) && (upcomingEvent.buddy_two !== 'closed') &&<div className="home-event-bottom-text">Host Buddies: {upcomingEvent.buddy_one} & {upcomingEvent.buddy_two}</div>}
+                        </div>
+                        <div className="home-event-bottom-details-bottom-flex-div">
+                          {!upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Language: {upcomingEvent.primary_language}</div>}
+                          {upcomingEvent.secondary_language && <div className="home-event-bottom-text middle">Code Languages: {upcomingEvent.primary_language} & {upcomingEvent.secondary_language}</div>}
+                          <div className="home-event-bottom-text">Available spots: {upcomingEvent.spots_available}</div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div></Link>))}
-            </div>
+                  </Link>))}
+              </div>
+            </div>)}
           </div>
         </div>
-        
       </div>
-      
       <div>
-
-      < MeetOurBuddies />
-
-    </div>
-
-< Footer />
-
+        < MeetOurBuddies />
+      </div>
+      < Footer />
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
 
-function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage, buddyUsernameArray}) {
+function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage, buddyUsernameArray}) {
   const router = useRouter()
   const [state, setState] = useState({chosenDate: new Date(),});
   const [selectedDayToDetail, setSelectedDayToDetail] = useState(1)
@@ -224,7 +224,7 @@ function CalendarOfEvents({setAllEvents, loading, setLoading, isBuddy, setIsBudd
                     </select>
                   </div>}  
                   <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
-                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType("")}}>close</button>
+                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType(""), setDisplayEvents(allEvents)}}>close</button>
                 </form>}
                 {isBuddy && !isAdmin &&<Link href="/event/add" title="Add Event"className="material-symbols-outlined add-button">calendar_add_on</Link>}
                 {isAdmin &&<Link href="/event/admin_add" title="Add Event" className="material-symbols-outlined add-button">calendar_add_on</Link>}
