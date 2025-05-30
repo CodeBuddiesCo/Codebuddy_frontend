@@ -12,6 +12,8 @@ import UserCalendar from '../../../components/UserCalendar';
 import { fetchOneBuddySearch, fetchTwoBuddySearch, fetchOneLanguageSearch, fetchTwoLanguageSearch } from "../../../api_calls_event";
 import Footer from '../../../components/Footer';
 const {codeLanguageObjectArray} = require('../../../Arrays/CodeLanguageObjectArray')
+import Modal from '../../../components/Modal';
+import BuddyRequestForm from '../../../components/BuddyRequestForm';
 
 const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => {
   const { data: session } = useSession();
@@ -27,6 +29,9 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
   const [primaryCriteria, setPrimaryCriteria] = useState("");
   const [secondaryCriteria, setSecondaryCriteria] = useState("");
   const [searchType, setSearchType] = useState("");
+  const [isBecomeBuddyModalOpen, setIsBecomeBuddyModalOpen] = useState(false);
+  const [buddyRequestMessage, setBuddyRequestMessage] = useState('');
+  const [buddyRequestSubmitted, setBuddyRequestSubmitted] = useState(false);
   const [userDetails, setUserDetails] = useState({});
   const [primaryLanguages, setPrimaryLanguages] = useState([]);
   const [secondaryLanguages, setSecondaryLanguages] = useState([]);
@@ -77,7 +82,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
     }
     console.log("Updated Data:", updatedData);
   };
-  
+
   const fetchUserDetails = async () => {
 
     try {
@@ -151,6 +156,38 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
     }
   };
 
+  const handleMessageSubmit = async (e) => {
+    e.preventDefault();
+    const sender_id = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    const adminUsernames = ['Hollye', 'cmugnai'];
+
+    for (const receiver_username of adminUsernames) {
+      try {
+        const response = await fetch('https://codebuddiesserver.onrender.com/api/users/message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            sender_id,
+            receiver_username,
+            message_content: buddyRequestMessage,
+          }),
+        });
+
+        if (response.ok) {
+          console.log(`Message sent to ${receiver_username}`);
+        }
+      } catch (error) {
+        console.error('Error sending request:', error);
+      }
+    }
+
+    setBuddyRequestSubmitted(true);
+  };
+
   async function handleAddFollow(followeeId) {
 
     try {
@@ -174,7 +211,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
     }
 
   }
- 
+
   async function handleSearch(event) {
     event.preventDefault()
     try {
@@ -245,6 +282,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
           setDisplayUpcomingMoYrList([...new Set (futureMonthYearArray)])
           if (!futureEvents[0]) {
             setUpcomingResultsBoolean(false)
+
           }
         }
       }
@@ -297,6 +335,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
           if (!pastEvents[0]) {
             setPreviousResultsBoolean(false)
           }
+
           
           const futureEvents = matchingEvents.filter(event => isAfter(parseISO(event.date_time), today));
           const sortFutureEventsOneL = futureEvents.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
@@ -316,7 +355,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
       console.error
     }
   }
-  
+
   useEffect(() => {
     setCurrentPage("User Profile");
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
@@ -329,7 +368,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
   <div>
     <div className={styles.profilePage}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-      < Header  {...currentPage={currentPage}}/>
+      < Header  {...currentPage = { currentPage }} />
       <div className={styles.leftPanel}>
         <section className={styles.mainDetailsContainer}>
           <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
@@ -338,7 +377,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
           </div>
           <div className={styles.profilePictureWrapper}>
             {!userDetails.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
-            {userDetails.pfp_url  && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
+            {userDetails.pfp_url && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
           </div>
           <div className={styles.profileNameWrapper}>
             <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
@@ -352,15 +391,37 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
             {(isBuddy) && (!isAdmin) && <Link href="/event/add">
               <button className={styles.profileGadgetButton}>Add Event</button>
             </Link>}
-            {!isBuddy && <Link href="/user/become-a-buddy">
-             <button className={styles.profileGadgetButton}>Become a Buddy</button>
-            </Link>}
-            {isAdmin && <div>
-              <button className={styles.profileGadgetButton} onClick={toggleBox}>{isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}</button>
-              {isBoxOpen && (<MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
-                  <p>Your content goes here!</p>
-              </MessageBox>)}
-            </div>}
+            <div>
+              <button
+                className={styles.profileGadgetButton}
+                onClick={() => setIsBecomeBuddyModalOpen(true)}
+              >
+                Become a Buddy
+              </button>
+              <Modal isOpen={isBecomeBuddyModalOpen} onClose={() => setIsBecomeBuddyModalOpen(false)}>
+                <BuddyRequestForm
+                  message={buddyRequestMessage}
+                  setMessage={setBuddyRequestMessage}
+                  handleMessageSubmit={handleMessageSubmit}
+                  formSubmitted={buddyRequestSubmitted}
+                />
+              </Modal>
+            </div>
+            {userDetails.isAdmin == true && (
+              <>
+                <button
+                  className={styles.profileGadgetButton}
+                  onClick={toggleBox}
+                >
+                  {isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}
+                </button>
+                {isBoxOpen && (
+                  <MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
+                    <p>Your content goes here!</p>
+                  </MessageBox>
+                )}
+              </>
+            )}
           </div>
         </section>
         <section className={styles.technologiesContainer}>
@@ -377,7 +438,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
             <div className={styles.techItemWrappers}>
               {secondaryLanguages && secondaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
             </div>
-          </div> 
+          </div>
         </section>
       </div>
       <div className={styles.middlePanel}>
@@ -492,14 +553,14 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
             <button title="Find others to follow" id={styles.iconButtons} className="material-symbols-outlined">person_add</button>
           </div>
           {followsArray && <div className={styles.followedUsersContainer}>
-            {followsArray.map ((followedUser) => (<div>
+            {followsArray.map((followedUser) => (<div>
               <div className={styles.followButtonContainer}>
-                <button title="Unfollow User" id={styles.followButtons} className="material-symbols-outlined" type="submit"  onClick={() => handleRemoveFollow(followedUser.id)}>person_remove</button>
+                <button title="Unfollow User" id={styles.followButtons} className="material-symbols-outlined" type="submit" onClick={() => handleRemoveFollow(followedUser.id)}>person_remove</button>
               </div>
               <Link key={followedUser.id} href={`/user/profile/${followedUser.id}`}>
                 <div className={styles.followedUserPictureWrapper}>
                   {!followedUser.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.followedUserPicture} />}
-                  {followedUser.pfp_url  && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
+                  {followedUser.pfp_url && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
                 </div>
                 <div className={styles.followedUserNameWrapper}>
                   <div className={styles.followedUserUsername}><span className={styles.followsCurly}>{`{`}</span>{followedUser.username}<span className={styles.followsCurly}>{`}`}</span></div>
@@ -521,7 +582,10 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
       />
       </div>
       <Footer/>
+
     </div>
+
+
   );
 }
 
