@@ -144,9 +144,11 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         if (!futureEvents[0]) {
           setUpcomingResultsBoolean(false)
         }
+
+        const sortAllEvents = localUserEvents.sort((a, b) => {return new Date (a.date_time) - new Date (b.date_time)}); 
         
-        setUserEvents(localUserEvents)
-        setDisplayEvents(localUserEvents)
+        setUserEvents(sortAllEvents)
+        setDisplayEvents(sortAllEvents)
 
       } else {
         console.error(`Server responded with status: ${response.status}`);
@@ -391,36 +393,19 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
             {(isBuddy) && (!isAdmin) && <Link href="/event/add">
               <button className={styles.profileGadgetButton}>Add Event</button>
             </Link>}
-            <div>
-              <button
-                className={styles.profileGadgetButton}
-                onClick={() => setIsBecomeBuddyModalOpen(true)}
-              >
-                Become a Buddy
-              </button>
+            {!isBuddy &&<div>
+              <button className={styles.profileGadgetButton} onClick={() => setIsBecomeBuddyModalOpen(true)}>Become a Buddy</button>
               <Modal isOpen={isBecomeBuddyModalOpen} onClose={() => setIsBecomeBuddyModalOpen(false)}>
-                <BuddyRequestForm
-                  message={buddyRequestMessage}
-                  setMessage={setBuddyRequestMessage}
-                  handleMessageSubmit={handleMessageSubmit}
-                  formSubmitted={buddyRequestSubmitted}
-                />
+                <BuddyRequestForm message={buddyRequestMessage} setMessage={setBuddyRequestMessage} handleMessageSubmit={handleMessageSubmit} formSubmitted={buddyRequestSubmitted}/>
               </Modal>
-            </div>
+            </div>}
             {userDetails.isAdmin == true && (
-              <>
-                <button
-                  className={styles.profileGadgetButton}
-                  onClick={toggleBox}
-                >
-                  {isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}
-                </button>
-                {isBoxOpen && (
-                  <MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
+              <div>
+                <button className={styles.profileGadgetButton} onClick={toggleBox}>{isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}</button>
+                {isBoxOpen && (<MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
                     <p>Your content goes here!</p>
-                  </MessageBox>
-                )}
-              </>
+                </MessageBox>)}
+              </div>
             )}
           </div>
         </section>

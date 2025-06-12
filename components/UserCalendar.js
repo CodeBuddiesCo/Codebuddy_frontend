@@ -69,10 +69,10 @@ const UserCalendar = ({ isOpen, onClose, children, displayEvents, setAllEvents, 
     } else {
       window.removeEventListener('keydown', handleKeyDown);
     }
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
+
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -101,14 +101,13 @@ const UserCalendar = ({ isOpen, onClose, children, displayEvents, setAllEvents, 
                     {chosenDate < todaysYearMon && <button onClick={backToCurrent} id={styles.returnToCurrentMonthIconButtons}  title="Current Month" className="material-symbols-outlined return">keyboard_double_arrow_right</button>}
                   </div>
                 </div>
-
               </div>
               <div className={styles.calendarGrid}>
               <div className={styles.calendarDaysOfTheWeekContainer}> 
                 {daysOfWeek.map((day)=>(<div key={day} className={styles.calendarDaysOfTheWeek}>{day}</div>))}
               </div>
               <div className={styles.calendarDatesContainer}>
-                {days.map((day) =>(<div key={day.key} className={styles.calendarDates}>
+                {days.map((day) =>(<div key={day.key} className={styles.calendarDate}>
                   <div className={styles.calendarNumAddContainer}>
                     {day.key > 0 && <div className={styles.calendarDateNum}>{day.key} </div>}
                   </div>
@@ -118,9 +117,10 @@ const UserCalendar = ({ isOpen, onClose, children, displayEvents, setAllEvents, 
                       return (
                         <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
                           <div className={styles.calendarEventContainer}>
-                            <ul className={styles.calendarEventText}>
-                              <li className={styles.calendarEventText}>{format(eventDate, 'p')}</li>
-                            </ul>
+                            <div className={styles.calendarEventText}>
+                              <div className={styles.calendarDot}></div>
+                              <p className={styles.calendarEventText}>{format(eventDate, 'p')}</p>
+                            </div>
                           </div>
                       </Link>
                       );
