@@ -271,7 +271,6 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
                     }
                     return null;
                   })}
-                
                   {count > 2 && <button>expand</button>}
                 </div>)})}
               </div>
