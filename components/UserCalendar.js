@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from '../styles/userCalendar.module.css';
 
-const UserCalendar = ({ isOpen, onClose, children, displayEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, }) => {
+const UserCalendar = ({isOpen, onClose, children, displayEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, }) => {
   const router = useRouter()
   const [state, setState] = useState({chosenDate: new Date(),});
   const [selectedDayToDetail, setSelectedDayToDetail] = useState(1)
@@ -22,7 +22,7 @@ const UserCalendar = ({ isOpen, onClose, children, displayEvents, setAllEvents, 
   const todaysFullDate = new Date()
   const todaysYearMonDate = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), todaysFullDate.getDate());
   const todaysYearMon = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), 1)
-  
+
     /* This is constructing a date object with the year, the month following the current month, and then calling the day
   before the first of that month (0), to get the previous day which was the last day of that month and then calling getDate to
   get the amount of days in that month. */
@@ -103,37 +103,49 @@ const UserCalendar = ({ isOpen, onClose, children, displayEvents, setAllEvents, 
                 </div>
               </div>
               <div className={styles.calendarGrid}>
-              <div className={styles.calendarDaysOfTheWeekContainer}> 
-                {daysOfWeek.map((day)=>(<div key={day} className={styles.calendarDaysOfTheWeek}>{day}</div>))}
-              </div>
-              <div className={styles.calendarDatesContainer}>
-                {days.map((day) =>(<div key={day.key} className={styles.calendarDate}>
-                  <div className={styles.calendarNumAddContainer}>
-                    {day.key > 0 && <div className={styles.calendarDateNum}>{day.key} </div>}
-                  </div>
-                  {displayEvents.map(event => {
-                    const eventDate = parseISO(event.date_time);
-                    if (format(eventDate, 'd') === day.key.toString() && format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() && format(eventDate, 'y') === chosenDate.getFullYear().toString()) {
+                <div className={styles.calendarDaysOfTheWeekContainer}> 
+                  {daysOfWeek.map((day)=>(<div key={day} className={styles.calendarDaysOfTheWeek}>{day}</div>))}
+                </div>
+                <div className={styles.calendarDatesContainer}>
+                  {days.map((day) => {
+                    const eventsForThisDay = displayEvents.filter(event => {
+                      const eventDate = parseISO(event.date_time);
                       return (
-                        <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
-                          <div className={styles.calendarEventContainer}>
-                            <div className={styles.calendarEventText}>
-                              <div className={styles.calendarDot}></div>
-                              <p className={styles.calendarEventText}>{format(eventDate, 'p')}</p>
-                            </div>
-                          </div>
-                      </Link>
+                        format(eventDate, 'd') === day.key.toString() &&
+                        format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() &&
+                        format(eventDate, 'y') === chosenDate.getFullYear().toString()
                       );
-                    }
-                    return null;
+                    });
+                    const dailyEventCount = eventsForThisDay.length;
+                    return (
+                      <div key={day.key} className={styles.calendarDate}>
+                        <div className={styles.calendarNumAddContainer}>
+                          {day.key > 0 && <div className={styles.calendarDateNum}>{day.key}</div>}
+                        </div>
+                        {eventsForThisDay.map(event => {
+                          const eventDate = parseISO(event.date_time);
+                          return (
+                            <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
+                              <div className={styles.calendarEventContainer}>
+                                <div className={styles.calendarEventText}>
+                                  <div className={styles.calendarDot}></div>
+                                  <p className={styles.calendarEventText}>{format(eventDate, 'p')}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                        { dailyEventCount > 1 && <button>expand</button>}
+                      </div>
+                      
+                    );
                   })}
-                </div>))}
+                </div>
               </div>
             </div>
-          </div>
-      </div>}
-    </div>
+          </div>}
       </div>
+    </div>
   );
 };
 
