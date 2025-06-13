@@ -9,13 +9,14 @@ import { useRouter } from "next/router";
 const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
 
-function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage, buddyUsernameArray}) {
+function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, setCurrentPage, currentPage, buddyUsernameArray}) {
   const router = useRouter()
   const [state, setState] = useState({chosenDate: new Date(),});
   const [selectedDayToDetail, setSelectedDayToDetail] = useState(1)
   const [togglePopout, setTogglePopout] = useState("calendar-popout-container")
   const [toggleSearch, setToggleSearch] = useState(false)
   const [eventCounts, setEventCounts] = useState([]);
+  const [dailyEventCount, setDailyEventCount] = useState(0)
   const [primaryCriteria, setPrimaryCriteria] = useState("");
   const [secondaryCriteria, setSecondaryCriteria] = useState("");
   const [searchType, setSearchType] = useState("");
@@ -76,6 +77,7 @@ function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy
       console.error   
     }
   }
+
 
   async function handleSearch(event) {
     event.preventDefault()
@@ -159,7 +161,7 @@ function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy
       }).length;
       return { day: day.key, count: dayEventsCount };
     });
-  
+    
     setEventCounts(counts)
   }, [chosenDate, displayEvents]);
   
@@ -236,7 +238,11 @@ function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy
                 {daysOfWeek.map((day)=>(<div key={day} className="calendar-days-of-the-week">{day}</div>))}
               </div>
               <div className="calendar-dates-container">
-                {days.map((day) =>(<div key={day.key} className="calendar-dates" onClick={(e) => {e.stopPropagation(); if ((day.key > 0) && (eventCounts.find(e => e.day === day.key)?.count > 0)) {setTogglePopout("calendar-popout-container open"); setSelectedDayToDetail(day.key)} else {setTogglePopout("calendar-popout-container")}}} >
+                {days.map((day) => {
+                  const daysTotalEvents = eventCounts.find(obj => obj.day === day.key);
+                  const count = daysTotalEvents?.count || 0;
+                  console.log(count)
+                  return(<div key={day.key} className="calendar-dates" onClick={(e) => {e.stopPropagation();const hasEvents = count > 0;if (day.key > 0 && hasEvents) {setTogglePopout("calendar-popout-container open");setSelectedDayToDetail(day.key);} else {setTogglePopout("calendar-popout-container");}}}>
                   <div className="calendar-num-add-container">
                     {isBuddy && !isAdmin &&<div className="empty-control">
                       {(new Date(chosenDate.getFullYear(), chosenDate.getMonth(), day.key) >= todaysYearMonDate) && <div>
@@ -254,8 +260,8 @@ function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy
                     const eventDate = parseISO(event.date_time);
                     if (format(eventDate, 'd') === day.key.toString() && format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() && format(eventDate, 'y') === chosenDate.getFullYear().toString()) {
                       return (
-                        <Link key={event.event_id} href={`/event/details/${event.event_id}`}>
-                          <div className="calendar-event-container">
+                        <Link key={event.event_id} href={`/event/details/${event.event_id}`} className="calendar-link-container">
+                          <div className="calendar-event-container" >
                             <div className="calendar-event-text">
                               <span className="calendar-event-text bold">{format(eventDate, 'p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
                             </div>
@@ -265,7 +271,9 @@ function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy
                     }
                     return null;
                   })}
-                </div>))}
+                
+                  {count > 2 && <button>expand</button>}
+                </div>)})}
               </div>
             </div>
           </div>
@@ -278,7 +286,7 @@ function CalendarOfEvents({setAllEvents, allEvents, loading, setLoading, isBuddy
                 return (
                   <Link href={`/event/details/${event.event_id}`}>
                     <div  key={event.event_id} >
-                      <div>
+                      <div> 
                         <div className="calendar-popout-event-container">
                           <div className="calendar-popout-time">{format(parseISO(event.date_time), 'p')}</div>
                           <div className="calendar-popout-event-details">
