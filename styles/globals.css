@@ -617,11 +617,9 @@ input:-webkit-autofill:active{
   border: .1px solid #D9D9D9;
   margin-top: -1px;
   margin-left: -1px;
-  overflow: auto;
+  overflow: hidden;
   padding-bottom: 10px;
-}
-.calendar-dates.overflowing{
-  background-color: #8C4C35;
+  position: relative;
 }
 .calendar-dates::-webkit-scrollbar {
   display: none;
@@ -652,18 +650,30 @@ input:-webkit-autofill:active{
   font-weight: 600;
 }
 .calendar-link-container {
-    margin: 3px;
-    margin-left: 14px;
-    margin-right: 23px;
-    box-sizing: content-box;
-    display: inline-block;
-    width: auto;
+  margin: 3px;
+  margin-left: 12px;
+  margin-right: 17px;
+  box-sizing: content-box;
+  display: inline-block;
+  width: auto;
+}
+.calendar-date-body {
+  display: flex;
+  flex-direction: row;
+}
+.calendar-link-group{
+  height: 120px;
+  overflow: auto;
+}
+.calendar-link-group::-webkit-scrollbar {
+  display: none;
 }
 .calendar-event-container {
   border-left: 2px solid #8C4C35;
   border-radius: 5px;
   padding: 1px;
   color: #939393;
+
 }
 .calendar-event-container:hover {
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
@@ -728,6 +738,23 @@ input:-webkit-autofill:active{
 .empty-control:empty{
   display: none;
 }
+.expand-button-container {
+  height: 12px;
+  width: 1px;
+  align-self: flex-end;
+}
+.expand-button {
+  margin-left: -35px;
+  margin-top: -200px;
+  border: none;
+  transform: rotate(270deg);
+}
+.material-symbols-outlined.expand-button{
+  font-size: 25px;
+  font-weight: 300;
+}
+
+
 /** Loading Component */
 
 .loading-page{

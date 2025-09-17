@@ -122,6 +122,7 @@ const UserCalendar = ({isOpen, onClose, children, displayEvents, setAllEvents, l
                         <div className={styles.calendarNumAddContainer}>
                           {day.key > 0 && <div className={styles.calendarDateNum}>{day.key}</div>}
                         </div>
+                        <div></div>
                         {eventsForThisDay.map(event => {
                           const eventDate = parseISO(event.date_time);
                           return (
