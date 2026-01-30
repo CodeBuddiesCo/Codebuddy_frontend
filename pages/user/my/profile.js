@@ -9,7 +9,6 @@ import MessageBox from '../../../components/MessageBox';
 import { parseISO, format, isBefore, isAfter } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow, } from "../../../api_calls_profile";
 import UserCalendar from '../../../components/UserCalendar';
-import { fetchOneBuddySearch, fetchTwoBuddySearch, fetchOneLanguageSearch, fetchTwoLanguageSearch } from "../../../api_calls_event";
 import Footer from '../../../components/Footer';
 const {codeLanguageObjectArray} = require('../../../Arrays/CodeLanguageObjectArray')
 import Modal from '../../../components/Modal';
@@ -49,6 +48,9 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
   const [displayUpcomingEvents, setDisplayUpcomingEvents] = useState([]);
   const [displayPreviousEvents, setDisplayPreviousEvents] = useState([]);
   const [upcomingEventsToggle, setUpcomingEventsToggle] = useState(true);
+  const [sortButtonPreviousStyle, setSortButtonPreviousStyle] = useState(styles.sortOff);
+  const [sortButtonUpcomingStyle, setSortButtonUpcomingStyle] = useState(styles.sortOn);
+  
   const todayFormatted = format(today, 'iiii LLLL do yyyy p')
 
 
@@ -442,7 +444,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
             <p1 className={styles.containerHeading}>My Events</p1>   
             <div className={styles.eventsHeaderRightWrapper}>
             <div className="calendar-menu-right-container">
-                {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Current Month" className="material-symbols-outlined search" id={styles.searchButton}>search</button>}
+                {!toggleSearch &&<button onClick={() => setToggleSearch(true)} title="Search" className="material-symbols-outlined search" id={styles.searchButton}>search</button>}
                 {toggleSearch && <form className={styles.calendarSearchFormContainer} onSubmit={handleSearch}>
                   <div className={styles.calendarSelectBorder}>
                     {searchType && <label className={styles.calendarSelectLabel}>Search Type</label>}
@@ -492,12 +494,13 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
           </div>
           <div className={styles.eventsWrapper}>
             <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} displayEvents={displayEvents}/>
-            {!isCalendarOpen && <div id="UserCalList">
-              <button onClick={()=> setUpcomingEventsToggle(true)}>Upcoming Events {displayUpcomingEvents.length}</button>
-              <button onClick={()=> setUpcomingEventsToggle(false)}>Previous Events {displayPreviousEvents.length}</button>
+            {!isCalendarOpen && <div className={styles.userEventsList}>
+              <button className={sortButtonUpcomingStyle} onClick={()=> {setUpcomingEventsToggle(true), setSortButtonUpcomingStyle(styles.sortOn), setSortButtonPreviousStyle(styles.sortOff)}}>Upcoming Events <span className={styles.eventTotals}>{`{`}{displayUpcomingEvents.length}{`}`} </span></button>
+              <button className={sortButtonPreviousStyle} onClick={()=> {setUpcomingEventsToggle(false), setSortButtonUpcomingStyle(styles.sortOff), setSortButtonPreviousStyle(styles.sortOn)}}>Previous Events <span className={styles.eventTotals}>{`{`}{displayPreviousEvents.length}{`}`}</span></button>
               {upcomingEventsToggle && <div id='upcoming events'>
                 {!upcomingResultsBoolean &&<div>No upcoming events</div>}
-                {displayUpcomingMoYrList.map(monthYear => <div>{monthYear}
+                {displayUpcomingMoYrList.map(monthYear => <div> 
+                  <div className={styles.monthYear}>{monthYear}</div>
                   {displayUpcomingEvents.map(event =>  {const eventDate = parseISO(event.date_time);
                     return (
                       (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
@@ -513,18 +516,21 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
               </div>}
               {!upcomingEventsToggle && <div id='previous events'>
                 {!previousResultsBoolean &&<div>No previous events</div>}
-                {displayPreviousMoYrList.map(monthYear => <div>{monthYear}
+                {displayPreviousMoYrList.map(monthYear => <div>
+                  <div className={styles.monthYear}>{monthYear}</div>
+                  <div className={styles.groupMonth}>
                   {displayPreviousEvents.map(event =>  {const eventDate = parseISO(event.date_time);
                     return (
                       (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
                         <div className={styles.calendarEventContainer}>
                           <div className={styles.calendarEventText}>
-                            <span className={styles.bold}>{format(eventDate, 'iiii LLLL do yyyy p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
+                            <span className={styles.eventFullDate}>{format(eventDate, 'iiii LLLL do p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
                           </div>
                         </div>
                       </Link>)
                     )
                   })}
+                  </div>
                 </div>)}
               </div>}
             </div>}
