@@ -6,6 +6,7 @@ import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useScreenSizer } from '../../hooks/useScreenSizer';
 const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
 
@@ -28,6 +29,7 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
   const todaysYearMonDate = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), todaysFullDate.getDate());
   const todaysYearMon = new Date(todaysFullDate.getFullYear(), todaysFullDate.getMonth(), 1)
   const [displayEvents, setDisplayEvents] = useState([])
+  const expandAt= useScreenSizer();
 
 
   /* This is constructing a date object with the year, the month following the current month, and then calling the day
@@ -148,6 +150,7 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
     setIsAdmin(JSON.parse(window.localStorage.getItem("isAdmin")));
     getAllEvents();
     setSelectedDate("")
+    
     setCurrentPage("Event Calendar")
   }, []);
  
@@ -241,7 +244,6 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
                 {days.map((day) => {
                   const daysTotalEvents = eventCounts.find(obj => obj.day === day.key);
                   const count = daysTotalEvents?.count || 0;
-                  console.log(count)
                   return(<div key={day.key} className="calendar-dates" onClick={(e) => {e.stopPropagation();const hasEvents = count > 0;if (day.key > 0 && hasEvents) {setTogglePopout("calendar-popout-container open");setSelectedDayToDetail(day.key);} else {setTogglePopout("calendar-popout-container");}}}>
                   <div className="calendar-num-add-container">
                     {isBuddy && !isAdmin &&<div className="empty-control">
@@ -255,11 +257,13 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
                       </div>}
                     </div>}
                     {day.key > 0 && <div className="calendar-date-num">{day.key} </div>}
-                  </div>
+                    
+                  </div><div className="calendar-date-body"><div className="calendar-link-group">
                   {displayEvents.map(event => {
                     const eventDate = parseISO(event.date_time);
                     if (format(eventDate, 'd') === day.key.toString() && format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() && format(eventDate, 'y') === chosenDate.getFullYear().toString()) {
                       return (
+                        
                         <Link key={event.event_id} href={`/event/details/${event.event_id}`} className="calendar-link-container">
                           <div className="calendar-event-container" >
                             <div className="calendar-event-text">
@@ -270,8 +274,9 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
                       );
                     }
                     return null;
-                  })}
-                  {count > 2 && <button>expand</button>}
+                  })}</div>
+                  {count >= expandAt&& <div className="expand-button-container" title="Show More"> <button className="material-symbols-outlined expand-button">expand_circle_down</button></div>}
+                  </div>
                 </div>)})}
               </div>
             </div>
