@@ -59,6 +59,9 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
 
       if (selectedDateWithTime > (new Date()).toISOString()) {
         
+        selectedDateWithTime = new Date(selectedDateWithTime).toISOString().slice(0,19).replace("T", " ")
+        console.log(selectedDateWithTime)
+        
         const results = await fetchAddEvent (secondBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink, additionalInfo);
         console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
       

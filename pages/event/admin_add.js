@@ -52,6 +52,9 @@ function AdminAddEvent({selectedDate, isAdmin, setIsAdmin, buddyUsernameArray}) 
         selectedDateWithTime = connectedDateAndTime.toISOString();
       }
 
+      selectedDateWithTime = new Date(selectedDateWithTime).toISOString().slice(0,19).replace("T", " ")
+      console.log(selectedDateWithTime)
+
       const results = await fetchAdminAddEvent (primaryBuddy, secondaryBuddy, primaryLanguage, secondaryLanguage, selectedDateWithTime, zoomLink, additionalInfo);
       console.log("🚀 ~ file: add.js:58 ~ handleAddEvent ~ results:", results);
 
