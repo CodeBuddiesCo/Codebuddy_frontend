@@ -171,7 +171,7 @@ function Register() {
               )}
 
               {/* Security Question 1 */}
-              <div className={styles.registerFormInputContainer}>
+              {/* <div className={styles.registerFormInputContainer}>
                 <div className={styles.securityQuestionContainer}>
                   <select
                     className={styles.registerSelect}
@@ -195,10 +195,10 @@ function Register() {
                     />
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* Security Question 2 */}
-              <div className={styles.registerFormInputContainer}>
+              {/* <div className={styles.registerFormInputContainer}>
                 <div className={styles.securityQuestionContainer}>
                   <select
                     className={styles.registerSelect}
@@ -222,10 +222,10 @@ function Register() {
                     />
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* Security Question 3 */}
-              <div className={styles.registerFormInputContainer}>
+              {/* <div className={styles.registerFormInputContainer}>
                 <div className={styles.securityQuestionContainer}>
                   <select
                     className={styles.registerSelect}
@@ -249,7 +249,7 @@ function Register() {
                     />
                   )}
                 </div>
-              </div>
+              </div> */}
               <div className={styles.registerSubmitButtonContainer}>
                 <button className={styles.registerSubmitButton} type="submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Registering...' : 'Register'}

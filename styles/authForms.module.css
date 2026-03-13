@@ -245,6 +245,78 @@
   /* Add some vertical spacing */
 }
 
+.simpleFormWrapper {
+  max-width: 420px;
+  margin: 100px auto;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  font-family: 'Noto Sans', sans-serif;
+  color: #6A7680;
+}
+
+.simpleTitle {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 100;
+  font-size: 28px;
+}
+
+.simpleForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.simpleInput {
+  height: 35px;
+  font-size: 14px;
+  padding-left: 8px;
+  border: none;
+  border-bottom: 1px solid #D9D9D9;
+  font-family: 'Noto Sans Display', sans-serif;
+  font-weight: 300;
+}
+
+.simpleInput:focus {
+  outline: none;
+  border-bottom: 1px solid #BF6A4B;
+}
+
+.simpleButton {
+  height: 43px;
+  background-color: #BF6A4B;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 300;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.simpleButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.simpleMessage {
+  margin-top: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.simpleLink {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: #BF6A4B;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+
 @media (max-width: 990px) {
   .loginFormImageContainer {
     display: none;

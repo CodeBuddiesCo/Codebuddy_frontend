@@ -27,38 +27,55 @@
 // export default ForgotPasswordPage;
 
 import { useState } from 'react';
+import styles from '../../styles/authForms.module.css';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
 
-    const res = await fetch('https://codebuddiesserver.onrender.com/api/users/forgot-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      const res = await fetch('https://codebuddiesserver.onrender.com/api/users/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
 
-    const data = await res.json();
-    setMessage(res.ok ? 'Reset link sent if email exists.' : data.error || 'Error sending reset email');
+      const data = await res.json();
+      setMessage(res.ok ? 'If an account exists for that email, a reset link has been sent.' : data.error || 'Error sending reset email.');
+    } catch (err) {
+      setMessage('Unable to reach the server. Please try again later.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h2>Request Password Reset</h2>
-      <form onSubmit={handleSubmit}>
+    <div className={styles.simpleFormWrapper}>
+      <h2 className={styles.simpleTitle}>Request Password Reset</h2>
+      <form onSubmit={handleSubmit} className={styles.simpleForm}>
         <input
           type="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className={styles.simpleInput}
         />
-        <button type="submit">Send Reset Link</button>
+        <button type="submit" className={styles.simpleButton}
+         disabled={submitting}>
+          {submitting ? 'Sending...' : 'Send Reset Link'}
+
+        </button>
+
       </form>
-      {message && <p>{message}</p>}
+      {message && <p className={styles.simpleMessage}>{message}</p>}
+      <a href="/user/forgot-username" className={styles.simpleLink}>Forgot your username?</a>
     </div>
   );
 }
