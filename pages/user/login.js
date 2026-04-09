@@ -22,6 +22,11 @@ function Login() {
     if (localStorage.getItem('loginMethod') === 'username') {
       setIsUsernameLogin(true);
     }
+    const savedUsername = localStorage.getItem('rememberedUsername');
+    if (savedUsername) {
+      setUsername(savedUsername);
+      setRememberMe(true);
+    }
   }, []);
 
   const handleRememberMeChange = (e) => {
@@ -37,18 +42,21 @@ function Login() {
         body: JSON.stringify({ username, password }),
       });
 
-      console.log('Response Status:', response.status);
       const result = await response.json();
-      console.log('Response Body:', result);
 
       if (result.token) {
-        console.log("Token received, redirecting to profile...");
         localStorage.setItem('token', result.token);
         localStorage.setItem('loginMethod', 'username');
         localStorage.setItem('username', result.user.username);
-        localStorage.setItem('isAdmin', result.user.isAdmin ? 'true' : 'false'); // Store the admin status
-        localStorage.setItem('isBuddy', result.user.is_buddy ? 'true' : 'false'); // Store the buddy status
+        localStorage.setItem('isAdmin', result.user.isAdmin ? 'true' : 'false');
+        localStorage.setItem('isBuddy', result.user.is_buddy ? 'true' : 'false');
         localStorage.setItem('userId', result.user.id);
+
+        if (rememberMe) {
+          localStorage.setItem('rememberedUsername', result.user.username);
+        } else {
+          localStorage.removeItem('rememberedUsername');
+        }
 
         router.push('/user/my/profile');
       } else {

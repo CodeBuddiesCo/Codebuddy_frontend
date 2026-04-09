@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import styles from '../../styles/resetPassword.module.css';
+import styles from '../../styles/authForms.module.css';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -46,35 +46,31 @@ export default function ResetPasswordPage() {
   };
 
   return (
-<div className={`${styles.wrapper} ${styles.debug}`}>
-      
-      <div className={styles.box}>
-        <h2 className={styles.title}>Reset Your Password</h2>
-        {!resetSuccess ? (
-          <>
-            <p className={styles.subtitle}>Please enter a new password below.</p>
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <input
-                type="password"
-                placeholder="New password"
-                className={styles.input}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <button type="submit" className={styles.button} disabled={submitting}>
-                {submitting ? 'Resetting...' : 'Reset Password'}
-              </button>
-            </form>
-            {message && <p className={styles.message}>{message}</p>}
-          </>
-        ) : (
-          <>
-            <p className={styles.message}>{message}</p>
-            <a href="/user/login" className={styles.link}>Go to Login</a>
-          </>
-        )}
-      </div>
+    <div className={styles.simpleFormWrapper}>
+      <h2 className={styles.simpleTitle}>Reset Your Password</h2>
+      {!resetSuccess ? (
+        <>
+          <form onSubmit={handleSubmit} className={styles.simpleForm}>
+            <input
+              type="password"
+              placeholder="New password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              className={styles.simpleInput}
+            />
+            <button type="submit" className={styles.simpleButton} disabled={submitting}>
+              {submitting ? 'Resetting...' : 'Reset Password'}
+            </button>
+          </form>
+          {message && <p className={styles.simpleMessage}>{message}</p>}
+        </>
+      ) : (
+        <p className={styles.simpleMessage}>{message}</p>
+      )}
+      <a href={resetSuccess ? '/user/login' : '/user/forgot-password'} className={styles.simpleLink}>
+        {resetSuccess ? 'Go to Login' : 'Back to Forgot Password'}
+      </a>
     </div>
   );
 }

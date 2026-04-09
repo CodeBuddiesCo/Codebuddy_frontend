@@ -1,5 +1,4 @@
 require('dotenv').config()
-import Head from 'next/head'
 import {useEffect, useState} from "react";
 import '/styles/globals.css'
 import '/styles/authForms.module.css'
@@ -24,7 +23,6 @@ export default function App({ Component, pageProps, session }) {
     try {
       const buddyUsernames = [] 
       const results = await fetchAllBuddies()
-      console.log("results from getAllBuddies >>", results)
       setBuddyArray(() => results);
       results.map((buddy) => {buddyUsernames.push({value: buddy.username, label: buddy.username})})
       setBuddyUsernameArray(buddyUsernames)
@@ -40,11 +38,6 @@ export default function App({ Component, pageProps, session }) {
 
   return (
     <SessionProvider session={session}>
-      <Head>
-      <link rel="preconnect" href="https://fonts.googleapis.com"/>
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-      <link href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Big+Shoulders+Stencil+Display:wght@100..900&family=swap" rel="stylesheet"/>
-      </Head>
       <Component {...pageProps} 
         /** All Page State **/
           loading={loading}
