@@ -8,6 +8,7 @@ export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   useEffect(() => {
     if (router.isReady) {
@@ -20,22 +21,27 @@ export default function ResetPasswordPage() {
     if (!token) return setMessage('Missing or invalid token.');
 
     setSubmitting(true);
+    setMessage('');
 
-    const res = await fetch('https://codebuddiesserver.onrender.com/api/users/reset-password-token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, newPassword }),
-    });
+    try {
+      const res = await fetch('https://codebuddiesserver.onrender.com/api/users/reset-password-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword }),
+      });
 
-    const data = await res.json();
-    setSubmitting(false);
+      const data = await res.json();
 
-    if (res.ok) {
-      setMessage(
-        `✅ Password reset successful. You can now <a href="/user/login" class="${styles.link}">log in</a>.`
-      );
-    } else {
-      setMessage(data.error || 'Something went wrong.');
+      if (res.ok) {
+        setResetSuccess(true);
+        setMessage('Password reset successful!');
+      } else {
+        setMessage(data.error || 'Something went wrong.');
+      }
+    } catch (err) {
+      setMessage('Unable to reach the server. Please try again later.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -44,25 +50,29 @@ export default function ResetPasswordPage() {
       
       <div className={styles.box}>
         <h2 className={styles.title}>Reset Your Password</h2>
-        <p className={styles.subtitle}>Please enter a new password below.</p>
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <input
-            type="password"
-            placeholder="New password"
-            className={styles.input}
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-          <button type="submit" className={styles.button} disabled={submitting}>
-            {submitting ? 'Resetting...' : 'Reset Password'}
-          </button>
-        </form>
-        {message && (
-          <p
-            className={styles.message}
-            dangerouslySetInnerHTML={{ __html: message }}
-          />
+        {!resetSuccess ? (
+          <>
+            <p className={styles.subtitle}>Please enter a new password below.</p>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <input
+                type="password"
+                placeholder="New password"
+                className={styles.input}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+              <button type="submit" className={styles.button} disabled={submitting}>
+                {submitting ? 'Resetting...' : 'Reset Password'}
+              </button>
+            </form>
+            {message && <p className={styles.message}>{message}</p>}
+          </>
+        ) : (
+          <>
+            <p className={styles.message}>{message}</p>
+            <a href="/user/login" className={styles.link}>Go to Login</a>
+          </>
         )}
       </div>
     </div>
