@@ -24,7 +24,7 @@ function Header({currentPage}) {
   return (
     <div>
       <section className="header-section wf-section">
-        <img className='logo-div' src="/CB_Logo.png" alt='code buddy logo'/>
+        <Link href="/"><img className='logo-div' src="/CB_Logo.png" alt='code buddy logo' style={{cursor: 'pointer'}}/></Link>
         <div className="nav-btn-div">
         <Link href="/">
             <button className="header-nav-buttons w-button">Home</button>
