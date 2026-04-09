@@ -174,6 +174,23 @@ const MessagesPage = () => {
       console.error('Exception:', error);
     }
   };
+  const handleRestore = async (messageId) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/message/restore/${messageId}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200) {
+        fetchReceivedMessages();
+        fetchDeletedMessages();
+      }
+    } catch (error) {
+      console.error('Error restoring message:', error);
+    }
+  };
+
   return (
     <div className={styles.messagesBox}>
   
@@ -187,10 +204,11 @@ const MessagesPage = () => {
         {!viewingDemoteBuddy ? (
           <>
             {viewingDeleted ? (
-              <DeletedMessages 
-                messages={deletedMessages} 
-                viewingDeleted={viewingDeleted} 
-                setViewingDeleted={setViewingDeleted} />
+              <DeletedMessages
+                messages={deletedMessages}
+                viewingDeleted={viewingDeleted}
+                setViewingDeleted={setViewingDeleted}
+                onRestore={handleRestore} />
             ) : (
               <ReceivedMessages
                 messages={receivedMessages}

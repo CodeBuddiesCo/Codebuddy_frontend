@@ -260,8 +260,11 @@
 
 .panelTitle {
   font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  font-weight: 400;
+  font-family: 'Noto Sans Display', sans-serif;
+  color: #8C4C35;
+  margin: 0 0 20px 0;
+  padding: 10px 0 0 0;
 }
 
 .tabContainer {

@@ -1,7 +1,9 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/modal.module.css';
 
-const DeletedMessages = ({ messages, viewingDeleted, setViewingDeleted }) => {
+const DeletedMessages = ({ messages, viewingDeleted, setViewingDeleted, onRestore }) => {
     return (
         <div className={styles.receivedMessagesContainer}>
             <div className={styles.adminTabContainer}>
@@ -27,6 +29,11 @@ const DeletedMessages = ({ messages, viewingDeleted, setViewingDeleted }) => {
                                 <span className={styles.emailTimestamp}>{new Date(msg.timestamp).toLocaleString()}</span>
                             </div>
                             <p className={styles.messageContent}><strong>Message:</strong> {msg.message_content}</p>
+                            <div className={styles.messageActions}>
+                                <button className={styles.promoteButton} onClick={() => onRestore(msg.id)}>
+                                    <FontAwesomeIcon icon={faRotateLeft} /> Restore
+                                </button>
+                            </div>
                         </div>
                     ))
                 ) : (
