@@ -32,7 +32,7 @@ function HomepageHeader() {
       <section className="HP-header-section wf-section">
         <img className='HP-logo-div' src="/CB_Logo.png" alt='code buddy logo'/>
         <div className="HP-nav-btn-div">
-          {!username &&<Link href="#">
+          {!username &&<Link href="/#about">
             <div className="HP-header-nav-buttons w-button">What is codebuddy?</div>
           </Link>}
           {(username && !isBuddy) && <Link href="/user/become-a-buddy">

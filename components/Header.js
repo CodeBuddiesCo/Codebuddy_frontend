@@ -29,7 +29,7 @@ function Header({currentPage}) {
         <Link href="/">
             <button className="header-nav-buttons w-button">Home</button>
           </Link>
-          {!username &&<Link href="#">
+          {!username &&<Link href="/#about">
             <button className="header-nav-buttons w-button">What is codebuddy?</button>
           </Link>}
           {(username && !isBuddy) &&<Link href="become-a-buddy">
