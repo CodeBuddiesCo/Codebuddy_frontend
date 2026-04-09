@@ -46,6 +46,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
   const [displayPreviousEvents, setDisplayPreviousEvents] = useState([]);
   const [upcomingEventsToggle, setUpcomingEventsToggle] = useState(true);
   const todayFormatted = format(today, 'iiii LLLL do yyyy p')
+  const [sortButtonPreviousStyle, setSortButtonPreviousStyle] = useState(styles.sortOff);
+  const [sortButtonUpcomingStyle, setSortButtonUpcomingStyle] = useState(styles.sortOn);
 
 
 
@@ -131,32 +133,31 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
     }
   };
 
-   const fetchUserDetails = async () => {
+  const fetchUserDetails = async () => {
   
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        if (response.status === 200) {
-          const userData = await response.json();
-          console.log('Fetched User Data:', userData);
-          
-          const userSchedule = userData.schedule
-          
-          setUserDetails(userData);
-          setUserFollowsArray(userData.follows)
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://codebuddiesserver.onrender.com/api/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200) {
+        const userData = await response.json();
+        console.log('Fetched User Data:', userData);
+      
+        const userSchedule = userData.schedule
+        
+        setUserDetails(userData);
+        setUserFollowsArray(userData.follows)
 
   
-        } else {
-          console.error(`Server responded with status: ${response.status}`);
-        }
-      } catch (error) {
-        console.error('Exception:', error);
+      } else {
+        console.error(`Server responded with status: ${response.status}`);
       }
-    };
-  
+    } catch (error) {
+      console.error('Exception:', error);
+    }
+  };
 
   async function handleAddFollow(followeeId) {
 
@@ -324,7 +325,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
     }
   }
   
-    useEffect(() => {
+  useEffect(() => {
     if (id) {
     setCurrentPage("Other Profile");
     fetchProfileDetails(id);
@@ -342,7 +343,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         <section className={styles.mainDetailsContainer}>
           <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
             <div className={styles.containerHeading}> </div>
-            //!! you need to set this to a spacer div
+            {/* //!! you need to set this to a spacer div */}
             <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined"></button>
           </div>
           <div className={styles.profilePictureWrapper}>
@@ -358,9 +359,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
             {profileIsBuddy && <div className={styles.profileStatus}>Host Buddy</div>}
           </div>
           <div>
-          //!! you need to set the gadget button
-             <button className={styles.profileGadgetButton}>Follow</button>
-             <button className={styles.profileGadgetButton}>Unfollow</button>
+             <button className={styles.profileGadgetButton} onClick={() => handleAddFollow(id)}>Follow</button>
+             <button className={styles.profileGadgetButton} onClick={() => handleRemoveFollow(id)}>Unfollow</button>
           </div>
         </section>
         <section className={styles.technologiesContainer}>
@@ -437,21 +437,22 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
                     </select>
                   </div>}  
                   <button className="material-symbols-outlined button calendar-search-form-button" type="submit" >search</button>
-                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType(""), fetchProfileDetails()}}>close</button>
+                  <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType(""), fetchProfileDetails(id)}}>close</button>
                 </form>}
               </div>
             {!toggleSearch && !isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
-            {!toggleSearch && isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
+            {!toggleSearch && isCalendarOpen && <button title="View Monthly Calendar" onClick={(e)=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
             </div>
           </div>
           <div className={styles.eventsWrapper}>
             <UserCalendar isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} displayEvents={displayEvents}/>
-            {!isCalendarOpen && <div id="UserCalList">
-              <button onClick={()=> setUpcomingEventsToggle(true)}>Upcoming Events {displayUpcomingEvents.length}</button>
-              <button onClick={()=> setUpcomingEventsToggle(false)}>Previous Events {displayPreviousEvents.length}</button>
+            {!isCalendarOpen && <div className={styles.userEventsList}>
+              <button className={sortButtonUpcomingStyle} onClick={()=> {setUpcomingEventsToggle(true), setSortButtonUpcomingStyle(styles.sortOn), setSortButtonPreviousStyle(styles.sortOff)}}>Upcoming Events <span className={styles.eventTotals}>{`{`}{displayUpcomingEvents.length}{`}`} </span></button>
+              <button className={sortButtonPreviousStyle} onClick={()=> {setUpcomingEventsToggle(false), setSortButtonUpcomingStyle(styles.sortOff), setSortButtonPreviousStyle(styles.sortOn)}}>Previous Events <span className={styles.eventTotals}>{`{`}{displayPreviousEvents.length}{`}`}</span></button>
               {upcomingEventsToggle && <div id='upcoming events'>
                 {!upcomingResultsBoolean &&<div>No upcoming events</div>}
-                {displayUpcomingMoYrList.map(monthYear => <div>{monthYear}
+                {displayUpcomingMoYrList.map(monthYear => <div> 
+                  <div className={styles.monthYear}>{monthYear}</div>
                   {displayUpcomingEvents.map(event =>  {const eventDate = parseISO(event.date_time);
                     return (
                       (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
@@ -467,18 +468,21 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
               </div>}
               {!upcomingEventsToggle && <div id='previous events'>
                 {!previousResultsBoolean &&<div>No previous events</div>}
-                {displayPreviousMoYrList.map(monthYear => <div>{monthYear}
+                {displayPreviousMoYrList.map(monthYear => <div>
+                  <div className={styles.monthYear}>{monthYear}</div>
+                  <div className={styles.groupMonth}>
                   {displayPreviousEvents.map(event =>  {const eventDate = parseISO(event.date_time);
                     return (
                       (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
                         <div className={styles.calendarEventContainer}>
                           <div className={styles.calendarEventText}>
-                            <span className={styles.bold}>{format(eventDate, 'iiii LLLL do yyyy p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
+                            <span className={styles.eventFullDate}>{format(eventDate, 'iiii LLLL do p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
                           </div>
                         </div>
                       </Link>)
                     )
                   })}
+                  </div>
                 </div>)}
               </div>}
             </div>}
@@ -493,7 +497,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
           </div>
           {profileFollowsArray && <div className={styles.followedUsersContainer}>
             {profileFollowsArray.map ((followedUser) => (<div>
-               //!! you need to set this to a spacer div
+               {/* //!! you need to set this to a spacer div */}
               <div className={styles.followButtonContainer}>               
                 <button title="Unfollow User" id={styles.followButtons} className="material-symbols-outlined" type="submit"></button>
               </div>
