@@ -194,7 +194,7 @@ return (
           <div className="event-details-select-border">
             <h1 className="event-details-select">{event.buddy_one} - Host Buddy</h1>
             {(event.buddy_two !== "open") && (event.buddy_two !== "closed") && <h1 className="event-details-select">{event.buddy_two} - Host Buddy</h1>}
-            {(attendees).map ((attendee) =>(<div>
+            {attendees.map ((attendee) =>(<div>
               {(attendee !== event.buddy_one) && (attendee !== event.buddy_two) && <h1 className="event-details-select">{attendee}</h1>}
             </div>))}
           </div>
