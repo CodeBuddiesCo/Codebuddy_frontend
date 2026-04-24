@@ -10,10 +10,9 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
   const [updatedEmail, setUpdatedEmail] = useState('');
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedPfpUrl, setUpdatedPfpUrl] = useState('');
-  const [updatedPrimaryLanguage, setUpdatedPrimaryLanguage] = useState('');
-  const [updatedSecondaryLanguage, setUpdatedSecondaryLanguage] = useState('');
   const [updatedBuddyBio, setUpdatedBuddyBio] = useState('');
-  const [selectedTech, setSelectedTech] = useState([]);
+  const [highLanguages, setHighLanguages] = useState([]);
+  const [intermediateLanguages, setIntermediateLanguages] = useState([]);
 
   useEffect(() => {
     if (userDetails) {
@@ -22,10 +21,9 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
       setUpdatedEmail(userDetails.email || '');
       setUpdatedTitle(userDetails.title || '');
       setUpdatedPfpUrl(userDetails.pfp_url || '');
-      setUpdatedPrimaryLanguage(userDetails.primary_language || '');
-      setUpdatedSecondaryLanguage(userDetails.secondary_language || '');
       setUpdatedBuddyBio(userDetails.buddy_bio || '');
-      setSelectedTech(userDetails.programmingLanguages || []);
+      setHighLanguages(userDetails.highProficiencyLanguages || []);
+      setIntermediateLanguages(userDetails.intermediateProficiencyLanguages || []);
     }
   }, [userDetails]);
 
@@ -49,15 +47,34 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
     setter(e.target.value);
   };
 
-  const handleTechChange = (event) => {
-    const { value, checked } = event.target;
-
-    if (checked) {
-      setSelectedTech((prev) => [...prev, value]);
-    } else {
-      setSelectedTech((prev) => prev.filter((tech) => tech !== value));
+  const addHighLanguage = (event) => {
+    const value = event.target.value;
+    if (value) {
+      setHighLanguages((prev) => (prev.includes(value) ? prev : [...prev, value]));
     }
   };
+
+  const removeHighLanguage = (language) => {
+    setHighLanguages((prev) => prev.filter((lang) => lang !== language));
+  };
+
+  const addIntermediateLanguage = (event) => {
+    const value = event.target.value;
+    if (value) {
+      setIntermediateLanguages((prev) => (prev.includes(value) ? prev : [...prev, value]));
+    }
+  };
+
+  const removeIntermediateLanguage = (language) => {
+    setIntermediateLanguages((prev) => prev.filter((lang) => lang !== language));
+  };
+
+  const availableForHigh = codeLanguageArray.filter(
+    (lang) => !highLanguages.includes(lang) && !intermediateLanguages.includes(lang)
+  );
+  const availableForIntermediate = codeLanguageArray.filter(
+    (lang) => !highLanguages.includes(lang) && !intermediateLanguages.includes(lang)
+  );
 
   const handleSubmit = () => {
     const updatedData = {
@@ -66,10 +83,9 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
       email: updatedEmail,
       title: updatedTitle,
       pfp_url: updatedPfpUrl,
-      primary_language: updatedPrimaryLanguage,
-      secondary_language: updatedSecondaryLanguage,
       buddy_bio: updatedBuddyBio,
-      programmingLanguages: selectedTech,
+      highProficiencyLanguages: highLanguages,
+      intermediateProficiencyLanguages: intermediateLanguages,
     };
     handleProfileUpdate(updatedData);
     onClose();
@@ -108,34 +124,63 @@ const EditModal = ({ isOpen, onClose, userDetails, handleProfileUpdate }) => {
             <input className={styles.editModalInput} type="text" value={updatedPfpUrl} onChange={(e) => handleInputChange(e, setUpdatedPfpUrl)} />
           </div>
           <div className={styles.editModalFormGroup}>
-            <label>Primary Language:</label>
-            <input className={styles.editModalInput} type="text" value={updatedPrimaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedPrimaryLanguage)} />
+            <label>High Proficiency:</label>
+            <select
+              className={styles.editModalInput}
+              value=""
+              onChange={addHighLanguage}
+            >
+              <option value="">Select a language to add…</option>
+              {availableForHigh.map((lang) => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
+            <div className={styles.editModalLanguageChips}>
+              {highLanguages.map((lang) => (
+                <span key={lang} className={styles.editModalLanguageChip}>
+                  {lang}
+                  <button
+                    type="button"
+                    className={styles.editModalLanguageChipRemove}
+                    onClick={() => removeHighLanguage(lang)}
+                    aria-label={`Remove ${lang}`}
+                  >×</button>
+                </span>
+              ))}
+            </div>
           </div>
           <div className={styles.editModalFormGroup}>
-            <label>Secondary Language:</label>
-            <input className={styles.editModalInput} type="text" value={updatedSecondaryLanguage} onChange={(e) => handleInputChange(e, setUpdatedSecondaryLanguage)} />
+            <label>Intermediate Proficiency:</label>
+            <select
+              className={styles.editModalInput}
+              value=""
+              onChange={addIntermediateLanguage}
+            >
+              <option value="">Select a language to add…</option>
+              {availableForIntermediate.map((lang) => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
+            <div className={styles.editModalLanguageChips}>
+              {intermediateLanguages.map((lang) => (
+                <span key={lang} className={styles.editModalLanguageChip}>
+                  {lang}
+                  <button
+                    type="button"
+                    className={styles.editModalLanguageChipRemove}
+                    onClick={() => removeIntermediateLanguage(lang)}
+                    aria-label={`Remove ${lang}`}
+                  >×</button>
+                </span>
+              ))}
+            </div>
+            <p className={styles.editModalBioHelper}>
+              Skilled in other frameworks and technologies? Let us know in your bio!
+            </p>
           </div>
           <div className={styles.editModalFormGroup}>
             <label>Buddy Bio:</label>
             <textarea className={styles.editModalTextarea} value={updatedBuddyBio} onChange={(e) => handleInputChange(e, setUpdatedBuddyBio)}></textarea>
-          </div>
-          <div className={styles.editModalFormGroup}>
-            <label>Technologies:</label>
-            <div className={styles.editModalTechOptionsContainer}>
-              {codeLanguageArray && codeLanguageArray.map((tech, index) => (
-                <div key={index} className={styles.editModalTechOption}>
-                  <input
-                    type="checkbox"
-                    id={`tech-${index}`}
-                    name="tech"
-                    value={tech}
-                    checked={selectedTech.includes(tech)}
-                    onChange={handleTechChange}
-                  />
-                  <label htmlFor={`tech-${index}`}>{tech}</label>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
         <div className={styles.editModalFooter}>

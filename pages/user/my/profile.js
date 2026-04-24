@@ -32,8 +32,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
   const [buddyRequestMessage, setBuddyRequestMessage] = useState('');
   const [buddyRequestSubmitted, setBuddyRequestSubmitted] = useState(false);
   const [userDetails, setUserDetails] = useState({});
-  const [primaryLanguages, setPrimaryLanguages] = useState([]);
-  const [secondaryLanguages, setSecondaryLanguages] = useState([]);
+  const [highProficiencyLanguages, setHighProficiencyLanguages] = useState([]);
+  const [intermediateProficiencyLanguages, setIntermediateProficiencyLanguages] = useState([]);
   const [isBoxOpen, setIsBoxOpen] = useState(false);
   const [toggleSearch, setToggleSearch] = useState(false)
   const [moYrList, setMoYrList] = useState([])
@@ -108,8 +108,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         setUserDetails(userData);
         setFolloweeId(userData.id)
         setFollowsArray(userData.follows)
-        setPrimaryLanguages([userData.primary_language, userData.secondary_language])
-        setSecondaryLanguages(userData.programmingLanguages)
+        setHighProficiencyLanguages(userData.highProficiencyLanguages || [])
+        setIntermediateProficiencyLanguages(userData.intermediateProficiencyLanguages || [])
 
         if (!localUserEvents[0]) {
           setUpcomingResultsBoolean(false)
@@ -417,13 +417,13 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
             <button title="Edit Profile" id={styles.iconButtons} onClick={() => setIsModalOpen(true)} className="material-symbols-outlined">edit_square</button>
           </div>
           <div className={styles.technologiesWrapper}>
-            <h6 className={styles.techSubHeaders}>Primary Technologies</h6>
+            <h6 className={styles.techSubHeaders}>High Proficiency</h6>
             <div className={styles.techItemWrappers}>
-              {primaryLanguages && primaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
+              {highProficiencyLanguages && highProficiencyLanguages.map((language) => <div key={language} className={styles.techItems}>{language}</div>)}
             </div>
-            <h6 className={styles.techSubHeaders}>Secondary Technologies</h6>
+            <h6 className={styles.techSubHeaders}>Intermediate Proficiency</h6>
             <div className={styles.techItemWrappers}>
-              {secondaryLanguages && secondaryLanguages.map((language) => <div className={styles.techItems}>{language}</div>)}
+              {intermediateProficiencyLanguages && intermediateProficiencyLanguages.map((language) => <div key={language} className={styles.techItems}>{language}</div>)}
             </div>
           </div>
         </section>

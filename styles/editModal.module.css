@@ -203,3 +203,47 @@
 .editModalTechOption label {
   margin: 0;
 }
+
+.editModalLanguageChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
+.editModalLanguageChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background-color: #F2EBEC;
+  color: #6A7680;
+  border: 1px solid #D9D9D9;
+  border-radius: 16px;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 13px;
+}
+
+.editModalLanguageChipRemove {
+  background: none;
+  border: none;
+  color: #8C4C35;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.editModalLanguageChipRemove:hover {
+  color: #BF6A4B;
+}
+
+.editModalBioHelper {
+  color: #8C4C35;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 13px;
+  font-style: italic;
+  margin-bottom: 8px;
+}
