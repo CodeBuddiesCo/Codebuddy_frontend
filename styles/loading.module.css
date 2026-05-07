@@ -1,0 +1,16 @@
+
+.loadingPage{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height:100vh
+}
+.loadingMessage{
+  width: 100%;
+  align-items: center;
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 40px;
+  box-shadow: 0px 0px 1px 0px #8A99A6;
+}

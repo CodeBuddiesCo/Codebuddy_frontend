@@ -2,8 +2,21 @@
   background-color: #f2ebec20;
   margin-bottom: 100px;
   height: 100%;
+    color: #6a7680;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 135px;
 }
-.profilePage {
+.profilePage{
+  color: #6a7680;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+}
+.profileContent{
   display: flex;
   height: 100%;
   justify-content: center;

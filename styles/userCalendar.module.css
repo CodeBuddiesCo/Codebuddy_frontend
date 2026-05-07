@@ -94,12 +94,9 @@
   border: .1px solid #D9D9D9;
   margin-top: -1px;
   margin-left: -1px;
-  overflow: auto;
+  overflow: hidden;
   padding-bottom: 10px;
   box-sizing: border-box;
-}
-.calendarDate::-webkit-scrollbar{
-  display: none;
 }
 .calendarNumAddContainer{
   display: flex;
@@ -112,6 +109,13 @@
   margin-top: 1px;
   font-size: 11px;
   font-weight: 800;
+}
+.calendarDateEventsContainer{
+  overflow: scroll;
+  height: 80%;
+}
+.calendarDateEventsContainer::-webkit-scrollbar{
+  display: none;
 }
 .calendarEventContainer {
   margin-left: 5px;

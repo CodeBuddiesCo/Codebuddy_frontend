@@ -8,13 +8,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from '../styles/userCalendar.module.css';
 
-const UserCalendar = ({isOpen, onClose, children, displayEvents, setAllEvents, loading, setLoading, isBuddy, setIsBuddy, isAdmin, setIsAdmin, setSelectedDate, }) => {
+const UserCalendar = ({isOpen, onClose, children, displayEvents, loading }) => {
   const router = useRouter()
   const [state, setState] = useState({chosenDate: new Date(),});
-  const [selectedDayToDetail, setSelectedDayToDetail] = useState(1)
-  const [togglePopout, setTogglePopout] = useState("calendar-popout-container")
-  const [toggleSearch, setToggleSearch] = useState(false)
-  const [eventCounts, setEventCounts] = useState([]);
   const { chosenDate } = state;
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
@@ -28,7 +24,6 @@ const UserCalendar = ({isOpen, onClose, children, displayEvents, setAllEvents, l
   get the amount of days in that month. */
   const daysInMonth = new Date(chosenDate.getFullYear(), chosenDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(chosenDate.getFullYear(), chosenDate.getMonth(), 1).getDay();  
-  const selectedDateToDetail = (new Date(chosenDate.getFullYear(), (chosenDate.getMonth()), selectedDayToDetail)).toISOString()
 
   for (let i = 0; i < firstDayOfMonth; i++) {
     days.push({key:`empty-${i}`});
@@ -122,7 +117,7 @@ const UserCalendar = ({isOpen, onClose, children, displayEvents, setAllEvents, l
                         <div className={styles.calendarNumAddContainer}>
                           {day.key > 0 && <div className={styles.calendarDateNum}>{day.key}</div>}
                         </div>
-                        <div></div>
+                        <div className={styles.calendarDateEventsContainer}>
                         {eventsForThisDay.map(event => {
                           const eventDate = parseISO(event.date_time);
                           return (
@@ -136,7 +131,8 @@ const UserCalendar = ({isOpen, onClose, children, displayEvents, setAllEvents, l
                             </Link>
                           );
                         })}
-                        { dailyEventCount > 1 && <button>expand</button>}
+                        </div>
+                        {/* {count >= expandAt&& <div className="expand-button-container" title="Show More"> <button className="material-symbols-outlined expand-button">expand_circle_down</button></div>} */}
                       </div>
                       
                     );

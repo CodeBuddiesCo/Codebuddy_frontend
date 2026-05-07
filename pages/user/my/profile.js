@@ -13,8 +13,9 @@ import Footer from '../../../components/Footer';
 const {codeLanguageObjectArray} = require('../../../Arrays/CodeLanguageObjectArray')
 import Modal from '../../../components/Modal';
 import BuddyRequestForm from '../../../components/BuddyRequestForm';
+import Loading from '../../../components/Loading';
 
-const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => {
+const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today, loading, setLoading}) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -88,6 +89,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
   const fetchUserDetails = async () => {
 
     try {
+      setLoading(true)
       setPreviousResultsBoolean(true)
       setUpcomingResultsBoolean(true)
       const token = localStorage.getItem('token');
@@ -151,6 +153,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         
         setUserEvents(sortAllEvents)
         setDisplayEvents(sortAllEvents)
+        setLoading(false)
 
       } else {
         console.error(`Server responded with status: ${response.status}`);
@@ -369,42 +372,44 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
 
 
   return (
-  <div>
-    <div className={styles.profilePage}>
+  <div className={styles.profilePage}>
+    < Header  {...currentPage = { currentPage }} />
+      {loading &&<Loading/>}
+      {!loading &&<div>
+    <div className={styles.profileContent}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-      < Header  {...currentPage = { currentPage }} />
-      <div className={styles.leftPanel}>
-        <section className={styles.mainDetailsContainer}>
-          <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
-            <div className={styles.containerHeading}> </div>
-            <button title="Edit Profile" onClick={() => setIsModalOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
-          </div>
-          <div className={styles.profilePictureWrapper}>
-            {!userDetails.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
-            {userDetails.pfp_url && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
-          </div>
-          <div className={styles.profileNameWrapper}>
-            <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
-            <div className={styles.profileName}>{userDetails.name}</div>
-          </div>
-          <div className={styles.profileTitlesWrapper}>
-            {userDetails.title && <div className={styles.profileTitle}>{userDetails.title}</div>}
-            {isBuddy && <div className={styles.profileStatus}>Host Buddy</div>}
-          </div>
-          <div>
-            {(isBuddy) && (!isAdmin) && <Link href="/event/add">
-              <button className={styles.profileGadgetButton}>Add Event</button>
-            </Link>}
-            {!isBuddy &&<div>
-              <button className={styles.profileGadgetButton} onClick={() => setIsBecomeBuddyModalOpen(true)}>Become a Buddy</button>
-              <Modal isOpen={isBecomeBuddyModalOpen} onClose={() => setIsBecomeBuddyModalOpen(false)}>
-                <BuddyRequestForm message={buddyRequestMessage} setMessage={setBuddyRequestMessage} handleMessageSubmit={handleMessageSubmit} formSubmitted={buddyRequestSubmitted}/>
-              </Modal>
-            </div>}
-            {userDetails.isAdmin == true && (
-              <div>
-                <button className={styles.profileGadgetButton} onClick={toggleBox}>{isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}</button>
-                {isBoxOpen && (<MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
+        <div className={styles.leftPanel}>
+          <section className={styles.mainDetailsContainer}>
+            <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
+              <div className={styles.containerHeading}> </div>
+              <button title="Edit Profile" onClick={() => setIsModalOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">edit_square</button>
+            </div>
+            <div className={styles.profilePictureWrapper}>
+              {!userDetails.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.profilePicture} />}
+              {userDetails.pfp_url && <img src={userDetails.pfp_url} alt="Profile Preview" className={styles.profilePicture} />}
+            </div>
+            <div className={styles.profileNameWrapper}>
+              <div className={styles.profileUsername}><span className={styles.curly}>{`{`}</span>{userDetails.username}<span className={styles.curly}>{`}`}</span></div>
+              <div className={styles.profileName}>{userDetails.name}</div>
+            </div>
+            <div className={styles.profileTitlesWrapper}>
+              {userDetails.title && <div className={styles.profileTitle}>{userDetails.title}</div>}
+              {isBuddy && <div className={styles.profileStatus}>Host Buddy</div>}
+            </div>
+            <div>
+              {(isBuddy) && (!isAdmin) && <Link href="/event/add">
+                <button className={styles.profileGadgetButton}>Add Event</button>
+              </Link>}
+              {!isBuddy &&<div>
+                <button className={styles.profileGadgetButton} onClick={() => setIsBecomeBuddyModalOpen(true)}>Become a Buddy</button>
+                <Modal isOpen={isBecomeBuddyModalOpen} onClose={() => setIsBecomeBuddyModalOpen(false)}>
+                  <BuddyRequestForm message={buddyRequestMessage} setMessage={setBuddyRequestMessage} handleMessageSubmit={handleMessageSubmit} formSubmitted={buddyRequestSubmitted}/>
+                </Modal>
+              </div>}
+              {userDetails.isAdmin == true && (
+                <div>
+                  <button className={styles.profileGadgetButton} onClick={toggleBox}>{isBoxOpen ? 'Manage Buddies' : 'Manage Buddies'}</button>
+                  {isBoxOpen && (<MessageBox isOpen={isBoxOpen} onClose={toggleBox}>
                     <p>Your content goes here!</p>
                 </MessageBox>)}
               </div>
@@ -488,8 +493,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
                   <button className="material-symbols-outlined button calendar-close-search-button" onClick={(e) => {setToggleSearch(false), setSearchType(""), fetchUserDetails()}}>close</button>
                 </form>}
               </div>
-            {!toggleSearch && !isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
-            {!toggleSearch && isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
+              {!toggleSearch && !isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(true)} id={styles.iconButtons} className="material-symbols-outlined">calendar_month</button>}
+              {!toggleSearch && isCalendarOpen && <button title="View Monthly Calendar" onClick={()=> setIsCalendarOpen(false)} id={styles.iconButtons} className="material-symbols-outlined">list</button>}
             </div>
           </div>
           <div className={styles.eventsWrapper}>
@@ -518,24 +523,24 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
                 {!previousResultsBoolean &&<div>No previous events</div>}
                 {displayPreviousMoYrList.map(monthYear => <div>
                   <div className={styles.monthYear}>{monthYear}</div>
-                  <div className={styles.groupMonth}>
-                  {displayPreviousEvents.map(event =>  {const eventDate = parseISO(event.date_time);
-                    return (
-                      (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
-                        <div className={styles.calendarEventContainer}>
-                          <div className={styles.calendarEventText}>
-                            <span className={styles.eventFullDate}>{format(eventDate, 'iiii LLLL do p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
-                          </div>
-                        </div>
-                      </Link>)
-                    )
-                  })}
-                  </div>
-                </div>)}
-              </div>}
-            </div>}
-          </div>
-        </section>
+                    <div className={styles.groupMonth}>
+                      {displayPreviousEvents.map(event =>  {const eventDate = parseISO(event.date_time);
+                        return (
+                          (format((eventDate), 'LLLL yyyy') === monthYear &&<Link key={event.event_id} href={`/event/details/${event.event_id}`}>
+                            <div className={styles.calendarEventContainer}>
+                              <div className={styles.calendarEventText}>
+                                <span className={styles.eventFullDate}>{format(eventDate, 'iiii LLLL do p')}</span> - {event.primary_language} {event.secondary_language && <span> & {event.secondary_language}</span>} Buddy Code
+                              </div>
+                            </div>
+                          </Link>)
+                          )
+                        })}
+                      </div>
+                    </div>)}
+                  </div>}
+                </div>}
+              </div>
+            </section>
       </div>
       <div className={styles.rightPanel}>
         <section className={styles.followingContainer}>
@@ -570,9 +575,10 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         onClose={() => setIsModalOpen(false)}
         userDetails={userDetails}
         handleProfileUpdate={handleProfileUpdate}
-      />
-      </div>
+      /></div>
       <Footer/>
+    </div>}
+      
 
     </div>
 

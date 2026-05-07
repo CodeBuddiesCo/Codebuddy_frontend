@@ -102,7 +102,7 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
           {successMessage && <div className="add-event-form-container">
             <div className="add-event-form-header-container">
               <h1 className="add-event-form-header2">Success!!</h1>
-              <h1 className="add-event-form-header1">The crew is on the way!</h1>
+              <h1 className="add-event-form-header1">The pack is on the way!</h1>
             </div>
             <div className="add-event-form-button-container">
             <Link onClick={(event) => (setSuccessMessage(false))} href="/event/add"className="add-event-form-button" >Add Another Event</Link>
@@ -111,7 +111,7 @@ function AddEvent({selectedDate, isBuddy, setIsBuddy}) {
           </div>}
           {!successMessage && <form className="add-event-form-container" onSubmit={handleAddEvent}>
             <div className="add-event-form-header-container">
-              <h1 className="add-event-form-header1">Gather the crew...</h1>
+              <h1 className="add-event-form-header1">Gather the pack...</h1>
               <h1 className="add-event-form-header2">add an event!</h1>
             </div>
             <div className="add-event-select-border">

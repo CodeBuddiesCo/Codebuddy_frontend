@@ -1,13 +1,14 @@
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styles from '../styles/loading.module.css';
 
 
 const Loading = () => {
 
 
   return(
-    <div className="loading-page">
-      <div className="loading-message">
+    <div className={styles.loadingPage}>
+      <div className={styles.loadingMessage}>
         <h1>Loading <FontAwesomeIcon className='fas fa-spinner fa-spin'  icon={faSpinner} /></h1>
       </div>
     </div>

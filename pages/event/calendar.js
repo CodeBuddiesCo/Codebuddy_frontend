@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useScreenSizer } from '../../hooks/useScreenSizer';
+import Footer from "../../components/Footer";
 const {codeLanguageObjectArray} = require('../../Arrays/CodeLanguageObjectArray')
 
 
@@ -52,6 +53,7 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
     const newDate = new Date(chosenDate.getFullYear(), chosenDate.getMonth() - 1, 1);
     setState({ chosenDate: newDate });
   };
+  
 
   const nextMonth = () => {
     const { chosenDate } = state;
@@ -173,7 +175,7 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
     <div  className="calendar-page" onClick={()=> setTogglePopout("calendar-popout-container")}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" />
       <Header {...currentPage={currentPage}} />
-      {loading && <Loading/>}
+      {loading &&<Loading/>}
       {!loading &&<div  className="calendar-all-content">
         <div className="calendar-main-content">
           <div className="calendar-header">
@@ -258,7 +260,9 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
                     </div>}
                     {day.key > 0 && <div className="calendar-date-num">{day.key} </div>}
                     
-                  </div><div className="calendar-date-body"><div className="calendar-link-group">
+                  </div>
+                  <div className="calendar-date-body">
+                    <div className="calendar-link-group">
                   {displayEvents.map(event => {
                     const eventDate = parseISO(event.date_time);
                     if (format(eventDate, 'd') === day.key.toString() && format(eventDate, 'M') === (chosenDate.getMonth() + 1).toString() && format(eventDate, 'y') === chosenDate.getFullYear().toString()) {
@@ -308,8 +312,11 @@ function CalendarOfEvents({items, setAllEvents, allEvents, loading, setLoading, 
               return null;
             })}
           </div>
+        <Footer/>  
       </div>}
+      
     </div>
+    
   )
 }
 

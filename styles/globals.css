@@ -318,6 +318,7 @@ input:-webkit-autofill:active{
   overflow: auto;
   box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, .2);
   margin-bottom: 40px;
+  color:#6A7680;
 }
 .home-event-details-top-div {
   height: 40px;
@@ -470,10 +471,11 @@ input:-webkit-autofill:active{
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 135px;
 }
 .calendar-all-content {
   display: flex;  
+  flex-direction: column;
+  margin-top: 135px;
 }
 .calendar-main-content{
   display: flex;
@@ -798,23 +800,6 @@ input:-webkit-autofill:active{
 .material-symbols-outlined.expand-button{
   font-size: 25px;
   font-weight: 300;
-}
-
-
-/** Loading Component */
-
-.loading-page{
-  display: flex;
-  justify-content: center;
-}
-.loading-message{
-  width: 100%;
-  align-items: center;
-  text-align: center;
-  margin-top: 50px;
-  padding: 40px;
-  box-shadow: 0px 0px 1px 0px #8A99A6;
-  /* color: #8C4C35; */
 }
 
 /** Add Event Styles */

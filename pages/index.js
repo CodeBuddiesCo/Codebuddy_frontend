@@ -48,9 +48,12 @@ function HomePage({upcomingEvents, setUpcomingEvents}) {
       </section>
       <div className="home-events-section">
         <div className="home-events-title">Upcoming Buddy Events</div>
+        
         <div className="home-events-holder-div">
+          <div>Our buddies are taking a quick nap. Check back soon for new events! </div>
           <div className="home-event-holder-flex-div">
             {upcomingEventMonths.map ((eventMonth)=> <div className="home-events-holder-title-month_year">{eventMonth}
+              
               <div className="home-event-holder-flex-div">
                 {upcomingEvents.map ((upcomingEvent) => ( format(parseISO(upcomingEvent.date_time), 'LLLL') === eventMonth &&
                   <Link className="home-event-details-main-div" href={`/event/details/${upcomingEvent.event_id}`}>
