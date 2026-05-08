@@ -418,15 +418,15 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today, loadi
         </section>
         <section className={styles.technologiesContainer}>
           <div className={styles.containerHeaderWrapper}>
-            <p1 className={styles.containerHeading}>Technologies</p1>
+            <p1 className={styles.containerHeading}>Code Languages</p1>
             <button title="Edit Profile" id={styles.iconButtons} onClick={() => setIsModalOpen(true)} className="material-symbols-outlined">edit_square</button>
           </div>
           <div className={styles.technologiesWrapper}>
-            <h6 className={styles.techSubHeaders}>High Proficiency</h6>
+            {highProficiencyLanguages[1] &&<h6 className={styles.techSubHeaders}>High Proficiency</h6>}
             <div className={styles.techItemWrappers}>
               {highProficiencyLanguages && highProficiencyLanguages.map((language) => <div key={language} className={styles.techItems}>{language}</div>)}
             </div>
-            <h6 className={styles.techSubHeaders}>Intermediate Proficiency</h6>
+            {intermediateProficiencyLanguages[1] && <h6 className={styles.techSubHeaders}>Intermediate Proficiency</h6>}
             <div className={styles.techItemWrappers}>
               {intermediateProficiencyLanguages && intermediateProficiencyLanguages.map((language) => <div key={language} className={styles.techItems}>{language}</div>)}
             </div>
@@ -503,7 +503,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today, loadi
               <button className={sortButtonUpcomingStyle} onClick={()=> {setUpcomingEventsToggle(true), setSortButtonUpcomingStyle(styles.sortOn), setSortButtonPreviousStyle(styles.sortOff)}}>Upcoming Events <span className={styles.eventTotals}>{`{`}{displayUpcomingEvents.length}{`}`} </span></button>
               <button className={sortButtonPreviousStyle} onClick={()=> {setUpcomingEventsToggle(false), setSortButtonUpcomingStyle(styles.sortOff), setSortButtonPreviousStyle(styles.sortOn)}}>Previous Events <span className={styles.eventTotals}>{`{`}{displayPreviousEvents.length}{`}`}</span></button>
               {upcomingEventsToggle && <div id='upcoming events'>
-                {!upcomingResultsBoolean &&<div>No upcoming events</div>}
+                {!upcomingResultsBoolean &&<div className={styles.noEventsMsg}>No upcoming events. Check out the <Link href={`/event/calendar`}>calendar of events</Link> to schedule your next buddy code!</div>}
                 {displayUpcomingMoYrList.map(monthYear => <div> 
                   <div className={styles.monthYear}>{monthYear}</div>
                   {displayUpcomingEvents.map(event =>  {const eventDate = parseISO(event.date_time);
