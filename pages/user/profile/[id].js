@@ -27,8 +27,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
   const [searchType, setSearchType] = useState("");
   const [profileDetails, setProfileDetails] = useState({});
   const [userDetails, setUserDetails] = useState({});
-  const [primaryLanguages, setPrimaryLanguages] = useState([]);
-  const [secondaryLanguages, setSecondaryLanguages] = useState([]);
+  const [highProficiencyLanguages, setHighProficiencyLanguages] = useState([]);
+  const [intermediateProficiencyLanguages, setIntermediateProficiencyLanguages] = useState([]);
   const [isBoxOpen, setIsBoxOpen] = useState(false);
   const [toggleSearch, setToggleSearch] = useState(false)
   const [moYrList, setMoYrList] = useState([])
@@ -75,8 +75,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         }
         setProfileId(profileData.id)
         setProfileFollowsArray(profileData.follows)
-        setPrimaryLanguages([profileData.primary_language, profileData.secondary_language])
-        setSecondaryLanguages(profileData.programmingLanguages)
+        setHighProficiencyLanguages(profileData.highProficiencyLanguages)
+        setIntermediateProficiencyLanguages(profileData.intermediateProficiencyLanguages)
 
         if (!localProfileEvents[0]) {
           setUpcomingResultsBoolean(false)
@@ -345,7 +345,6 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         <section className={styles.mainDetailsContainer}>
           <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
             <div className={styles.containerHeading}> </div>
-            {/* //!! you need to set this to a spacer div */}
             <button title="Edit Profile" id={styles.iconButtons} className="material-symbols-outlined"></button>
           </div>
           <div className={styles.profilePictureWrapper}>
@@ -367,17 +366,17 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
         </section>
         <section className={styles.technologiesContainer}>
           <div className={styles.containerHeaderWrapper}>
-            <p1 className={styles.containerHeading}>Technologies</p1>
+            <p1 className={styles.containerHeading}>Code Languages</p1>
 
           </div>
           <div className={styles.technologiesWrapper}>
-            <h6 className={styles.techSubHeaders}>Primary Technologies</h6>
+            {highProficiencyLanguages[1] &&<h6 className={styles.techSubHeaders}>High Proficiency</h6>}
             <div className={styles.techItemWrappers}>
-              {primaryLanguages && primaryLanguages.map((language) => <div key={language.value} className={styles.techItems}>{language}</div>)}
+              {highProficiencyLanguages && highProficiencyLanguages.map((language) => <div key={language.value} className={styles.techItems}>{language}</div>)}
             </div>
-            <h6 className={styles.techSubHeaders}>Secondary Technologies</h6>
+            {intermediateProficiencyLanguages[1] &&<h6 className={styles.techSubHeaders}>Intermediate Proficiency</h6>}
             <div className={styles.techItemWrappers}>
-              {secondaryLanguages && secondaryLanguages.map((language) => <div key={language.value} className={styles.techItems}>{language}</div>)}
+              {intermediateProficiencyLanguages && intermediateProficiencyLanguages.map((language) => <div key={language.value} className={styles.techItems}>{language}</div>)}
             </div>
           </div> 
         </section>
@@ -452,7 +451,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
               <button className={sortButtonUpcomingStyle} onClick={()=> {setUpcomingEventsToggle(true), setSortButtonUpcomingStyle(styles.sortOn), setSortButtonPreviousStyle(styles.sortOff)}}>Upcoming Events <span className={styles.eventTotals}>{`{`}{displayUpcomingEvents.length}{`}`} </span></button>
               <button className={sortButtonPreviousStyle} onClick={()=> {setUpcomingEventsToggle(false), setSortButtonUpcomingStyle(styles.sortOff), setSortButtonPreviousStyle(styles.sortOn)}}>Previous Events <span className={styles.eventTotals}>{`{`}{displayPreviousEvents.length}{`}`}</span></button>
               {upcomingEventsToggle && <div id='upcoming events'>
-                {!upcomingResultsBoolean &&<div>No upcoming events</div>}
+                {!upcomingResultsBoolean &&<div className={styles.noEventsMsg}>No upcoming events</div>}
                 {displayUpcomingMoYrList.map(monthYear => <div> 
                   <div className={styles.monthYear}>{monthYear}</div>
                   {displayUpcomingEvents.map(event =>  {const eventDate = parseISO(event.date_time);
