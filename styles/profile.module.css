@@ -11,6 +11,7 @@
 .profilePage{
   color: #6a7680;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -20,6 +21,7 @@
   display: flex;
   height: 100%;
   justify-content: center;
+  width: 100%;
   margin: -10px;
   margin-bottom: 50px;
 }

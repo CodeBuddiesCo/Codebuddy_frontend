@@ -375,7 +375,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today, loadi
   <div className={styles.profilePage}>
     < Header  {...currentPage = { currentPage }} />
       {loading &&<Loading/>}
-      {!loading &&<div>
+      {!loading &&
     <div className={styles.profileContent}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <div className={styles.leftPanel}>
@@ -575,9 +575,10 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today, loadi
         onClose={() => setIsModalOpen(false)}
         userDetails={userDetails}
         handleProfileUpdate={handleProfileUpdate}
-      /></div>
+      /></div>}
       <Footer/>
-    </div>}
+      
+      
       
 
     </div>

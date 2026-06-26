@@ -8,10 +8,11 @@ import { parseISO, format, isBefore, isAfter } from 'date-fns';
 import { fetchAddFollow, fetchRemoveFollow, } from "../../../api_calls_profile";
 import UserCalendar from '../../../components/UserCalendar';
 import Footer from '../../../components/Footer';
+import Loading from '../../../components/Loading';
 const {codeLanguageObjectArray} = require('../../../Arrays/CodeLanguageObjectArray')
 
 
-const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => {
+const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today, loading, setLoading}) => {
   const { data: session } = useSession();
   const router = useRouter();
   const { id } = router.query;
@@ -341,6 +342,8 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
     <div className={styles.profilePage}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       < Header  {...currentPage={currentPage}}/>
+      {loading &&<Loading/>}
+      {!loading &&<div className={styles.profileContent}>
       <div className={styles.leftPanel}>
         <section className={styles.mainDetailsContainer}>
           <div className={styles.containerHeaderWrapper} id={styles.noBorder}>
@@ -502,7 +505,7 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
               <div className={styles.followButtonContainer}>               
                 <button title="Unfollow User" id={styles.followButtons} className="material-symbols-outlined" type="submit"></button>
               </div>
-              <Link key={followedUser.id} href={`/user/profile/${followedUser.id}`}>
+              <Link key={followedUser.id} href={followedUser.id === userDetails.id ? "/user/my/profile" : `/user/profile/${followedUser.id}`}>
                 <div className={styles.followedUserPictureWrapper}>
                   {!followedUser.pfp_url && <img src={"/Gemini_Generated_Image_8tpel98tpel98tpe.jpeg"} alt="Profile Preview" className={styles.followedUserPicture} />}
                   {followedUser.pfp_url  && <img src={followedUser.pfp_url} alt="Profile Preview" className={styles.followedUserPicture} />}
@@ -519,9 +522,10 @@ const Profile = ({ setCurrentPage, currentPage, buddyUsernameArray, today }) => 
           </div>}
         </section>
       </div>
-      </div>
+      
+      </div>}
       <Footer/>
-    </div>
+    </div></div>
   );
 }
 
